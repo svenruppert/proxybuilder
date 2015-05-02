@@ -49,11 +49,11 @@
     </developers>
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/RapidPM/cdi-pattern/issues</url>
+        <url>https://github.com/RapidPM/proxybuilder/issues</url>
     </issueManagement>
     <ciManagement>
         <system>TravisCI</system>
-        <url>https://travis-ci.org/RapidPM/cdi-pattern/</url>
+        <url>https://travis-ci.org/RapidPM/proxybuilder/</url>
     </ciManagement>
     <licenses>
         <license>
