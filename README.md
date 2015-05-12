@@ -1,4 +1,5 @@
 # Welcome to the Project ProxyBuilder
+[![Download](https://api.bintray.com/packages/sven+ruppert/maven/proxy-builder/images/download.svg) ](https://bintray.com/sven%20ruppert/maven/proxy-builder/_latestVersion)
 
 [![Build Status](https://travis-ci.org/RapidPM/proxybuilder.svg?branch=develop)](https://travis-ci.org/RapidPM/proxybuilder)
 
