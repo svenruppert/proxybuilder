@@ -26,57 +26,54 @@ import java.lang.reflect.Method;
 public class FieldSetter {
 
 
-    //JDK7
-    public <T, S> boolean setFieldIfNotNull(T target, String propertyName ,S source ){
-        if (source != null){
-            try {
-                Field declaredField = target.getClass().getDeclaredField(propertyName);
-                if ( ! declaredField.isAccessible()){
-                    declaredField.setAccessible(true);
-                    declaredField.set(target , source);
-                    declaredField.setAccessible(false);
-                } else {
-                    declaredField.set(target , source);
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-                return false;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }else{
-            return false;
+  //JDK7
+  public <T, S> boolean setFieldIfNotNull(T target, String propertyName, S source) {
+    if (source != null) {
+      try {
+        Field declaredField = target.getClass().getDeclaredField(propertyName);
+        if (!declaredField.isAccessible()) {
+          declaredField.setAccessible(true);
+          declaredField.set(target, source);
+          declaredField.setAccessible(false);
+        } else {
+          declaredField.set(target, source);
         }
+      } catch (NoSuchFieldException e) {
+        e.printStackTrace();
+        return false;
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+        return false;
+      }
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    public <T, S> boolean useMethodIfNotNull(T target, String methodName ,S source ){
-        if (source != null){
-            try {
-                Method declaredMethod = target.getClass().getDeclaredMethod(methodName, source.getClass());
-                if ( ! declaredMethod.isAccessible()){
-                    declaredMethod.setAccessible(true);
-                    declaredMethod.invoke(target, source);
-                    declaredMethod.setAccessible(false);
-                } else {
-                    declaredMethod.invoke(target , source);
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                return false;
-            } catch (NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return true;
-        }else{
-            return false;
+  public <T, S> boolean useMethodIfNotNull(T target, String methodName, S source) {
+    if (source != null) {
+      try {
+        Method declaredMethod = target.getClass().getDeclaredMethod(methodName, source.getClass());
+        if (!declaredMethod.isAccessible()) {
+          declaredMethod.setAccessible(true);
+          declaredMethod.invoke(target, source);
+          declaredMethod.setAccessible(false);
+        } else {
+          declaredMethod.invoke(target, source);
         }
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+        return false;
+      } catch (NoSuchMethodException | InvocationTargetException e) {
+        e.printStackTrace();
+        return false;
+      }
+      return true;
+    } else {
+      return false;
     }
-
-
-
+  }
 
 
 }

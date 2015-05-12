@@ -29,7 +29,11 @@ import java.util.WeakHashMap;
  */
 public class ProxyGenerator {
 
-  private static final WeakHashMap cache = new WeakHashMap();
+
+  private ProxyGenerator() {
+  }
+
+  private static final WeakHashMap CACHE = new WeakHashMap();
 
   public static <T> T make(Class<T> subject, Class<? extends T> realClass, Concurrency concurrency, ProxyType type) {
     final T make = make(subject.getClassLoader(), subject, realClass, concurrency, type);
@@ -59,12 +63,12 @@ public class ProxyGenerator {
     return subject.cast(proxy);
   }
 
-  private static Object createStaticProxy( ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
+  private static Object createStaticProxy(ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
     Map clcache;
-    synchronized (cache) {
-      clcache = (Map) cache.get(loader);
+    synchronized (CACHE) {
+      clcache = (Map) CACHE.get(loader);
       if (clcache == null) {
-        cache.put(loader, clcache = new HashMap());
+        CACHE.put(loader, clcache = new HashMap());
       }
     }
     try {
@@ -86,7 +90,7 @@ public class ProxyGenerator {
     }
   }
 
-  private static VirtualProxySourceGenerator create( Class subject, Class realClass, Concurrency concurrency) {
+  private static VirtualProxySourceGenerator create(Class subject, Class realClass, Concurrency concurrency) {
     switch (concurrency) {
       case NONE:
         return new VirtualProxySourceGeneratorNotThreadsafe(subject, realClass);
@@ -102,9 +106,9 @@ public class ProxyGenerator {
     }
   }
 
-  private static Object createDynamicProxy( ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
+  private static Object createDynamicProxy(ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
     if (concurrency != Concurrency.NONE) {
-      throw new IllegalArgumentException( "Unsupported Concurrency: " + concurrency);
+      throw new IllegalArgumentException("Unsupported Concurrency: " + concurrency);
     }
     return Proxy.newProxyInstance(
         loader,

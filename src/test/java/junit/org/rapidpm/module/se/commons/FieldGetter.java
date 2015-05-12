@@ -25,26 +25,23 @@ import static org.rapidpm.module.se.commons.proxy.type.virtual.Concurrency.NO_DU
  */
 public class FieldGetter {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-        DemoClassA demoClassA = new DemoClassA();
-        demoClassA.demoClassB = new DemoClassB();
-        demoClassA.demoClassB.value = "TestValue";
+    DemoClassA demoClassA = new DemoClassA();
+    demoClassA.demoClassB = new DemoClassB();
+    demoClassA.demoClassB.value = "TestValue";
 
-        //could get an NPE
+    //could get an NPE
 //        final String value = demoClassA.getDemoClassB().getValue();
 
-        final DemoClassA make = ProxyGenerator.make(DemoClassA.class, DemoClassA.class, NO_DUPLICATES);
-        make.demoClassB = new DemoClassB();
-        final DemoClassB demoClassB = make.getDemoClassB();
-        final String value = demoClassB.getValue();
-        System.out.println("value = " + value);
+    final DemoClassA make = ProxyGenerator.make(DemoClassA.class, DemoClassA.class, NO_DUPLICATES);
+    make.demoClassB = new DemoClassB();
+    final DemoClassB demoClassB = make.getDemoClassB();
+    final String value = demoClassB.getValue();
+    System.out.println("value = " + value);
 
 
-
-
-
-    }
+  }
 
 //    private static String getValue(DemoClassA demoClassA) {
 //        String demoClassBValue;
@@ -75,25 +72,25 @@ public class FieldGetter {
 //        }
 //    }
 
-    public static class Optional<T> {
+  public static class Optional<T> {
 
-        T value;
+    T value;
 
-        public Optional(T value) {
-            this.value = value;
-        }
-
-        public Boolean isPresent() {
-            return value != null;
-        }
-
-        public T getValue() {
-            return value;
-        }
-
-        public void setValue(T value) {
-            this.value = value;
-        }
+    public Optional(T value) {
+      this.value = value;
     }
+
+    public Boolean isPresent() {
+      return value != null;
+    }
+
+    public T getValue() {
+      return value;
+    }
+
+    public void setValue(T value) {
+      this.value = value;
+    }
+  }
 
 }

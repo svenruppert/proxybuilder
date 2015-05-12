@@ -21,6 +21,7 @@ public class ProxyBuilder<I, T extends I> {
 
   private T original;
   private Class<I> clazz;
+  private List<SecurityRule> securityRules = new ArrayList<>();
 
   private ProxyBuilder() {
   }
@@ -35,30 +36,24 @@ public class ProxyBuilder<I, T extends I> {
   public static <I, T extends I> ProxyBuilder<I, T> createBuilder(Class<I> clazz, Class<T> original, Concurrency concurrency) {
     final ProxyBuilder<I, T> proxyBuilder = new ProxyBuilder<>();
     final I proxy = ProxyGenerator.make(clazz, original, concurrency);
-    proxyBuilder.original = (T)proxy;
+    proxyBuilder.original = (T) proxy;
     proxyBuilder.clazz = clazz;
     return proxyBuilder;
   }
 
-
-
-
-
   //die originalReihenfolge behalten in der die Methoden aufgerufen worden sind.
   public I build() {
     Collections.reverse(securityRules);
-    securityRules.forEach(this::build_addSecurityRule);
+    securityRules.forEach(this::buildAddSecurityRule);
     return this.original;
   }
-
-  private List<SecurityRule> securityRules = new ArrayList<>();
 
   public ProxyBuilder<I, T> addSecurityRule(SecurityRule rule) {
     securityRules.add(rule);
     return this;
   }
 
-  private ProxyBuilder<I, T> build_addSecurityRule(SecurityRule rule) {
+  private ProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
     final ClassLoader classLoader = original.getClass().getClassLoader();
     final Class<?>[] interfaces = {clazz};
     final Object nextProxy = Proxy.newProxyInstance(
@@ -66,6 +61,7 @@ public class ProxyBuilder<I, T extends I> {
         interfaces,
         new InvocationHandler() {
           private T original = ProxyBuilder.this.original;
+
           @Override
           public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             final boolean checkRule = rule.checkRule();
@@ -79,7 +75,6 @@ public class ProxyBuilder<I, T extends I> {
     original = (T) clazz.cast(nextProxy);
     return this;
   }
-
 
 
   //wo die Metriken ablegen ?
@@ -107,7 +102,6 @@ public class ProxyBuilder<I, T extends I> {
     original = (T) clazz.cast(nextProxy);
     return this;
   }
-
 
 
   public ProxyBuilder<I, T> addLogging() {

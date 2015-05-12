@@ -16,11 +16,11 @@
 
 package demo.reflections;
 
-import org.rapidpm.module.se.commons.reflections.Reflections;
-import org.rapidpm.module.se.commons.reflections.scanners.*;
-import org.rapidpm.module.se.commons.reflections.util.ClasspathHelper;
-import org.rapidpm.module.se.commons.reflections.util.ConfigurationBuilder;
-import org.rapidpm.module.se.commons.reflections.util.FilterBuilder;
+import org.reflections.Reflections;
+import org.reflections.scanners.*;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ public class ReflectionsDemo {
     final FilterBuilder TestModelFilter = new FilterBuilder().include("demo.*.model.*");
 
     final Reflections reflections = new Reflections(new ConfigurationBuilder()
-          .setUrls(Arrays.asList(ClasspathHelper.forClass(ReflectionsDemo.class)))
+        .setUrls(Arrays.asList(ClasspathHelper.forClass(ReflectionsDemo.class)))
         .filterInputsBy(TestModelFilter)
         .setScanners(
             new SubTypesScanner(false),
@@ -47,7 +47,7 @@ public class ReflectionsDemo {
             new MethodParameterNamesScanner(),
             new MemberUsageScanner()));
 
-     frageFindeAlleInjectsMitMultiplizitaeten(reflections);
+    frageFindeAlleInjectsMitMultiplizitaeten(reflections);
 
   }
 
@@ -60,15 +60,12 @@ public class ReflectionsDemo {
     for (final Field field : fieldsAnnotatedWith) {
       final Class<?> type = field.getType();
       final Set<? extends Class<?>> subTypesOf = reflections.getSubTypesOf(type);
-      if(subTypesOf.size() > 1){
+      if (subTypesOf.size() > 1) {
 
         System.out.println("field = " + field);
-      } else{
+      } else {
       }
     }
-
-
-
 
 
   }

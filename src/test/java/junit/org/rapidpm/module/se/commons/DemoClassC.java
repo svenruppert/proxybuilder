@@ -21,13 +21,13 @@ package junit.org.rapidpm.module.se.commons;
  */
 public class DemoClassC {
 
-    public String value = "demoClassC";
+  public String value = "demoClassC";
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

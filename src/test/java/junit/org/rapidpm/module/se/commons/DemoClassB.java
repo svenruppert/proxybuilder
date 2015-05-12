@@ -17,22 +17,22 @@
 package junit.org.rapidpm.module.se.commons;
 
 /**
-* Created by ts40 on 19.02.14.
-*/
+ * Created by ts40 on 19.02.14.
+ */
 public class DemoClassB {
-    public String value;
+  public String value;
 
-    public DemoClassC demoClassC;
+  public DemoClassC demoClassC;
 
-    public DemoClassC getDemoClassC() {
-        return demoClassC;
-    }
+  public DemoClassC getDemoClassC() {
+    return demoClassC;
+  }
 
-    public void setDemoClassC(DemoClassC demoClassC) {
-        this.demoClassC = demoClassC;
-    }
+  public void setDemoClassC(DemoClassC demoClassC) {
+    this.demoClassC = demoClassC;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 }

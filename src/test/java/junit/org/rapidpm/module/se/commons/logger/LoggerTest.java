@@ -24,15 +24,16 @@ import org.rapidpm.module.se.commons.logger.Logger;
  * User: Sven Ruppert Date: 18.09.13 Time: 11:05
  */
 public class LoggerTest {
-    @Test  @Ignore
-    public void testLoggerAppender() throws Exception {
-        final Logger logger = Logger.getLogger(LoggerTest.class);
+  @Test
+  @Ignore
+  public void testLoggerAppender() throws Exception {
+    final Logger logger = Logger.getLogger(LoggerTest.class);
 
-        final long start = System.nanoTime();
-        for (int i = 0; i < 100; i++) {
-            logger.debug("Eine DebugMeldung -> " + i);
-        }
-        final long stop = System.nanoTime();
-        System.out.println("delts [ms] = " + (stop - start) / 1000 / 1000);
+    final long start = System.nanoTime();
+    for (int i = 0; i < 100; i++) {
+      logger.debug("Eine DebugMeldung -> " + i);
     }
+    final long stop = System.nanoTime();
+    System.out.println("delts [ms] = " + (stop - start) / 1000 / 1000);
+  }
 }

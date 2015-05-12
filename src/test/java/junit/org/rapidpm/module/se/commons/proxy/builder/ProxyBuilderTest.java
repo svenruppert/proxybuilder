@@ -3,11 +3,11 @@ package junit.org.rapidpm.module.se.commons.proxy.builder;
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import junit.org.rapidpm.module.se.commons.proxy.DemoInterface;
-import org.junit.Assert;
 import junit.org.rapidpm.module.se.commons.proxy.DemoLogic;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.rapidpm.module.se.commons.proxy.builder.ProxyBuilder;
 import org.rapidpm.module.se.commons.proxy.type.metrics.MetricsRegistry;
 import org.rapidpm.module.se.commons.proxy.type.virtual.Concurrency;
@@ -18,11 +18,13 @@ import java.util.stream.IntStream;
 /**
  * ProxyBuilder Tester.
  *
- * @author <Authors name>
+ * @author <Sven Rupperte>
  * @version 1.0
  * @since <pre>Apr 28, 2015</pre>
  */
 public class ProxyBuilderTest {
+
+  String s1;
 
   @Before
   public void before() throws Exception {
@@ -37,9 +39,8 @@ public class ProxyBuilderTest {
    */
   @Test
   public void testCreateBuilder01() throws Exception {
-//TODO: Test goes here... 
+//TODO: Test goes here...
   }
-
 
   @Test
   public void testCreateBuilder02() throws Exception {
@@ -60,7 +61,7 @@ public class ProxyBuilderTest {
         InnerDemoClass.class,
         Concurrency.NO_DUPLICATES);
 
-    builder.addSecurityRule(()-> true);
+    builder.addSecurityRule(() -> true);
     builder.addMetrics();
 
     final InnerDemoInterface demoLogic = builder.build();
@@ -68,7 +69,6 @@ public class ProxyBuilderTest {
     final InnerDemoClass original = new InnerDemoClass();
     Assert.assertEquals(demoLogic.doWork(), original.doWork());
   }
-
 
   @Test
   public void testAddSecurityRule001() throws Exception {
@@ -114,7 +114,6 @@ public class ProxyBuilderTest {
     Assert.assertEquals(demoLogic.doWork(), "InnerDemoClass.doWork()");
   }
 
-
   @Test
   public void testAddSecurityRule005() throws Exception {
     final InnerDemoClass original = new InnerDemoClass();
@@ -127,7 +126,6 @@ public class ProxyBuilderTest {
     Assert.assertNotNull(demoLogic);
     Assert.assertNotEquals(demoLogic.doWork(), original.doWork());
   }
-
 
   /**
    * Method: addMetrics()
@@ -160,8 +158,6 @@ public class ProxyBuilderTest {
 
     reporter.close();
   }
-
-  String s1;
 
   private void workingHole(String s) {
     s1 = s;

@@ -27,83 +27,83 @@ import java.io.Serializable;
 public class Logger implements Serializable {
 
 
-    private Class<?> declaringClass;
-    private final org.apache.log4j.Logger logger;
+  private final org.apache.log4j.Logger logger;
+  private Class<?> declaringClass;
 
 
-    public Logger(Class<?> declaringClass) {
-        this.declaringClass = declaringClass;
-        this.logger = org.apache.log4j.Logger.getLogger(declaringClass.getName());
-    }
+  public Logger(Class<?> declaringClass) {
+    this.declaringClass = declaringClass;
+    this.logger = org.apache.log4j.Logger.getLogger(declaringClass.getName());
+  }
 
 
-    public static Logger getLogger(Class<?> declaringClass) {
-        new Logger(Logger.class).warn("Class with static Logger definition " + declaringClass);
-        return new Logger(declaringClass);
-    }
+  public static Logger getLogger(Class<?> declaringClass) {
+    new Logger(Logger.class).warn("Class with static Logger definition " + declaringClass);
+    return new Logger(declaringClass);
+  }
 
 
-    public void debug(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.DEBUG, message, t);
-    }
+  public void debug(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.DEBUG, message, t);
+  }
 
-    public void debug(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.DEBUG, message, null);
-    }
+  public void debug(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.DEBUG, message, null);
+  }
 
-    public boolean isTraceEnabled() {
-        return logger.isTraceEnabled();
-    }
+  public boolean isTraceEnabled() {
+    return logger.isTraceEnabled();
+  }
 
-    public void trace(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.TRACE, message, t);
-    }
+  public void trace(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.TRACE, message, t);
+  }
 
-    public void trace(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.TRACE, message, null);
-    }
+  public void trace(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.TRACE, message, null);
+  }
 
-    public void error(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.ERROR, message, null);
-    }
+  public void error(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.ERROR, message, null);
+  }
 
-    public void error(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.ERROR, message, t);
-    }
+  public void error(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.ERROR, message, t);
+  }
 
-    public void fatal(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.FATAL, message, null);
-    }
+  public void fatal(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.FATAL, message, null);
+  }
 
-    public void fatal(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.FATAL, message, t);
-    }
+  public void fatal(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.FATAL, message, t);
+  }
 
-    public void info(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.INFO, message, null);
-    }
+  public void info(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.INFO, message, null);
+  }
 
-    public void info(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.INFO, message, t);
-    }
+  public void info(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.INFO, message, t);
+  }
 
-    public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
-    }
+  public boolean isDebugEnabled() {
+    return logger.isDebugEnabled();
+  }
 
-    public boolean isEnabledFor(Priority level) {
-        return logger.isEnabledFor(level);
-    }
+  public boolean isEnabledFor(Priority level) {
+    return logger.isEnabledFor(level);
+  }
 
-    public boolean isInfoEnabled() {
-        return logger.isInfoEnabled();
-    }
+  public boolean isInfoEnabled() {
+    return logger.isInfoEnabled();
+  }
 
-    public void warn(Object message) {
-        logger.log(Logger.class.getCanonicalName(), Level.WARN, message, null);
-    }
+  public void warn(Object message) {
+    logger.log(Logger.class.getCanonicalName(), Level.WARN, message, null);
+  }
 
-    public void warn(Object message, Throwable t) {
-        logger.log(Logger.class.getCanonicalName(), Level.WARN, message, t);
-    }
+  public void warn(Object message, Throwable t) {
+    logger.log(Logger.class.getCanonicalName(), Level.WARN, message, t);
+  }
 }

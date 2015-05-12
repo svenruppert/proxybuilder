@@ -26,32 +26,30 @@ import javax.annotation.PostConstruct;
 public class Model_A {
 
 
+  public static interface Service {
+    public String work(String txt);
 
+    public SubService getSubService();
 
+    public boolean isPostconstructed();
+  }
 
-
-
-
-  public static class BusinessModule{
+  public static class BusinessModule {
 
     @Inject
     Service service;
 
-    public String work(String txt){
+    public String work(String txt) {
       return service.work(txt);
     }
   }
 
-
-  public static interface Service{
-    public String work(String txt);
-    public SubService getSubService();
-    public boolean isPostconstructed();
-  }
-
   public static class ServiceImplA implements Service {
-    @Inject SubService subService;
-    public String work(String txt){
+    @Inject
+    SubService subService;
+    boolean postconstructed = false;
+
+    public String work(String txt) {
       return subService.work(txt);
     }
 
@@ -60,20 +58,22 @@ public class Model_A {
       return subService;
     }
 
-    boolean postconstructed = false;
-
     public boolean isPostconstructed() {
       return postconstructed;
     }
 
     @PostConstruct
-    public void postconstruct(){
+    public void postconstruct() {
       postconstructed = true;
     }
   }
+
   public static class ServiceImplB implements Service {
-    @Inject SubService subService;
-    public String work(String txt){
+    @Inject
+    SubService subService;
+    boolean postconstructed = false;
+
+    public String work(String txt) {
       return subService.work(txt);
     }
 
@@ -82,44 +82,42 @@ public class Model_A {
       return subService;
     }
 
-    boolean postconstructed = false;
     public boolean isPostconstructed() {
       return postconstructed;
     }
 
     @PostConstruct
-    public void postconstruct(){
+    public void postconstruct() {
       postconstructed = true;
     }
   }
 
 
+  public static class SubService {
+    @Inject
+    SubSubService subSubService;
+    boolean postconstructed = false;
 
-
-  public static class SubService{
-    @Inject SubSubService subSubService;
-    public String work(final String txt){
+    public String work(final String txt) {
       return subSubService.work(txt);
     }
-    boolean postconstructed = false;
+
     public boolean isPostconstructed() {
       return postconstructed;
     }
+
     @PostConstruct
-    public void postconstruct(){
+    public void postconstruct() {
       postconstructed = true;
     }
   }
 
 
-
-  public static class SubSubService{
-    public String work(final String txt){
+  public static class SubSubService {
+    public String work(final String txt) {
       return "SubSubService " + txt;
     }
   }
-
-
 
 
 }

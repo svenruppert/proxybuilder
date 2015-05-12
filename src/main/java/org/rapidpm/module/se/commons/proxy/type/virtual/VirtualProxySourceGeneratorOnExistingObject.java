@@ -23,15 +23,16 @@ import java.io.PrintWriter;
  */
 public class VirtualProxySourceGeneratorOnExistingObject extends VirtualProxySourceGenerator {
 
-    public VirtualProxySourceGeneratorOnExistingObject(
-            Class subject, Class realSubject) {
-        super(subject, realSubject, Concurrency.OnExistingObject);
-    }
-    protected void addRealSubjectCreation(PrintWriter out,  String name, String realName) {
-        out.printf(" public %s realSubject;%n", name);
-        out.println();
-        out.printf(" private %s realSubject() {%n", name);
-        out.println(" return realSubject;");
-        out.println(" }");
-    }
+  public VirtualProxySourceGeneratorOnExistingObject(
+      Class subject, Class realSubject) {
+    super(subject, realSubject, Concurrency.OnExistingObject);
+  }
+
+  protected void addRealSubjectCreation(PrintWriter out, String name, String realName) {
+    out.printf(" public %s realSubject;%n", name);
+    out.println();
+    out.printf(" private %s realSubject() {%n", name);
+    out.println(" return realSubject;");
+    out.println(" }");
+  }
 }

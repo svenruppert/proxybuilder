@@ -71,6 +71,7 @@ public class ClassPathScanner {
     }
     return distinctUrls(urls);
   }
+
   private Collection<URL> distinctUrls(Collection<URL> urls) {
     Map<String, URL> distinct = new HashMap<>(urls.size());
     for (URL url : urls) {
@@ -78,8 +79,6 @@ public class ClassPathScanner {
     }
     return distinct.values();
   }
-
-
 
 
   public String cleanPath(final URL url) {

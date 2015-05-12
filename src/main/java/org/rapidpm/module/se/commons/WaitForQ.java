@@ -23,16 +23,14 @@ import java.util.List;
 
 /**
  * Waiting at CMD for pressing Q.
- *
+ * <p>
  * Created by Sven Ruppert on 15.02.14.
  */
 public class WaitForQ {
 
-  @FunctionalInterface
-  public interface ShutDownAction{ void execute();}
-
   private List<ShutDownAction> shutDownActions = new ArrayList<>();
-  public void addShutDownAction(ShutDownAction action){
+
+  public void addShutDownAction(ShutDownAction action) {
     shutDownActions.add(action);
   }
 
@@ -49,7 +47,8 @@ public class WaitForQ {
           while (true) {
             try {
               msg = in.readLine();
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
             if (msg != null && msg.equals("Q")) {
               quit = 1;
             }
@@ -64,5 +63,10 @@ public class WaitForQ {
       shutDownActions.forEach(ShutDownAction::execute);
     });
     t.start();
+  }
+
+  @FunctionalInterface
+  public interface ShutDownAction {
+    void execute();
   }
 }

@@ -27,18 +27,21 @@ import java.util.Arrays;
 public class Generator {
 
 
-  private static final Method defineClassMethod;
-  private static final JavaCompiler jc;
+  private static final Method DEFINE_CLASS_METHOD;
+  private static final JavaCompiler JAVA_COMPILER;
+
+  private Generator() {
+  }
 
   static {
     try {
-      defineClassMethod = Proxy.class.getDeclaredMethod( "defineClass0", ClassLoader.class,String.class, byte[].class, int.class, int.class);
-      defineClassMethod.setAccessible(true);
+      DEFINE_CLASS_METHOD = Proxy.class.getDeclaredMethod("defineClass0", ClassLoader.class, String.class, byte[].class, int.class, int.class);
+      DEFINE_CLASS_METHOD.setAccessible(true);
     } catch (NoSuchMethodException e) {
       throw new ExceptionInInitializerError(e);
     }
-    jc = ToolProvider.getSystemJavaCompiler();
-    if (jc == null) {
+    JAVA_COMPILER = ToolProvider.getSystemJavaCompiler();
+    if (JAVA_COMPILER == null) {
       throw new UnsupportedOperationException(
           "Cannot find java compiler! " +
               "Probably only JRE installed.");
@@ -52,10 +55,10 @@ public class Generator {
     return processResults(loader, javaSource, gcf, dc, result);
   }
 
-  private static boolean compile( String className, CharSequence javaSource, GeneratedClassFile gcf, DiagnosticCollector<JavaFileObject> dc) {
+  private static boolean compile(String className, CharSequence javaSource, GeneratedClassFile gcf, DiagnosticCollector<JavaFileObject> dc) {
     GeneratedJavaSourceFile gjsf = new GeneratedJavaSourceFile(className, javaSource);
-    GeneratingJavaFileManager fileManager = new GeneratingJavaFileManager( jc.getStandardFileManager(dc, null, null), gcf);
-    JavaCompiler.CompilationTask task = jc.getTask( null, fileManager, dc, null, null, Arrays.asList(gjsf));
+    GeneratingJavaFileManager fileManager = new GeneratingJavaFileManager(JAVA_COMPILER.getStandardFileManager(dc, null, null), gcf);
+    JavaCompiler.CompilationTask task = JAVA_COMPILER.getTask(null, fileManager, dc, null, null, Arrays.asList(gjsf));
     return task.call();
   }
 
@@ -81,7 +84,7 @@ public class Generator {
   private static Class createClass(ClassLoader loader, GeneratedClassFile gcf) {
     try {
       byte[] data = gcf.getClassAsBytes();
-      return (Class) defineClassMethod.invoke(null, loader, null, data, 0, data.length);
+      return (Class) DEFINE_CLASS_METHOD.invoke(null, loader, null, data, 0, data.length);
     } catch (RuntimeException e) {
       throw e;
     } catch (Exception e) {

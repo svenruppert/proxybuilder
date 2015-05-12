@@ -8,14 +8,13 @@ import java.util.concurrent.Executors;
  */
 public class CachedThreadPoolSingleton {
 
-    public final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+  private static CachedThreadPoolSingleton ourInstance = new CachedThreadPoolSingleton();
+  public final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
-    private static CachedThreadPoolSingleton ourInstance = new CachedThreadPoolSingleton();
+  private CachedThreadPoolSingleton() {
+  }
 
-    public static CachedThreadPoolSingleton getInstance() {
-        return ourInstance;
-    }
-
-    private CachedThreadPoolSingleton() {
-    }
+  public static CachedThreadPoolSingleton getInstance() {
+    return ourInstance;
+  }
 }

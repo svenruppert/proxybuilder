@@ -20,5 +20,5 @@ package org.rapidpm.module.se.commons.proxy.type.virtual;
  * Created by Sven Ruppert on 14.01.14.
  */
 public enum ProxyType {
-    STATIC, DYNAMIC, OnExistingObject
+  STATIC, DYNAMIC, OnExistingObject
 }

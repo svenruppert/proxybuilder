@@ -15,13 +15,25 @@
   ~    limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <description>ProxyBuilder</description>
     <groupId>org.rapidpm.proxybuilder</groupId>
     <artifactId>proxybuilder</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
+
+
+    <!--
+      There are several build profiles available:
+      - extras: Creates additional artifacts containing source files and javadoc. (activated on release)
+      - gpg: Sign all artifacts using gpg. (activated on release)
+      - checks: Applies style checks to the source files. (activated by default, activated on release)
+      - android: Builds an Android test application. An Android SDK is required for doing so. (excluded from release)
+      Additionally, the following reports are configured:
+      - cobertura:cobertura - Computes line coverage for test suite
+      - org.pitest:pitest-maven:mutationCoverage - Runs mutation tests
+    -->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,6 +48,7 @@
         <url>https://github.com/RapidPM/proxybuilder</url>
         <connection>scm:git:https://github.com/RapidPM/proxybuilder.git</connection>
         <developerConnection>scm:git:https://github.com/RapidPM/proxybuilder.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
     <developers>
         <developer>
@@ -72,24 +85,6 @@
             <version>3.1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.18.2-GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-vfs2</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-            <optional>true</optional> <!-- case: -->
-        </dependency>
-        <dependency>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-            <optional>true</optional> <!-- case: when no xml de/serialization -->
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>18.0</version>
@@ -100,9 +95,46 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>1.4</version>
-            <optional>true</optional> <!-- case: when no json de/serialization -->
+            <optional>true</optional>
+            <!-- case: when no json de/serialization -->
         </dependency>
 
+
+
+        <!--Reflection Utils-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.18.2-GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-vfs2</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+            <!-- case: -->
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <optional>true</optional>
+            <!-- case: when no xml de/serialization -->
+        </dependency>
+
+
+
+
+
+
+
+        <!--Logging-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -115,13 +147,19 @@
             <version>2.2</version>
         </dependency>
 
+        <!--tdd-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
         <!--Microbenchmarking-->
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
@@ -147,20 +185,16 @@
             <version>1.7</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.0.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
-
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -185,6 +219,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-repository-plugin</artifactId>
                     <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -214,9 +253,27 @@
                         <repoToken>KMHtA4a1JE18NXrfejbMeHP0bsobH09To</repoToken>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>1.1.5</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+
+            <!-- Define release properties -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>extras</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -251,6 +308,22 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Enable mutation testing -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <configuration>
+                    <targetClasses>
+                        <param>org.rapidpm.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>org.rapidpm.*</param>
+                        <param>junit.org.rapidpm.*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -292,6 +365,25 @@
         </plugins>
     </build>
 
+    <!-- Define explicit version to overcome problem with generated reports -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <distributionManagement>
+        <repository>
+            <id>bintray</id>
+            <!--<url>http://dl.bintray.com/rapidpm/proxy-builder</url>-->
+            <url>https://api.bintray.com/maven/rapidpm/maven/proxy-builder</url>
+        </repository>
+    </distributionManagement>
+
 
     <profiles>
         <!-- embedded profiles -->
@@ -318,10 +410,36 @@
                 </plugins>
             </build>
         </profile>
-
+        <profile>
+            <id>checks</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Check style on build -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <configLocation>checkstyle.xml</configLocation>
+                                    <consoleOutput>true</consoleOutput>
+                                    <failsOnError>true</failsOnError>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
-
-
 
 
 </project>

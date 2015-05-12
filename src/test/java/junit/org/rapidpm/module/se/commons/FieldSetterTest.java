@@ -24,34 +24,29 @@ import org.rapidpm.module.se.commons.FieldSetter;
  */
 public class FieldSetterTest {
 
-    @Test
-    public void test001() throws Exception{
-        FieldSetter fieldSetter = new FieldSetter();
+  @Test
+  public void test001() throws Exception {
+    FieldSetter fieldSetter = new FieldSetter();
 
-        DemoClass demoClass = new DemoClass();
-        fieldSetter.setFieldIfNotNull(demoClass, "bool",true );
-
-
+    DemoClass demoClass = new DemoClass();
+    fieldSetter.setFieldIfNotNull(demoClass, "bool", true);
 
 
+  }
+
+
+  public static class DemoClass {
+
+    private boolean bool;
+
+    public boolean isBool() {
+      return bool;
     }
 
-
-
-
-    public static class DemoClass {
-
-        private boolean bool;
-
-        public boolean isBool() {
-            return bool;
-        }
-
-        public void setBool(boolean bool) {
-            this.bool = bool;
-        }
+    public void setBool(boolean bool) {
+      this.bool = bool;
     }
-
+  }
 
 
 }

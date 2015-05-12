@@ -7,15 +7,14 @@ import com.codahale.metrics.MetricRegistry;
  */
 public class MetricsRegistry {
   private static MetricsRegistry ourInstance = new MetricsRegistry();
-
-  public static MetricsRegistry getInstance() {
-    return ourInstance;
-  }
+  private final MetricRegistry metrics = new MetricRegistry();
 
   private MetricsRegistry() {
   }
 
-  private final MetricRegistry metrics = new MetricRegistry();
+  public static MetricsRegistry getInstance() {
+    return ourInstance;
+  }
 
   public MetricRegistry getMetrics() {
     return metrics;

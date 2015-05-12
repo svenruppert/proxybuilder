@@ -24,13 +24,15 @@ import java.net.URI;
  * Created by Sven Ruppert on 06.01.14.
  */
 public class GeneratedJavaSourceFile extends SimpleJavaFileObject {
-    private CharSequence javaSource;
-    public GeneratedJavaSourceFile(String className, CharSequence javaSource) {
-        super(URI.create(className + ".java"), Kind.SOURCE);
-        this.javaSource = javaSource;
-    }
-    public CharSequence getCharContent(boolean ignoreEncodeErrors)
-            throws IOException {
-        return javaSource;
-    }
+  private CharSequence javaSource;
+
+  public GeneratedJavaSourceFile(String className, CharSequence javaSource) {
+    super(URI.create(className + ".java"), Kind.SOURCE);
+    this.javaSource = javaSource;
+  }
+
+  public CharSequence getCharContent(boolean ignoreEncodeErrors)
+      throws IOException {
+    return javaSource;
+  }
 }
