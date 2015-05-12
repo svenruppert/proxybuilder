@@ -26,10 +26,7 @@
 
     <!--
       There are several build profiles available:
-      - extras: Creates additional artifacts containing source files and javadoc. (activated on release)
-      - gpg: Sign all artifacts using gpg. (activated on release)
       - checks: Applies style checks to the source files. (activated by default, activated on release)
-      - android: Builds an Android test application. An Android SDK is required for doing so. (excluded from release)
       Additionally, the following reports are configured:
       - cobertura:cobertura - Computes line coverage for test suite
       - org.pitest:pitest-maven:mutationCoverage - Runs mutation tests
@@ -380,7 +377,7 @@
         <repository>
             <id>bintray</id>
             <!--<url>http://dl.bintray.com/rapidpm/proxy-builder</url>-->
-            <url>https://api.bintray.com/maven/rapidpm/maven/proxy-builder</url>
+            <url>https://api.bintray.com/maven/sven%20ruppert/maven/proxy-builder</url>
         </repository>
     </distributionManagement>
 
