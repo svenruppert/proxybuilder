@@ -375,7 +375,6 @@
     <distributionManagement>
         <repository>
             <id>bintray</id>
-            <!--<url>http://dl.bintray.com/rapidpm/proxy-builder</url>-->
             <url>https://api.bintray.com/maven/sven%20ruppert/maven/proxy-builder</url>
         </repository>
     </distributionManagement>
