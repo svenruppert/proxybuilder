@@ -2,7 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/generator/annotations/annotations.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/generator/annotations/annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/builder/builder.iml" filepath="$PROJECT_DIR$/modules/builder/builder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/dynamicobjectadapter.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/dynamicobjectadapter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/generator/generator.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/generator/generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/modules.iml" filepath="$PROJECT_DIR$/modules/modules.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/generator/processors/processors.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/generator/processors/processors.iml" />
       <module fileurl="file://$PROJECT_DIR$/proxybuilder.iml" filepath="$PROJECT_DIR$/proxybuilder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/generator/usages/usages.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/generator/usages/usages.iml" />
+      <module fileurl="file://$PROJECT_DIR$/modules/dynamicobjectadapter/generator/usages/usinggenerated/usinggenerated.iml" filepath="$PROJECT_DIR$/modules/dynamicobjectadapter/generator/usages/usinggenerated/usinggenerated.iml" />
     </modules>
   </component>
 </project>
