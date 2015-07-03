@@ -63,7 +63,7 @@
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
         <module name="MissingSwitchDefault"/>
-        <module name="RedundantThrows"/>
+        <!--<module name="RedundantThrows"/>-->
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 

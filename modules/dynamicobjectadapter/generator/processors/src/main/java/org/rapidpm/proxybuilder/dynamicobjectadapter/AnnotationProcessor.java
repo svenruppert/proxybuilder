@@ -2,9 +2,6 @@ package org.rapidpm.proxybuilder.dynamicobjectadapter;
 
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.*;
-import org.rapidpm.proxybuilder.dynamicobjectadapter.AdapterBuilder;
-import org.rapidpm.proxybuilder.dynamicobjectadapter.DynamicObjectAdapterBuilder;
-import org.rapidpm.proxybuilder.dynamicobjectadapter.ExtendedInvocationHandler;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -25,19 +22,17 @@ import java.util.*;
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
-  private static final String builderClassnamePostFix = "AdapterBuilder";
-  public static final String invocationHandlerClassnamePostFix = "InvocationHandler";
+  private static final String BUILDER_CLASSNAME_POST_FIX = "AdapterBuilder";
+  public static final String INVOCATION_HANDLER_CLASSNAME_POST_FIX = "InvocationHandler";
 
 
-  private Types typeUtils;
-  private Elements elementUtils;
   private Filer filer;
   private Messager messager;
 //  private Map<String, FactoryGroupedClasses> factoryClasses = new LinkedHashMap<String, FactoryGroupedClasses>();
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    Set<String> annotataions = new LinkedHashSet<String>();
+    Set<String> annotataions = new LinkedHashSet<>();
     annotataions.add(DynamicObjectAdapterBuilder.class.getCanonicalName());
     return annotataions;
   }
@@ -46,8 +41,8 @@ public class AnnotationProcessor extends AbstractProcessor {
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
-    typeUtils = processingEnv.getTypeUtils();
-    elementUtils = processingEnv.getElementUtils();
+    final Types typeUtils = processingEnv.getTypeUtils();
+    final Elements elementUtils = processingEnv.getElementUtils();
     filer = processingEnv.getFiler();
     messager = processingEnv.getMessager();
   }
@@ -68,9 +63,9 @@ public class AnnotationProcessor extends AbstractProcessor {
       final ClassName typeElementClassName = ClassName.get(pkgName, typeElement.getSimpleName().toString());
 
 //      final TypeSpec.Builder invocationHandlerBuilder = createInvocationHandlerTypeSpecBuilder(typeElement);
-      final TypeSpec.Builder invocationHandlerBuilder = createTypedTypeSpecBuilder(typeElement, ExtendedInvocationHandler.class, invocationHandlerClassnamePostFix);
+      final TypeSpec.Builder invocationHandlerBuilder = createTypedTypeSpecBuilder(typeElement, ExtendedInvocationHandler.class, INVOCATION_HANDLER_CLASSNAME_POST_FIX);
 
-      final ClassName adapterBuilderClassname = ClassName.get(pkgName, typeElement.getSimpleName().toString() + builderClassnamePostFix);
+      final ClassName adapterBuilderClassname = ClassName.get(pkgName, typeElement.getSimpleName().toString() + BUILDER_CLASSNAME_POST_FIX);
       final ClassName invocationHandlerClassname = ClassName.get(pkgName, invocationHandlerBuilder.build().name);
 
       final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createAdapterBuilderBuilder(typeElement, typeElementClassName, adapterBuilderClassname, invocationHandlerClassname);
@@ -132,7 +127,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
 
   private TypeSpec.Builder createAdapterBuilderBuilder(TypeElement typeElement, ClassName typeElementClassName, ClassName adapterBuilderClassname, ClassName invocationHandlerClassname) {
-    final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createTypedTypeSpecBuilder(typeElement, AdapterBuilder.class, builderClassnamePostFix);
+    final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createTypedTypeSpecBuilder(typeElement, AdapterBuilder.class, BUILDER_CLASSNAME_POST_FIX);
 
     final FieldSpec invocationHandler = FieldSpec
         .builder(invocationHandlerClassname, "invocationHandler")
