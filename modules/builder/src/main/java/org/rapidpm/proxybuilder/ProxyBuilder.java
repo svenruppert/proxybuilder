@@ -53,26 +53,33 @@ public class ProxyBuilder<I, T extends I> {
     return this;
   }
 
-  private ProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
+
+  private void createProxy(InvocationHandler invocationHandler) {
     final ClassLoader classLoader = original.getClass().getClassLoader();
     final Class<?>[] interfaces = {clazz};
     final Object nextProxy = Proxy.newProxyInstance(
         classLoader,
         interfaces,
-        new InvocationHandler() {
-          private T original = ProxyBuilder.this.original;
-
-          @Override
-          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            final boolean checkRule = rule.checkRule();
-            if (checkRule) {
-              return method.invoke(original, args);
-            } else {
-              return null;
-            }
-          }
-        });
+        invocationHandler);
     original = (T) clazz.cast(nextProxy);
+  }
+
+
+  private ProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
+    final InvocationHandler invocationHandler = new InvocationHandler() {
+      private T original = ProxyBuilder.this.original;
+
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final boolean checkRule = rule.checkRule();
+        if (checkRule) {
+          return method.invoke(original, args);
+        } else {
+          return null;
+        }
+      }
+    };
+    createProxy(invocationHandler);
     return this;
   }
 
@@ -80,33 +87,45 @@ public class ProxyBuilder<I, T extends I> {
   //wo die Metriken ablegen ?
   public ProxyBuilder<I, T> addMetrics() {
     final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
-    final ClassLoader classLoader = original.getClass().getClassLoader();
-    final Class<?>[] interfaces = {clazz};
-    final Object nextProxy = Proxy.newProxyInstance(
-        classLoader,
-        interfaces,
-        new InvocationHandler() {
-          private final Histogram methodCalls = metrics.histogram(clazz.getSimpleName());
-          private final T original = ProxyBuilder.this.original;
+    final InvocationHandler invocationHandler = new InvocationHandler() {
+      private final Histogram methodCalls = metrics.histogram(clazz.getSimpleName());
+      private final T original = ProxyBuilder.this.original;
 
-          @Override
-          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 //            System.out.println("addMetrics = is running");
-            final long start = System.nanoTime();
-            final Object invoke = method.invoke(original, args);
-            final long stop = System.nanoTime();
-            methodCalls.update((stop - start));
-            return invoke;
-          }
-        });
-    original = (T) clazz.cast(nextProxy);
+        final long start = System.nanoTime();
+        final Object invoke = method.invoke(original, args);
+        final long stop = System.nanoTime();
+        methodCalls.update((stop - start));
+        return invoke;
+      }
+    };
+    createProxy(invocationHandler);
     return this;
   }
 
 
-  public ProxyBuilder<I, T> addLogging() {
-    return this;
-  }
+//  public ProxyBuilder<I, T> addLogging() {
+//
+//    final InvocationHandler invocationHandler = new InvocationHandler() {
+//
+//      private final T original = ProxyBuilder.this.original;
+//
+//      @Override
+//      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+//        final long start = System.nanoTime();
+//        final Object invoke = method.invoke(original, args);
+//        final long stop = System.nanoTime();
+////        methodCalls.update((stop - start));
+//        return invoke;
+//      }
+//    };
+//
+//
+//    createProxy(invocationHandler);
+//    return this;
+//  }
 
 
 }

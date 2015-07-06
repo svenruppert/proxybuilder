@@ -17,7 +17,7 @@
 package junit.org.rapidpm.module.se.commons;
 
 /**
- * Created by ts40 on 19.02.14.
+ * Created by Sven Ruppert on 19.02.14.
  */
 public class DemoClassA {
   public DemoClassB demoClassB;

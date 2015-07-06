@@ -30,8 +30,7 @@ public class Generator {
   private static final Method DEFINE_CLASS_METHOD;
   private static final JavaCompiler JAVA_COMPILER;
 
-  private Generator() {
-  }
+  private Generator() { }
 
   static {
     try {
@@ -72,13 +71,9 @@ public class Generator {
 // use your logging system of choice here
       System.err.println("Compile failed:");
       System.err.println(javaSource);
-      for (Diagnostic<?> d : dc.getDiagnostics()) {
-        System.err.println(d);
-      }
-      throw new IllegalArgumentException(
-          "Could not create proxy - compile failed");
+      dc.getDiagnostics().stream().forEach(System.err::println);
+      throw new IllegalArgumentException("Could not create proxy - compile failed");
     }
-
   }
 
   private static Class createClass(ClassLoader loader, GeneratedClassFile gcf) {

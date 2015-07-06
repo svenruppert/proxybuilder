@@ -21,12 +21,13 @@ import junit.org.rapidpm.module.se.commons.DemoClassB;
 import junit.org.rapidpm.module.se.commons.DemoClassC;
 import junit.org.rapidpm.module.se.commons.proxy.DemoInterface;
 import junit.org.rapidpm.module.se.commons.proxy.DemoLogic;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 
 /**
- * Created by ts40 on 19.02.14.
+ * Created by Sven Ruppert on 19.02.14.
  */
 public class ProxyGeneratorTest {
 
@@ -34,14 +35,16 @@ public class ProxyGeneratorTest {
   @Test
   public void testGenerator001() throws Exception {
     final DemoInterface demoInterface = ProxyGenerator.make(DemoInterface.class, DemoLogic.class, Concurrency.NO_DUPLICATES);
+    Assert.assertNotNull(demoInterface);
     demoInterface.doSomething();
   }
 
   @Test
   public void testGenerator002() throws Exception {
     final DemoLogic demoInterface = ProxyGenerator.make(DemoLogic.class, DemoLogic.class, Concurrency.NO_DUPLICATES);
+    Assert.assertNotNull(demoInterface);
     demoInterface.doSomething();
-    demoInterface.getSomething();
+    Assert.assertEquals("nooop", demoInterface.getSomething());
   }
 
   @Test
@@ -51,10 +54,10 @@ public class ProxyGeneratorTest {
     final Class<DemoLogic> aClass = (Class<DemoLogic>) logic.getClass();
     final DemoLogic demoInterface = ProxyGenerator.make(aClass, aClass, Concurrency.NO_DUPLICATES);
     demoInterface.doSomething();
-    final String something = demoInterface.getSomething();
+    Assert.assertEquals("nooop", demoInterface.getSomething());
 
     final String value = demoInterface.getValue();
-    System.out.println("value = " + value);
+    Assert.assertNull(value);
   }
 
   @Test
@@ -70,15 +73,15 @@ public class ProxyGeneratorTest {
 
 
     final DemoClassB demoClassB = demo.getDemoClassB();
-    System.out.println("demoClassB = " + demoClassB);
+//    System.out.println("demoClassB = " + demoClassB);
+    Assert.assertTrue(demoClassB.toString().startsWith("NullObjectHolder"));
     final DemoClassC demoClassC = demoClassB.getDemoClassC();
-    System.out.println("demoClassC = " + demoClassC);
+//    System.out.println("demoClassC = " + demoClassC);
+    Assert.assertTrue(demoClassC.toString().startsWith("NullObjectHolder"));
     final String value = demoClassB.getValue();
-    System.out.println("value = " + value);
-
-    System.out.println("demoClassC = " + demoClassC);
+    Assert.assertNull(value);
     final String value1 = demoClassC.getValue();
-    System.out.println("value1 = " + value1);
+    Assert.assertNull(value1);
   }
 
   private DemoClassA proxy(DemoClassA demoClassA) {
@@ -99,10 +102,24 @@ public class ProxyGeneratorTest {
   public void testGenerator00X() throws Exception {
     DemoClassA demoClassA = new DemoClassA();
     demoClassA.demoClassB = null;
-
     final String value = proxy(demoClassA).getDemoClassB().getDemoClassC().getValue();
-    System.out.println("value = " + value);
+    Assert.assertNull(value);
 
   }
 
+  @Test
+  public void testMake001() throws Exception {
+    //ProxyType.DYNAMIC
+
+  }
+
+  @Test
+  public void testMake002() throws Exception {
+
+  }
+
+  @Test
+  public void testMake003() throws Exception {
+
+  }
 }

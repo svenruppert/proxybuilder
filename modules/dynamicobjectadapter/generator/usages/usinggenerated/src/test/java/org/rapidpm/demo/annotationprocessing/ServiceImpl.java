@@ -5,12 +5,12 @@ package org.rapidpm.demo.annotationprocessing;
  */
 public class ServiceImpl implements Service {
   @Override
-  public String doWork_A(String txt) {
+  public String doWorkA(String txt) {
     return "doWorkd_A_Original";
   }
 
   @Override
-  public String doWork_B(String txt) {
+  public String doWorkB(String txt) {
     return "doWorkd_B_Original";
   }
 }

@@ -1,45 +1,46 @@
 package org.rapidpm.demo.annotationprocessing;
 
+import org.junit.Test;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
+
 /**
- * Created by sven on 18.05.15.
+ * Created by svenruppert on 06.07.15.
  */
-public class Main {
+public class MainTest {
 
 
-  public static void main(String[] args) {
-
+  @Test
+  public void testMain001() throws Exception {
     Service service = ServiceAdapterBuilder.newBuilder()
         .setOriginal(new ServiceImpl())
-        .withDoWork_A((txt) -> txt + "_part")
+        .withDoWorkA((txt) -> txt + "_part")
 //        .withTarget(Service.class) //leider als letztes.....
         .buildForTarget(Service.class);
-
-    System.out.println(service.doWork_A("Hallo Adapter"));
-
+    assertEquals("Hallo Adapter_part", service.doWorkA("Hallo Adapter"));
 
     final boolean proxyClass = Proxy.isProxyClass(service.getClass());
-    System.out.println("proxyClass = " + proxyClass);
+    assertTrue(proxyClass);
 
     //Interface auf den InvocactionHandler
     final InvocationHandler invocationHandler = Proxy.getInvocationHandler(service);
     final ServiceInvocationHandler serviceInvocationHandler = (ServiceInvocationHandler) invocationHandler;
 
-    serviceInvocationHandler.doWork_A((txt) -> txt + "_part_modified");
-    System.out.println(service.doWork_A("Hallo Adapter"));
-
-
-
+    serviceInvocationHandler.doWorkA((txt) -> txt + "_part_modified");
+    assertEquals("Hallo Adapter_part_modified", service.doWorkA("Hallo Adapter"));
 
     final Service serviceX = ServiceAdapterBuilder
         .newBuilder()
         .setOriginal(new ServiceImpl())
-        .withDoWork_A(txt -> "DOA-Builder Method A " + txt)
+        .withDoWorkA(txt -> "DOA-Builder Method A " + txt)
         .buildForTarget(Service.class);
 
-    System.out.println(serviceX.doWork_A("XX"));
+    assertEquals("DOA-Builder Method A XX",serviceX.doWorkA("XX"));
+
 
   }
 }
