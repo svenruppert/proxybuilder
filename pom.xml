@@ -470,12 +470,10 @@
       <distributionManagement>
         <repository>
           <id>releasesDevelopment</id>
-          <name>RapidPM Releases</name>
           <url>http://${nexus.ip}/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
           <id>snapshotsDevelopment</id>
-          <name>RapidPM Snapshots</name>
           <url>http://${nexus.ip}/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
       </distributionManagement>
