@@ -14,25 +14,20 @@
  *    limitations under the License.
  */
 
-package junit.org.rapidpm.module.se.commons;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
-public class DemoClassB {
-  public String value;
+public class DemoClassC {
 
-  public DemoClassC demoClassC;
-
-  public DemoClassC getDemoClassC() {
-    return demoClassC;
-  }
-
-  public void setDemoClassC(DemoClassC demoClassC) {
-    this.demoClassC = demoClassC;
-  }
+  public String value = "demoClassC";
 
   public String getValue() {
     return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
   }
 }

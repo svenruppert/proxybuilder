@@ -14,15 +14,11 @@
  *    limitations under the License.
  */
 
-package junit.org.rapidpm.module.se.commons;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
-public class DemoClassA {
-  public DemoClassB demoClassB;
+public final class FinalDemoLogic extends DemoLogic {
 
-  public DemoClassB getDemoClassB() {
-    return demoClassB;
-  }
 }

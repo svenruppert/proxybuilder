@@ -14,20 +14,27 @@
  *    limitations under the License.
  */
 
-package junit.org.rapidpm.module.se.commons;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
-public class DemoClassC {
+public class DemoLogic implements DemoInterface {
 
-  public String value = "demoClassC";
+  public String value = null;
+
+  @Override
+  public String doSomething() {
+    final String result = "doSomething-> DemoLogic";
+    System.out.println(result);
+    return result;
+  }
+
+  public String getSomething() {
+    return "nooop";
+  }
 
   public String getValue() {
     return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
   }
 }

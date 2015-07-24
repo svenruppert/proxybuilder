@@ -1,14 +1,14 @@
-package junit.org.rapidpm.module.se.commons.proxy.builder;
+package junit.org.rapidpm.proxybuilder;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
-import junit.org.rapidpm.module.se.commons.proxy.DemoInterface;
-import junit.org.rapidpm.module.se.commons.proxy.DemoLogic;
+import junit.org.rapidpm.proxybuilder.model.DemoInterface;
+import junit.org.rapidpm.proxybuilder.model.DemoLogic;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.rapidpm.proxybuilder.ProxyBuilder;
+import org.rapidpm.proxybuilder.VirtualProxyBuilder;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 
@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
  * @version 1.0
  * @since <pre>Apr 28, 2015</pre>
  */
-public class ProxyBuilderTest {
+public class VirtualProxyBuilderTest {
 
   String s1;
 
@@ -44,10 +44,10 @@ public class ProxyBuilderTest {
 
   @Test
   public void testCreateBuilder02() throws Exception {
-    final ProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = ProxyBuilder.createBuilder(
+    final VirtualProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = VirtualProxyBuilder.createBuilder(
         InnerDemoInterface.class,
         InnerDemoClass.class,
-        Concurrency.NO_DUPLICATES);
+        Concurrency.NONE);
     final InnerDemoInterface demoLogic = builder.build();
     Assert.assertNotNull(demoLogic);
     final InnerDemoClass original = new InnerDemoClass();
@@ -56,10 +56,10 @@ public class ProxyBuilderTest {
 
   @Test
   public void testCreateBuilder03() throws Exception {
-    final ProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = ProxyBuilder.createBuilder(
+    final VirtualProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = VirtualProxyBuilder.createBuilder(
         InnerDemoInterface.class,
         InnerDemoClass.class,
-        Concurrency.NO_DUPLICATES);
+        Concurrency.NONE);
 
     builder.addSecurityRule(() -> true);
     builder.addMetrics();
@@ -73,7 +73,7 @@ public class ProxyBuilderTest {
   @Test
   public void testAddSecurityRule001() throws Exception {
     final DemoLogic original = new DemoLogic();
-    final DemoInterface demoLogic = ProxyBuilder
+    final DemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(DemoInterface.class, original)
         .addSecurityRule(() -> false)
         .build();
@@ -84,7 +84,7 @@ public class ProxyBuilderTest {
   @Test
   public void testAddSecurityRule002() throws Exception {
     final DemoLogic original = new DemoLogic();
-    final DemoInterface demoLogic = ProxyBuilder
+    final DemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(DemoInterface.class, original)
         .addSecurityRule(() -> true)
         .build();
@@ -95,7 +95,7 @@ public class ProxyBuilderTest {
   @Test
   public void testAddSecurityRule003() throws Exception {
     final InnerDemoClass original = new InnerDemoClass();
-    final InnerDemoInterface demoLogic = ProxyBuilder
+    final InnerDemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(InnerDemoInterface.class, original)
         .addSecurityRule(() -> false)
         .build();
@@ -106,7 +106,7 @@ public class ProxyBuilderTest {
   @Test
   public void testAddSecurityRule004() throws Exception {
     final InnerDemoClass original = new InnerDemoClass();
-    final InnerDemoInterface demoLogic = ProxyBuilder
+    final InnerDemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(InnerDemoInterface.class, original)
         .addSecurityRule(() -> true)
         .build();
@@ -117,7 +117,7 @@ public class ProxyBuilderTest {
   @Test
   public void testAddSecurityRule005() throws Exception {
     final InnerDemoClass original = new InnerDemoClass();
-    final InnerDemoInterface demoLogic = ProxyBuilder
+    final InnerDemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(InnerDemoInterface.class, original)
         .addSecurityRule(() -> true)
         .addSecurityRule(() -> true)
@@ -134,7 +134,7 @@ public class ProxyBuilderTest {
   public void testAddMetrics() throws Exception {
 
     final InnerDemoClass original = new InnerDemoClass();
-    final InnerDemoInterface demoLogic = ProxyBuilder
+    final InnerDemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(InnerDemoInterface.class, original)
         .addSecurityRule(() -> true)
         .addSecurityRule(() -> true)

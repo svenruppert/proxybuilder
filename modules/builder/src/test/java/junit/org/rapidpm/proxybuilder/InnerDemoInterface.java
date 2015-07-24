@@ -1,4 +1,4 @@
-package junit.org.rapidpm.module.se.commons.proxy.builder;
+package junit.org.rapidpm.proxybuilder;
 
 /**
  * Created by sven on 28.04.15.

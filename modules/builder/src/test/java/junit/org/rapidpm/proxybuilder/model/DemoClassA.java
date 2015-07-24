@@ -14,12 +14,20 @@
  *    limitations under the License.
  */
 
-package junit.org.rapidpm.module.se.commons.proxy;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
-public interface DemoInterface {
+public class DemoClassA implements DemoInterface {
+  public DemoClassB demoClassB;
 
-  public void doSomething();
+  public DemoClassB getDemoClassB() {
+    return demoClassB;
+  }
+
+  @Override
+  public String doSomething() {
+    return null;
+  }
 }

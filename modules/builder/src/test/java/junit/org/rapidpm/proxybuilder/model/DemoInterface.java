@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package junit.org.rapidpm.module.se.commons.proxy;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
-public final class FinalDemoLogic extends DemoLogic {
-
+public interface DemoInterface {
+  String doSomething();
 }
