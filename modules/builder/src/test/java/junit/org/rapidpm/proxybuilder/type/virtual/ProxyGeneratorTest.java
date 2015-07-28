@@ -17,8 +17,6 @@
 package junit.org.rapidpm.proxybuilder.type.virtual;
 
 import junit.org.rapidpm.proxybuilder.model.DemoClassA;
-import junit.org.rapidpm.proxybuilder.model.DemoClassB;
-import junit.org.rapidpm.proxybuilder.model.DemoClassC;
 import junit.org.rapidpm.proxybuilder.model.DemoInterface;
 import junit.org.rapidpm.proxybuilder.model.DemoLogic;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +29,22 @@ import org.rapidpm.proxybuilder.type.virtual.ProxyType;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
 
+import java.lang.reflect.Proxy;
+
 /**
  * Created by Sven Ruppert on 19.02.14.
  */
 public class ProxyGeneratorTest {
+
+
+  @NotNull
+  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
+    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
+        .withSubject(DemoInterface.class)
+        .withRealClass(DemoLogic.class)
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
+        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
+  }
 
 
   @Test
@@ -47,51 +57,42 @@ public class ProxyGeneratorTest {
         .make();
 //    final DemoInterface demoInterface = ProxyGenerator.make(DemoInterface.class, DemoLogic.class, Concurrency.NO_DUPLICATES);
     Assert.assertNotNull(demoInterface);
-    demoInterface.doSomething();
+    Assert.assertEquals("doSomething-> DemoLogic", demoInterface.doSomething());
+    Assert.assertTrue(demoInterface.getClass().getSimpleName().contains("_NO_DUPLICATES"));
+    Assert.assertFalse(Proxy.isProxyClass(demoInterface.getClass()));
   }
 
-  @NotNull
-  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
-    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
-          .withSubject(DemoInterface.class)
-          .withRealClass(DemoLogic.class)
-          .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
-          .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
-  }
 
-  @Test @Ignore
-  public void testGenerator002() throws Exception {
-//    final DemoLogic demoInterface = ProxyGenerator.make(DemoLogic.class, DemoLogic.class, Concurrency.NO_DUPLICATES);
-    final DemoLogic demoInterface = (DemoLogic) createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NO_DUPLICATES)
-        .withType(ProxyType.STATIC)
-        .build()
-        .make();
-
-    Assert.assertNotNull(demoInterface);
-    demoInterface.doSomething();
-    Assert.assertEquals("nooop", demoInterface.getSomething());
-  }
-
-  @Test @Ignore
+  @Test
   public void testGenerator003() throws Exception {
 //    final DemoLogic demoInterface = ProxyGenerator.make(aClass, aClass, Concurrency.NO_DUPLICATES);
-    final DemoLogic demoInterface = ( DemoLogic) createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NO_DUPLICATES)
+    final DemoInterface demoInterface = createBuilder4DemoLogic()
+        .withConcurrency(Concurrency.SOME_DUPLICATES)
         .withType(ProxyType.STATIC)
         .build()
         .make();
-
-
-    demoInterface.doSomething();
-    Assert.assertEquals("nooop", demoInterface.getSomething());
-
-    final String value = demoInterface.getValue();
-    Assert.assertNull(value);
+    Assert.assertEquals("doSomething-> DemoLogic", demoInterface.doSomething());
+    Assert.assertTrue(demoInterface.getClass().getSimpleName().contains("_SOME_DUPLICATES"));
+    Assert.assertFalse(Proxy.isProxyClass(demoInterface.getClass()));
   }
 
-  @Test @Ignore
+  @Test
+  @Ignore
   public void testGenerator004() throws Exception {
+//    final DemoLogic demoInterface = ProxyGenerator.make(aClass, aClass, Concurrency.NO_DUPLICATES);
+    final DemoInterface demoInterface = createBuilder4DemoLogic()
+        .withConcurrency(Concurrency.OnExistingObject)
+        .withType(ProxyType.STATIC)
+        .build()
+        .make();
+    Assert.assertEquals("doSomething-> DemoLogic", demoInterface.doSomething());
+    Assert.assertTrue(demoInterface.getClass().getSimpleName().contains("_OnExistingObject"));
+    Assert.assertFalse(Proxy.isProxyClass(demoInterface.getClass()));
+  }
+
+  @Test
+  @Ignore
+  public void testGenerator005() throws Exception {
     DemoClassA demoClassA = new DemoClassA();
 //        demoClassA.demoClassB = new DemoClassB();
     demoClassA.demoClassB = null;
@@ -99,19 +100,24 @@ public class ProxyGeneratorTest {
 //        demoClassA.demoClassB.demoClassC = new DemoClassC();
 //        demoClassA.demoClassB.demoClassC.setValue("DumDiDum");
 
-    final DemoClassA demo = (DemoClassA) proxy(demoClassA);
+    final DemoInterface demoInterface = proxy(demoClassA);
+    Assert.assertNotNull(demoInterface);
+    Assert.assertTrue(demoInterface.getClass().getSimpleName().contains("_OnExistingObject"));
+    Assert.assertFalse(Proxy.isProxyClass(demoInterface.getClass()));
+
+    DemoClassA demoClassA1 = (DemoClassA) demoInterface;
 
 
-    final DemoClassB demoClassB = demo.getDemoClassB();
+//    final DemoClassB demoClassB = demo.doSomething();
 //    System.out.println("demoClassB = " + demoClassB);
-    Assert.assertTrue(demoClassB.toString().startsWith("NullObjectHolder"));
-    final DemoClassC demoClassC = demoClassB.getDemoClassC();
+//    Assert.assertTrue(demoClassB.toString().startsWith("NullObjectHolder"));
+//    final DemoClassC demoClassC = demoClassB.getDemoClassC();
 //    System.out.println("demoClassC = " + demoClassC);
-    Assert.assertTrue(demoClassC.toString().startsWith("NullObjectHolder"));
-    final String value = demoClassB.getValue();
-    Assert.assertNull(value);
-    final String value1 = demoClassC.getValue();
-    Assert.assertNull(value1);
+//    Assert.assertTrue(demoClassC.toString().startsWith("NullObjectHolder"));
+//    final String value = demoClassB.getValue();
+//    Assert.assertNull(value);
+//    final String value1 = demoClassC.getValue();
+//    Assert.assertNull(value1);
   }
 
   private DemoInterface proxy(DemoClassA demoClassA) {
@@ -133,16 +139,18 @@ public class ProxyGeneratorTest {
       aClassProxy.getDeclaredField("realSubject").set(demo, demoClassA);
     } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
       e.printStackTrace();
+      System.out.println("e = " + e);
     }
     return demo;
   }
 
 
-  @Test @Ignore
+  @Test
+  @Ignore
   public void testGenerator00X() throws Exception {
     DemoClassA demoClassA = new DemoClassA();
     demoClassA.demoClassB = null;
-    final String value = ((DemoClassA)proxy(demoClassA)).getDemoClassB().getDemoClassC().getValue();
+    final String value = ((DemoClassA) proxy(demoClassA)).getDemoClassB().getDemoClassC().getValue();
     Assert.assertNull(value);
 
   }
