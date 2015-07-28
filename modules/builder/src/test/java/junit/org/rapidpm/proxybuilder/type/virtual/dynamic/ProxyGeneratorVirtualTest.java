@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultServiceFactory;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 
@@ -23,7 +23,7 @@ public class ProxyGeneratorVirtualTest {
     return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
         .withSubject(DemoInterface.class)
         .withRealClass(DemoLogic.class)
-        .withServiceFactory(new DefaultServiceFactory<>(DemoLogic.class))
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
         .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
   }
 

@@ -8,7 +8,7 @@ import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultServiceFactory;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
 
 import java.lang.reflect.InvocationHandler;
@@ -55,7 +55,7 @@ public class VirtualProxyBuilder<I, T extends I> {
         .withSubject(clazz)
         .withRealClass(original)
         .withConcurrency(concurrency)
-        .withServiceFactory(new DefaultServiceFactory<>(original))
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(original))
         .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<T>())
         .withType(ProxyType.DYNAMIC)
         .build()

@@ -4,12 +4,12 @@ package org.rapidpm.proxybuilder.type.virtual.dynamic;
 /**
  * Created by svenruppert on 22.07.15.
  */
-public class DefaultServiceFactory<C> implements VirtualDynamicProxyInvocationHandler.ServiceFactory<C> {
+public class DefaultConstructorServiceFactory<C> implements VirtualDynamicProxyInvocationHandler.ServiceFactory<C> {
 
 
   private Class<C> realClass;
 
-  public DefaultServiceFactory(final Class<C> realClass) {
+  public DefaultConstructorServiceFactory(final Class<C> realClass) {
     this.realClass = realClass;
   }
 

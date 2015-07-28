@@ -70,63 +70,6 @@ public class ProxyGenerator<I, C extends I> {
     return subject.cast(proxy);
   }
 
-//
-//  public static <I, C extends I> I make(Class<I> subject, Class<C> realClass, Concurrency concurrency, ProxyType type) {
-//    return make(subject.getClassLoader(), subject, realClass, concurrency, type);
-//  }
-//
-//  public static <I, C extends I> I make(Class<I> subject, Class<C> realClass, Concurrency concurrency) {
-//    return make(subject, realClass, concurrency, ProxyType.STATIC);
-//  }
-//
-//  public static <I, C extends I> I make(Class<I> subject, Class<C> realClass) {
-//    return make(subject, realClass, Concurrency.NONE, ProxyType.STATIC);
-//  }
-//
-//  public static <I, C extends I> I make(ClassLoader loader,
-//                                        Class<I> subject,
-//                                        Class<C> realClass,
-//                                        Concurrency concurrency,
-//                                        ProxyType type) {
-//    return make(loader, subject, realClass, concurrency, type, new DefaultServiceFactory<>(realClass));
-//  }
-//
-//  public static <I, C extends I> I make(Class<I> subject,
-//                                        Class<C> realClass,
-//                                        Concurrency concurrency,
-//                                        ProxyType type,
-//                                        ServiceFactory<C> serviceFactory) {
-//    return make(subject.getClassLoader(), subject, realClass, concurrency, type, serviceFactory, new ServiceStrategyFactoryNotThreadSafe<>());
-//  }
-//
-//  public static <I, C extends I> I make(ClassLoader loader,
-//                                        Class<I> subject,
-//                                        Class<C> realClass,
-//                                        Concurrency concurrency,
-//                                        ProxyType type,
-//                                        ServiceFactory<C> serviceFactory) {
-//    return make(loader, subject, realClass, concurrency, type, serviceFactory, new ServiceStrategyFactoryNotThreadSafe<>());
-//  }
-//
-//  public static <I, C extends I> I make(ClassLoader loader,
-//                                        Class<I> subject,
-//                                        Class<C> realClass,
-//                                        Concurrency concurrency,
-//                                        ProxyType type,
-//                                        ServiceFactory<C> serviceFactory,
-//                                        ServiceStrategyFactory<C> serviceStrategyFactory) {
-//    Object proxy = null;
-//    if (type == ProxyType.STATIC) {
-//      proxy = createStaticProxy(loader, subject, realClass, concurrency);
-//    } else if (type == ProxyType.DYNAMIC) {
-//      proxy = createDynamicProxy(loader, subject, concurrency, serviceFactory, serviceStrategyFactory);
-//    } else if (type == ProxyType.OnExistingObject) {
-//      //Hier den OnExistingObject Proxy erzeugen!
-//      proxy = createStaticProxy(loader, subject, realClass, Concurrency.OnExistingObject);
-//    }
-//    return subject.cast(proxy);
-//  }
-
   private static Object createStaticProxy(ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
     Map clcache;
     synchronized (CACHE) {

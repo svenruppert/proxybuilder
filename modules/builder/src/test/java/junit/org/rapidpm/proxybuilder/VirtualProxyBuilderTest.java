@@ -1,6 +1,7 @@
 package junit.org.rapidpm.proxybuilder;
 
 import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import junit.org.rapidpm.proxybuilder.model.DemoInterface;
 import junit.org.rapidpm.proxybuilder.model.DemoLogic;
@@ -12,6 +13,7 @@ import org.rapidpm.proxybuilder.VirtualProxyBuilder;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -155,6 +157,16 @@ public class VirtualProxyBuilderTest {
       workingHole(s.toUpperCase());
     });
     System.out.println("s1 = " + s1);
+
+
+    final SortedMap<String, Histogram> histograms = metrics.getHistograms();
+    Assert.assertNotNull(histograms);
+    Assert.assertFalse(histograms.isEmpty());
+    Assert.assertTrue(histograms.containsKey(InnerDemoInterface.class.getSimpleName()));
+
+    final Histogram histogram = histograms.get(InnerDemoInterface.class.getSimpleName());
+    Assert.assertNotNull(histogram);
+    Assert.assertNotNull(histogram.getSnapshot());
 
     reporter.close();
   }

@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultServiceFactory;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
 
 /**
@@ -55,7 +55,7 @@ public class ProxyGeneratorTest {
     return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
           .withSubject(DemoInterface.class)
           .withRealClass(DemoLogic.class)
-          .withServiceFactory(new DefaultServiceFactory<>(DemoLogic.class))
+          .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
           .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
   }
 
@@ -123,7 +123,7 @@ public class ProxyGeneratorTest {
         .withRealClass(aClass)
         .withConcurrency(Concurrency.OnExistingObject)
         .withType(ProxyType.OnExistingObject)
-        .withServiceFactory(new DefaultServiceFactory<>(DemoClassA.class))
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoClassA.class))
         .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
 
     final DemoInterface demo = proxyBuilder.build().make();
