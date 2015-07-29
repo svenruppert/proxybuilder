@@ -4,22 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.rapidpm.proxybuilder</groupId>
-        <artifactId>usages</artifactId>
+        <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-usages</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>usinggenerated</artifactId>
+    <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-usages-usinggenerated</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.rapidpm.proxybuilder</groupId>
-            <artifactId>processors</artifactId>
+            <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-processors</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.rapidpm.proxybuilder</groupId>
-            <artifactId>annotations</artifactId>
+            <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-annotations</artifactId>
             <version>${project.parent.version}</version>
             <optional>true</optional>
         </dependency>

@@ -27,7 +27,7 @@
   </parent>
 
   <groupId>org.rapidpm.proxybuilder</groupId>
-  <artifactId>proxybuilder</artifactId>
+  <artifactId>rapidpm-proxybuilder</artifactId>
   <version>0.0.2-SNAPSHOT</version>
 
 
