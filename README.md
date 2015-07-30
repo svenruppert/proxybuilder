@@ -1,4 +1,6 @@
 # Welcome to the Project ProxyBuilder
+
+[![Join the chat at https://gitter.im/RapidPM/proxybuilder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RapidPM/proxybuilder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [ ![Download](https://api.bintray.com/packages/sven+ruppert/maven/proxybuilder/images/download.svg) ](https://bintray.com/sven%20ruppert/maven/proxybuilder/_latestVersion)
 
 [![Build Status](https://travis-ci.org/RapidPM/proxybuilder.svg?branch=develop)](https://travis-ci.org/RapidPM/proxybuilder)
