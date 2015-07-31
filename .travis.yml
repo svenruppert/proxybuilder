@@ -1,5 +1,7 @@
 language: java
 
+sudo: false
+
 branches:
   only:
     - master
@@ -7,13 +9,10 @@ branches:
 
 jdk:
   - oraclejdk8
-#  - openjdk8
 #  - oraclejdk7
+  - openjdk8
 #  - openjdk7
 #  - openjdk6
 
 after_success:
   - mvn clean cobertura:cobertura coveralls:report
-
-  notifications:
-      slack: rapidpm:giph6gm6CAPsatCNt5jHhnzN
