@@ -141,6 +141,16 @@
   </dependencies>
 
   <build>
+    <plugins>
+      <!-- Generate coveralls reports from Travis -->
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <configuration>
+          <repoToken>MW5SHM1zQ5fPBDkjNL651ixpwkfOradfQ</repoToken>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <!-- Define explicit version to overcome problem with generated reports -->
