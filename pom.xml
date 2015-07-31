@@ -154,20 +154,82 @@
   <!--</reporting>-->
 
 
+  <!--<profiles>-->
+    <!--<profile>-->
+      <!--<activation>-->
+        <!--<activeByDefault>false</activeByDefault>-->
+      <!--</activation>-->
+      <!--<id>deployBintray</id>-->
+      <!--<distributionManagement>-->
+        <!--<repository>-->
+          <!--<id>bintray</id>-->
+          <!--<url>https://api.bintray.com/maven/sven%20ruppert/maven/proxy-builder</url>-->
+        <!--</repository>-->
+      <!--</distributionManagement>-->
+    <!--</profile>-->
+  <!--</profiles>-->
   <profiles>
     <profile>
+      <id>sys-nexus-ip</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <activeByDefault>true</activeByDefault>
       </activation>
-      <id>deployBintray</id>
+      <properties>
+        <nexus.ip>nexus.rapidpm.org</nexus.ip>
+      </properties>
+    </profile>
+    <profile>
+      <id>sys-nexus-deploy</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <!--for development of features/develop branch-->
       <distributionManagement>
         <repository>
-          <id>bintray</id>
-          <url>https://api.bintray.com/maven/sven%20ruppert/maven/proxy-builder</url>
+          <id>releasesRapidPM</id>
+          <url>http://${nexus.ip}/nexus/content/repositories/releases</url>
         </repository>
+        <snapshotRepository>
+          <id>snapshotsRapidPM</id>
+          <url>http://${nexus.ip}/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
       </distributionManagement>
     </profile>
+    <profile>
+      <id>sys-nexus-repo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>publicRapidPM</id>
+          <name>RapidPM Public Repository</name>
+          <url>http://nexus.rapidpm.org/nexus/content/groups/public</url>
+          <snapshots>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
+          <releases>
+            <updatePolicy>always</updatePolicy>
+          </releases>
+        </repository>
+        <repository>
+          <id>releasesRapidPM</id>
+          <name>RapidPM Releases</name>
+          <url>http://nexus.rapidpm.org/nexus/content/repositories/releases</url>
+          <releases>
+            <updatePolicy>always</updatePolicy>
+          </releases>
+        </repository>
+        <repository>
+          <id>snapshotsRapidPM</id>
+          <name>RapidPM Snapshots</name>
+          <url>http://nexus.rapidpm.org/nexus/content/repositories/snapshots</url>
+          <snapshots>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
   </profiles>
-
 
 </project>
