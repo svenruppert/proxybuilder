@@ -232,7 +232,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     final Element enclosingElement = typeElement.getEnclosingElement();
     final String packageName = enclosingElement.toString();
-    final JavaFile javaFile = JavaFile.builder(packageName, functionalInterface).build();
+    final JavaFile javaFile = JavaFile.builder(packageName, functionalInterface).skipJavaLangImports(true).build();
     final String className = typeElement.getQualifiedName().toString() + "Method" + finalMethodName;
     try {
       JavaFileObject jfo = filer.createSourceFile(className);
@@ -250,7 +250,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
   private void writeDefinedClass(String pkgName, TypeSpec.Builder typeSpecBuilder) {
     final TypeSpec typeSpec = typeSpecBuilder.build();
-    final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).build();
+    final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
     final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
     try {
       JavaFileObject jfo = filer.createSourceFile(className);
