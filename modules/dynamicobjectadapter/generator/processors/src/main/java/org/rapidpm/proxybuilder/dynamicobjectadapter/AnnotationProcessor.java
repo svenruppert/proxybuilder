@@ -213,11 +213,18 @@ public class AnnotationProcessor extends AbstractProcessor {
    * @param typeElement
    * @param methodElement
    * @param methodSpecBuilder
+   *
    * @return the functional Interface spec
    */
   private Optional<TypeSpec> writeFunctionalInterface(TypeElement typeElement, ExecutableElement methodElement, MethodSpec.Builder methodSpecBuilder) {
+    final String methodNameRaw = methodElement.getSimpleName().toString();
+    final String firstCharUpper = (methodNameRaw.charAt(0) + "").toUpperCase();
+
+    final String finalMethodName = firstCharUpper + methodNameRaw.substring(1);
+
+
     final TypeSpec functionalInterface = TypeSpec
-        .interfaceBuilder(typeElement.getSimpleName().toString() + "_" + methodElement.getSimpleName().toString())
+        .interfaceBuilder(typeElement.getSimpleName().toString() + "Method" + finalMethodName)
         .addAnnotation(FunctionalInterface.class)
         .addMethod(methodSpecBuilder.build())
         .addModifiers(Modifier.PUBLIC)
@@ -226,7 +233,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     final Element enclosingElement = typeElement.getEnclosingElement();
     final String packageName = enclosingElement.toString();
     final JavaFile javaFile = JavaFile.builder(packageName, functionalInterface).build();
-    final String className = typeElement.getQualifiedName().toString() + "_" + methodElement.getSimpleName().toString();
+    final String className = typeElement.getQualifiedName().toString() + "Method" + finalMethodName;
     try {
       JavaFileObject jfo = filer.createSourceFile(className);
       Writer writer = jfo.openWriter();
