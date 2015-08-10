@@ -27,7 +27,6 @@ public class DAOTest001 {
   public void test002() throws Exception {
     final Service target = ServiceAdapterBuilder.newBuilder()
         .setOriginal(null)
-//        .withDoWorkA(() -> "mocked-A")
         .withDoWorkB(() -> "mocked-B")
         .buildForTarget(Service.class);
 
