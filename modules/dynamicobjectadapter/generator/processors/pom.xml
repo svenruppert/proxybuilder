@@ -2,30 +2,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>org.rapidpm.proxybuilder</groupId>
-        <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.rapidpm.proxybuilder</groupId>
+    <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
 
-    <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-processors</artifactId>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.rapidpm.proxybuilder</groupId>
-            <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-annotations</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <!-- Auto service annotation processor -->
-        <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup</groupId>
-            <artifactId>javapoet</artifactId>
-        </dependency>
-    </dependencies>
+  <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-processors</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.rapidpm.proxybuilder</groupId>
+      <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator-annotations</artifactId>
+    </dependency>
+    <!-- Auto service annotation processor -->
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup</groupId>
+      <artifactId>javapoet</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>
