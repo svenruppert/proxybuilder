@@ -15,6 +15,32 @@ branch:
 [![Dependency Status](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be)
 
 
+## SNAPSHOTS
+If you are using maven you could add the following to your settings.xml to get the snapshots.
+
+```
+   <profile>
+      <id>allow-snapshots</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>snapshots-repo</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+```
+
+
 # ProxyBuilder
 With the proxy builder you can build proxies with different functions. There are two main versions available.
 The first one is the static virtual proxy, the second one ist based on the dynamic proxies.
