@@ -1,4 +1,4 @@
-package org.rapidpm.demo.annotationprocessing;
+package junit.org.rapidpm.demo.annotationprocessing;
 
 import org.junit.Test;
 
@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import static org.junit.Assert.*;
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by svenruppert on 06.07.15.

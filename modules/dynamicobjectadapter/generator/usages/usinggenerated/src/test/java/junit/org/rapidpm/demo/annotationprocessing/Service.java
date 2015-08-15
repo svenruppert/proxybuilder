@@ -1,4 +1,4 @@
-package org.rapidpm.demo.annotationprocessing;
+package junit.org.rapidpm.demo.annotationprocessing;
 
 import org.rapidpm.proxybuilder.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 

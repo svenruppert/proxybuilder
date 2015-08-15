@@ -1,4 +1,4 @@
-package org.rapidpm.demo.dao.v001;
+package junit.org.rapidpm.demo.dao.v001;
 
 import org.rapidpm.proxybuilder.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 

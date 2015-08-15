@@ -1,4 +1,4 @@
-package org.rapidpm.demo.annotationprocessing;
+package junit.org.rapidpm.demo.annotationprocessing;
 
 /**
  * Created by sven on 13.05.15.
