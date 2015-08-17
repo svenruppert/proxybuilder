@@ -12,8 +12,8 @@
   <artifactId>rapidpm-proxybuilder-modules</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>dynamicobjectadapter</module>
     <module>builder</module>
+    <module>dynamicobjectadapter</module>
   </modules>
 
 
