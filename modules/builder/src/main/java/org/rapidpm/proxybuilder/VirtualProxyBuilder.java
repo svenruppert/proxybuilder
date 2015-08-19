@@ -111,7 +111,6 @@ public class VirtualProxyBuilder<I, T extends I> {
   public VirtualProxyBuilder<I, T> addMetrics() {
     final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
     final InvocationHandler invocationHandler = new InvocationHandler() {
-      private final Histogram methodCalls = metrics.histogram(clazz.getSimpleName());
       private final T original = VirtualProxyBuilder.this.original;
 
       @Override
@@ -119,6 +118,7 @@ public class VirtualProxyBuilder<I, T extends I> {
         final long start = System.nanoTime();
         final Object invoke = method.invoke(original, args);
         final long stop = System.nanoTime();
+        Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
         methodCalls.update((stop - start));
         return invoke;
       }

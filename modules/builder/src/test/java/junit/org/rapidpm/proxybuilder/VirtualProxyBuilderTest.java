@@ -162,9 +162,9 @@ public class VirtualProxyBuilderTest {
     final SortedMap<String, Histogram> histograms = metrics.getHistograms();
     Assert.assertNotNull(histograms);
     Assert.assertFalse(histograms.isEmpty());
-    Assert.assertTrue(histograms.containsKey(InnerDemoInterface.class.getSimpleName()));
+    Assert.assertTrue(histograms.containsKey(InnerDemoInterface.class.getSimpleName() + ".doWork"));
 
-    final Histogram histogram = histograms.get(InnerDemoInterface.class.getSimpleName());
+    final Histogram histogram = histograms.get(InnerDemoInterface.class.getSimpleName() + ".doWork");
     Assert.assertNotNull(histogram);
     Assert.assertNotNull(histogram.getSnapshot());
 
