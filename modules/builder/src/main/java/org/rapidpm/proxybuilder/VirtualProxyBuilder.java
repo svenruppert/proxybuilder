@@ -3,7 +3,6 @@ package org.rapidpm.proxybuilder;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
-import org.jetbrains.annotations.NotNull;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
@@ -84,7 +83,7 @@ public class VirtualProxyBuilder<I, T extends I> {
       private T original = VirtualProxyBuilder.this.original;
 
       @Override
-      public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final boolean checkRule = rule.checkRule();
         if (checkRule) {
           return method.invoke(original, args);
@@ -114,7 +113,7 @@ public class VirtualProxyBuilder<I, T extends I> {
       private final T original = VirtualProxyBuilder.this.original;
 
       @Override
-      public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final long start = System.nanoTime();
         final Object invoke = method.invoke(original, args);
         final long stop = System.nanoTime();
@@ -125,6 +124,42 @@ public class VirtualProxyBuilder<I, T extends I> {
     };
     createProxy(invocationHandler);
     return this;
+  }
+
+  public VirtualProxyBuilder<I, T> addIPreAction(PreAction<I> preAction) {
+    final InvocationHandler invocationHandler = new InvocationHandler() {
+      private final T original = VirtualProxyBuilder.this.original;
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        preAction.execute(original, method, args);
+        final Object invoke = method.invoke(original, args);
+        return invoke;
+      }
+    };
+    createProxy(invocationHandler);
+    return this;
+  }
+  public VirtualProxyBuilder<I, T> addIPostAction(PreAction<I> postAction) {
+    final InvocationHandler invocationHandler = new InvocationHandler() {
+      private final T original = VirtualProxyBuilder.this.original;
+
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final Object invoke = method.invoke(original, args);
+        postAction.execute(original, method, args);
+        return invoke;
+      }
+    };
+    createProxy(invocationHandler);
+    return this;
+  }
+
+  public interface PreAction<T> {
+    void execute(T original, Method method, Object[] args) throws Throwable;
+  }
+
+  public interface PostAction<T> {
+    void execute(T original, Method method, Object[] args) throws Throwable;
   }
 
 

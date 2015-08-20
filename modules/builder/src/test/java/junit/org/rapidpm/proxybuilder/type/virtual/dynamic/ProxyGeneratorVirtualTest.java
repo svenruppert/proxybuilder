@@ -2,7 +2,6 @@ package junit.org.rapidpm.proxybuilder.type.virtual.dynamic;
 
 import junit.org.rapidpm.proxybuilder.model.DemoInterface;
 import junit.org.rapidpm.proxybuilder.model.DemoLogic;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rapidpm.proxybuilder.type.virtual.Concurrency;
@@ -18,7 +17,6 @@ import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocati
 public class ProxyGeneratorVirtualTest {
 
 
-  @NotNull
   private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
     return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
         .withSubject(DemoInterface.class)

@@ -19,7 +19,6 @@ package junit.org.rapidpm.proxybuilder.type.virtual;
 import junit.org.rapidpm.proxybuilder.model.DemoClassA;
 import junit.org.rapidpm.proxybuilder.model.DemoInterface;
 import junit.org.rapidpm.proxybuilder.model.DemoLogic;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,7 +36,6 @@ import java.lang.reflect.Proxy;
 public class ProxyGeneratorTest {
 
 
-  @NotNull
   private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
     return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
         .withSubject(DemoInterface.class)

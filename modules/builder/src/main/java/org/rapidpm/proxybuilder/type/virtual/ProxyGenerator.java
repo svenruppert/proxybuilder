@@ -22,7 +22,6 @@ import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocati
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -179,43 +178,38 @@ public class ProxyGenerator<I, C extends I> {
     private Builder() {
     }
 
-    @Nonnull
-    public Builder<I, C> withSubject(@Nonnull final Class<I> subject) {
+    public Builder<I, C> withSubject(final Class<I> subject) {
       this.subject = subject;
       return this;
     }
 
-    @Nonnull
-    public Builder<I, C> withRealClass(@Nonnull final Class<C> realClass) {
+    public Builder<I, C> withRealClass(final Class<C> realClass) {
       this.realClass = realClass;
       return this;
     }
 
-    @Nonnull
-    public Builder<I, C> withConcurrency(@Nonnull final Concurrency concurrency) {
+    public Builder<I, C> withConcurrency(final Concurrency concurrency) {
       this.concurrency = concurrency;
       return this;
     }
 
-    @Nonnull
-    public Builder<I, C> withType(@Nonnull final ProxyType type) {
+
+    public Builder<I, C> withType(final ProxyType type) {
       this.type = type;
       return this;
     }
 
-    @Nonnull
-    public Builder<I, C> withServiceFactory(@Nonnull final ServiceFactory<C> serviceFactory) {
+
+    public Builder<I, C> withServiceFactory(final ServiceFactory<C> serviceFactory) {
       this.serviceFactory = serviceFactory;
       return this;
     }
 
-    @Nonnull
-    public Builder<I, C> withServiceStrategyFactory(@Nonnull final ServiceStrategyFactory<C> serviceStrategyFactory) {
+    public Builder<I, C> withServiceStrategyFactory(final ServiceStrategyFactory<C> serviceStrategyFactory) {
       this.serviceStrategyFactory = serviceStrategyFactory;
       return this;
     }
 
-    @Nonnull
     public ProxyGenerator<I, C> build() {
       return new ProxyGenerator<>(this);
     }

@@ -70,50 +70,9 @@ public class AnnotationProcessor extends AbstractProcessor {
 
       final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createAdapterBuilderBuilder(typeElement, typeElementClassName, adapterBuilderClassname, invocationHandlerClassname);
 
-      for (Element enclosed : annotatedElement.getEnclosedElements()) {
-        if (enclosed.getKind() == ElementKind.METHOD) {
-          ExecutableElement methodElement = (ExecutableElement) enclosed;
-          if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
-            final TypeMirror returnType = methodElement.getReturnType();
-
-            final List<? extends VariableElement> parameters = methodElement.getParameters();
-            List<ParameterSpec> parameterSpecs = new ArrayList<>();
-            String params = "";
-            for (VariableElement parameter : parameters) {
-              final Name simpleName = parameter.getSimpleName();
-              final TypeMirror typeMirror = parameter.asType();
-              params = params + " " + typeMirror + " " + simpleName;
-              TypeName typeName = TypeName.get(typeMirror);
-
-              final ParameterSpec parameterSpec = ParameterSpec.builder(typeName, simpleName.toString(), Modifier.FINAL).build();
-              parameterSpecs.add(parameterSpec);
-            }
-
-            final MethodSpec.Builder methodSpecBuilder = createMethodSpecBuilder(methodElement, returnType, parameterSpecs);
-
-            final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(typeElement, methodElement, methodSpecBuilder);
-            addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
-            //nun alle Delegator Methods
-
-            final String methodSimpleName = methodElement.getSimpleName().toString();
-            String methodimpleNameUpper = methodSimpleName.substring(0, 1).toUpperCase() + methodSimpleName.substring(1);
-
-            final ClassName bestGuess = ClassName.get(pkgName, functionalInterfaceSpec.get().name);
-            final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
-
-            adapterBuilderTypeSpecBuilder
-                .addMethod(MethodSpec
-                    .methodBuilder("with" + methodimpleNameUpper)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(parameterSpec)
-                    .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
-                    .addStatement("return this")
-                    .returns(adapterBuilderClassname)
-                    .build())
-                .build();
-          }
-        }
-      }
+      //TODO how to get Methods from the father??
+      final List<? extends Element> enclosedElements = annotatedElement.getEnclosedElements();
+      workEclosedElementsOnThisLevel(typeElement, pkgName, invocationHandlerBuilder, adapterBuilderClassname, adapterBuilderTypeSpecBuilder, enclosedElements);
 
       //write InvocationHandler
       writeDefinedClass(pkgName, invocationHandlerBuilder);
@@ -123,6 +82,53 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     }
     return true;
+  }
+
+  private void workEclosedElementsOnThisLevel(final TypeElement typeElement, final String pkgName, final TypeSpec.Builder invocationHandlerBuilder, final ClassName adapterBuilderClassname, final TypeSpec.Builder adapterBuilderTypeSpecBuilder, final List<? extends Element> enclosedElements) {
+    for (Element enclosed : enclosedElements) {
+      if (enclosed.getKind() == ElementKind.METHOD) {
+        ExecutableElement methodElement = (ExecutableElement) enclosed;
+        if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
+          final TypeMirror returnType = methodElement.getReturnType();
+
+          final List<? extends VariableElement> parameters = methodElement.getParameters();
+          List<ParameterSpec> parameterSpecs = new ArrayList<>();
+          String params = "";
+          for (VariableElement parameter : parameters) {
+            final Name simpleName = parameter.getSimpleName();
+            final TypeMirror typeMirror = parameter.asType();
+            params = params + " " + typeMirror + " " + simpleName;
+            TypeName typeName = TypeName.get(typeMirror);
+
+            final ParameterSpec parameterSpec = ParameterSpec.builder(typeName, simpleName.toString(), Modifier.FINAL).build();
+            parameterSpecs.add(parameterSpec);
+          }
+
+          final MethodSpec.Builder methodSpecBuilder = createMethodSpecBuilder(methodElement, returnType, parameterSpecs);
+
+          final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(typeElement, methodElement, methodSpecBuilder);
+          addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
+          //nun alle Delegator Methods
+
+          final String methodSimpleName = methodElement.getSimpleName().toString();
+          String methodimpleNameUpper = methodSimpleName.substring(0, 1).toUpperCase() + methodSimpleName.substring(1);
+
+          final ClassName bestGuess = ClassName.get(pkgName, functionalInterfaceSpec.get().name);
+          final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
+
+          adapterBuilderTypeSpecBuilder
+              .addMethod(MethodSpec
+                  .methodBuilder("with" + methodimpleNameUpper)
+                  .addModifiers(Modifier.PUBLIC)
+                  .addParameter(parameterSpec)
+                  .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
+                  .addStatement("return this")
+                  .returns(adapterBuilderClassname)
+                  .build())
+              .build();
+        }
+      }
+    }
   }
 
 
