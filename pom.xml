@@ -179,6 +179,24 @@
         </snapshotRepository>
       </distributionManagement>
     </profile>
+    <profile>
+      <id>sys-nexus-deploy-reply</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <!--for development of features/develop branch-->
+      <distributionManagement>
+        <repository>
+          <id>releasesReply</id>
+          <name>macrosreply Releases</name>
+          <url>http://10.64.54.53/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>snapshotsReply</id>
+          <url>http://10.64.54.53/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
   </profiles>
 
 </project>
