@@ -16,17 +16,6 @@ import java.util.Map;
 public class AddPreActionTest {
 
 
-  public interface DemoService {
-    String doWork(String txt);
-  }
-
-  public static class DemoServiceImplementation implements DemoService {
-    @Override
-    public String doWork(final String txt) {
-      return txt + "impl";
-    }
-  }
-
   @Test
   public void test001() throws Exception {
     final DemoService build = VirtualProxyBuilder
@@ -37,7 +26,6 @@ public class AddPreActionTest {
         .build();
     Assert.assertEquals("hhimpl", build.doWork("hh"));
   }
-
 
   @Test
   public void test002() throws Exception {
@@ -55,13 +43,16 @@ public class AddPreActionTest {
     Assert.assertFalse(done.isEmpty());
   }
 
+  public interface DemoService {
+    String doWork(String txt);
+  }
 
-
-
-
-
-
-
+  public static class DemoServiceImplementation implements DemoService {
+    @Override
+    public String doWork(final String txt) {
+      return txt + "impl";
+    }
+  }
 
 
 }

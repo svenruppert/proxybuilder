@@ -53,7 +53,10 @@ public class Model_A {
       return subService.work(txt);
     }
 
-    @Override
+    @PostConstruct
+    public void postconstruct() {
+      postconstructed = true;
+    }    @Override
     public SubService getSubService() {
       return subService;
     }
@@ -62,10 +65,7 @@ public class Model_A {
       return postconstructed;
     }
 
-    @PostConstruct
-    public void postconstruct() {
-      postconstructed = true;
-    }
+
   }
 
   public static class ServiceImplB implements Service {
@@ -73,7 +73,10 @@ public class Model_A {
     SubService subService;
     boolean postconstructed = false;
 
-    public String work(String txt) {
+    @PostConstruct
+    public void postconstruct() {
+      postconstructed = true;
+    }    public String work(String txt) {
       return subService.work(txt);
     }
 
@@ -86,10 +89,7 @@ public class Model_A {
       return postconstructed;
     }
 
-    @PostConstruct
-    public void postconstruct() {
-      postconstructed = true;
-    }
+
   }
 
 

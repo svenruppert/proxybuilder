@@ -17,15 +17,6 @@ import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocati
 public class ProxyGeneratorVirtualTest {
 
 
-  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
-    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
-        .withSubject(DemoInterface.class)
-        .withRealClass(DemoLogic.class)
-        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
-        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
-  }
-
-
   @Test
   public void test001() throws Exception {
     final ProxyGenerator<DemoInterface, DemoLogic> build = createBuilder4DemoLogic()
@@ -37,6 +28,14 @@ public class ProxyGeneratorVirtualTest {
 
     Assert.assertNotNull(demoInterface);
     Assert.assertEquals("doSomething-> DemoLogic", demoInterface.doSomething());
+  }
+
+  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
+    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
+        .withSubject(DemoInterface.class)
+        .withRealClass(DemoLogic.class)
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
+        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
   }
 
   @Test

@@ -21,7 +21,8 @@ package org.rapidpm.proxybuilder.type.virtual;
  */
 public class Util {
 
-  private Util() { }
+  private Util() {
+  }
 
   public static String prettyPrint(Class clazz) {
     return prettyPrint(clazz, "");

@@ -36,15 +36,6 @@ import java.lang.reflect.Proxy;
 public class ProxyGeneratorTest {
 
 
-  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
-    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
-        .withSubject(DemoInterface.class)
-        .withRealClass(DemoLogic.class)
-        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
-        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
-  }
-
-
   @Test
   public void testGenerator001() throws Exception {
 
@@ -60,6 +51,13 @@ public class ProxyGeneratorTest {
     Assert.assertFalse(Proxy.isProxyClass(demoInterface.getClass()));
   }
 
+  private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
+    return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
+        .withSubject(DemoInterface.class)
+        .withRealClass(DemoLogic.class)
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
+        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
+  }
 
   @Test
   public void testGenerator003() throws Exception {

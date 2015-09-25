@@ -67,38 +67,27 @@ public abstract class VirtualProxySourceGenerator {
     out.close();
   }
 
-  private void addProxyBody(PrintWriter out) {
-    addRealSubjectCreation(out, subject.getName(), realSubject.getName());
-    addProxiedMethods(out);
-    out.println("}");
-  }
-
-  protected abstract void addRealSubjectCreation(PrintWriter out, String name, String realName);
-
-
   private void addClassDefinition(PrintWriter out) {
     addImports(out);
     out.printf("public class %s %s %s {%n",
         proxy, getInheritanceType(subject), subject.getName());
   }
 
-  private String getInheritanceType(Class subject) {
-    return subject.isInterface() ? "implements" : "extends";
+  private void addProxyBody(PrintWriter out) {
+    addRealSubjectCreation(out, subject.getName(), realSubject.getName());
+    addProxiedMethods(out);
+    out.println("}");
   }
 
   protected void addImports(PrintWriter out) {
 
   }
 
-  private void addToStringIfInterface(PrintWriter out) {
-    if (subject.isInterface()) {
-      out.println();
-      out.println(" public String toString() {");
-      out.println(" if(realSubject() == null ) return \"NullObjectHolder in \" + this.getClass() ;");
-      out.println(" return realSubject().toString();");
-      out.println(" }");
-    }
+  private String getInheritanceType(Class subject) {
+    return subject.isInterface() ? "implements" : "extends";
   }
+
+  protected abstract void addRealSubjectCreation(PrintWriter out, String name, String realName);
 
   private void addProxiedMethods(PrintWriter out) {
     for (Method m : subject.getMethods()) {
@@ -140,11 +129,26 @@ public abstract class VirtualProxySourceGenerator {
     }
   }
 
+  private void addToStringIfInterface(PrintWriter out) {
+    if (subject.isInterface()) {
+      out.println();
+      out.println(" public String toString() {");
+      out.println(" if(realSubject() == null ) return \"NullObjectHolder in \" + this.getClass() ;");
+      out.println(" return realSubject().toString();");
+      out.println(" }");
+    }
+  }
+
   private void addMethodSignature(PrintWriter out, Method m) {
     out.printf("%n public %s", Util.prettyPrint(m.getReturnType()));
     out.printf(" %s(", m.getName());
     addParameterList(out, m);
     out.printf(") {%n ");
+  }
+
+  private void addMethodBody(PrintWriter out, Method m) {
+//        addReturnKeyword(out, m);
+    addMethodBodyDelegatingToRealSubject(out, m);
   }
 
   private void addParameterList(PrintWriter out, Method m) {
@@ -153,11 +157,6 @@ public abstract class VirtualProxySourceGenerator {
       String next = i == types.length - 1 ? "" : ", ";
       out.printf("%s p%d%s", Util.prettyPrint(types[i]), i, next);
     }
-  }
-
-  private void addMethodBody(PrintWriter out, Method m) {
-//        addReturnKeyword(out, m);
-    addMethodBodyDelegatingToRealSubject(out, m);
   }
 
   private void addMethodBodyDelegatingToRealSubject(PrintWriter out, Method m) {

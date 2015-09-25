@@ -8,5 +8,6 @@ import org.rapidpm.proxybuilder.dynamicobjectadapter.DynamicObjectAdapterBuilder
 @DynamicObjectAdapterBuilder
 public interface Service {
   String doWorkA(String txt);
+
   String doWorkB(String txt);
 }

@@ -34,15 +34,6 @@ public class ClassPathScanner {
     return result;
   }
 
-
-  public ClassLoader contextClassLoader() {
-    return Thread.currentThread().getContextClassLoader();
-  }
-
-  public ClassLoader staticClassLoader() {
-    return ClassPathScanner.class.getClassLoader();
-  }
-
   public ClassLoader[] classLoaders(ClassLoader... classLoaders) {
     if (classLoaders != null && classLoaders.length != 0) {
       return classLoaders;
@@ -55,6 +46,14 @@ public class ClassPathScanner {
         else return new ClassLoader[]{contextClassLoader};
       else return new ClassLoader[]{};
     }
+  }
+
+  public ClassLoader contextClassLoader() {
+    return Thread.currentThread().getContextClassLoader();
+  }
+
+  public ClassLoader staticClassLoader() {
+    return ClassPathScanner.class.getClassLoader();
   }
 
   public Collection<URL> forJavaClassPath() {

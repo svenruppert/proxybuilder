@@ -129,6 +129,7 @@ public class VirtualProxyBuilder<I, T extends I> {
   public VirtualProxyBuilder<I, T> addIPreAction(PreAction<I> preAction) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = VirtualProxyBuilder.this.original;
+
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         preAction.execute(original, method, args);
@@ -139,6 +140,7 @@ public class VirtualProxyBuilder<I, T extends I> {
     createProxy(invocationHandler);
     return this;
   }
+
   public VirtualProxyBuilder<I, T> addIPostAction(PreAction<I> postAction) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = VirtualProxyBuilder.this.original;

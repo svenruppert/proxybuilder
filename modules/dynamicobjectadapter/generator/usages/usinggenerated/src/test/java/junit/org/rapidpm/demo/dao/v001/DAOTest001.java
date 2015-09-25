@@ -20,7 +20,7 @@ public class DAOTest001 {
     final String hello = target.doWorkA();
     Assert.assertNotNull(hello);
     Assert.assertFalse(hello.isEmpty());
-    Assert.assertEquals("mocked-A",hello);
+    Assert.assertEquals("mocked-A", hello);
   }
 
   @Test
@@ -35,7 +35,7 @@ public class DAOTest001 {
     final String hello = target.doWorkB();
     Assert.assertNotNull(hello);
     Assert.assertFalse(hello.isEmpty());
-    Assert.assertEquals("mocked-B",hello);
+    Assert.assertEquals("mocked-B", hello);
   }
 
   @Test(expected = NullPointerException.class)
@@ -48,10 +48,6 @@ public class DAOTest001 {
     Assert.assertNotNull(target);
     final String hello = target.doWorkB();
   }
-
-
-
-
 
 
 }

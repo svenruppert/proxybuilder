@@ -22,10 +22,8 @@ import java.util.*;
 @AutoService(Processor.class)
 public class AnnotationProcessor extends AbstractProcessor {
 
-  private static final String BUILDER_CLASSNAME_POST_FIX = "AdapterBuilder";
   public static final String INVOCATION_HANDLER_CLASSNAME_POST_FIX = "InvocationHandler";
-
-
+  private static final String BUILDER_CLASSNAME_POST_FIX = "AdapterBuilder";
   private Filer filer;
   private Messager messager;
 //  private Map<String, FactoryGroupedClasses> factoryClasses = new LinkedHashMap<String, FactoryGroupedClasses>();
@@ -37,6 +35,10 @@ public class AnnotationProcessor extends AbstractProcessor {
     return annotataions;
   }
 
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
+    return SourceVersion.latestSupported();
+  }
 
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -46,7 +48,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     filer = processingEnv.getFiler();
     messager = processingEnv.getMessager();
   }
-
 
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -82,6 +83,61 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     }
     return true;
+  }
+
+  public void error(Element e, String msg, Object... args) {
+    messager.printMessage(Diagnostic.Kind.ERROR, String.format(msg, args), e);
+  }
+
+  private TypeSpec.Builder createTypedTypeSpecBuilder(TypeElement typeElement, Class class2Extend, String classnamePostFix) {
+    // Get the full QualifiedTypeName
+    final ClassName extendedInvocationHandlerClassName = ClassName.get(class2Extend);
+    final ParameterizedTypeName typedExtendedInvocationHandler = ParameterizedTypeName.get(extendedInvocationHandlerClassName, TypeName.get(typeElement.asType()));
+
+    return TypeSpec
+        .classBuilder(typeElement.getSimpleName().toString() + classnamePostFix)
+        .superclass(typedExtendedInvocationHandler)
+        .addModifiers(Modifier.PUBLIC);
+  }
+
+  private TypeSpec.Builder createAdapterBuilderBuilder(TypeElement typeElement, ClassName typeElementClassName, ClassName adapterBuilderClassname, ClassName invocationHandlerClassname) {
+    final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createTypedTypeSpecBuilder(typeElement, AdapterBuilder.class, BUILDER_CLASSNAME_POST_FIX);
+
+    final FieldSpec invocationHandler = FieldSpec
+        .builder(invocationHandlerClassname, "invocationHandler")
+        .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
+        .initializer("new $T()", invocationHandlerClassname)
+        .build();
+
+    adapterBuilderTypeSpecBuilder
+        //add static newBuilder method
+        .addMethod(MethodSpec
+            .methodBuilder("newBuilder")
+            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+            .addStatement("return new $T()", adapterBuilderClassname)
+            .returns(adapterBuilderClassname)
+            .build())
+        //add class attributre
+        .addField(invocationHandler)
+        //add getInvocationHandler
+        .addMethod(MethodSpec
+            .methodBuilder("getInvocationHandler")
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(Override.class)
+            .addStatement(" return invocationHandler")
+            .returns(invocationHandlerClassname)
+            .build())
+        //add setOriginal
+        .addMethod(MethodSpec
+            .methodBuilder("setOriginal")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(ParameterSpec.builder(typeElementClassName, "original", Modifier.FINAL).build())
+            .addStatement("invocationHandler.setOriginal(original)")
+            .addStatement("return this")
+            .returns(adapterBuilderClassname)
+            .build()
+        );
+    return adapterBuilderTypeSpecBuilder;
   }
 
   private void workEclosedElementsOnThisLevel(final TypeElement typeElement, final String pkgName, final TypeSpec.Builder invocationHandlerBuilder, final ClassName adapterBuilderClassname, final TypeSpec.Builder adapterBuilderTypeSpecBuilder, final List<? extends Element> enclosedElements) {
@@ -131,75 +187,21 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
   }
 
+  private void writeDefinedClass(String pkgName, TypeSpec.Builder typeSpecBuilder) {
+    final TypeSpec typeSpec = typeSpecBuilder.build();
+    final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
+    final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
+    try {
+      JavaFileObject jfo = filer.createSourceFile(className);
+      Writer writer = jfo.openWriter();
+      javaFile.writeTo(writer);
+      writer.flush();
+//        return Optional.of(functionalInterface);
 
-  private TypeSpec.Builder createAdapterBuilderBuilder(TypeElement typeElement, ClassName typeElementClassName, ClassName adapterBuilderClassname, ClassName invocationHandlerClassname) {
-    final TypeSpec.Builder adapterBuilderTypeSpecBuilder = createTypedTypeSpecBuilder(typeElement, AdapterBuilder.class, BUILDER_CLASSNAME_POST_FIX);
-
-    final FieldSpec invocationHandler = FieldSpec
-        .builder(invocationHandlerClassname, "invocationHandler")
-        .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
-        .initializer("new $T()", invocationHandlerClassname)
-        .build();
-
-    adapterBuilderTypeSpecBuilder
-        //add static newBuilder method
-        .addMethod(MethodSpec
-            .methodBuilder("newBuilder")
-            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-            .addStatement("return new $T()", adapterBuilderClassname)
-            .returns(adapterBuilderClassname)
-            .build())
-            //add class attributre
-        .addField(invocationHandler)
-            //add getInvocationHandler
-        .addMethod(MethodSpec
-            .methodBuilder("getInvocationHandler")
-            .addModifiers(Modifier.PUBLIC)
-            .addAnnotation(Override.class)
-            .addStatement(" return invocationHandler")
-            .returns(invocationHandlerClassname)
-            .build())
-            //add setOriginal
-        .addMethod(MethodSpec
-                .methodBuilder("setOriginal")
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(ParameterSpec.builder(typeElementClassName, "original", Modifier.FINAL).build())
-                .addStatement("invocationHandler.setOriginal(original)")
-                .addStatement("return this")
-                .returns(adapterBuilderClassname)
-                .build()
-        );
-    return adapterBuilderTypeSpecBuilder;
-  }
-
-
-  private void addBuilderMethodForFunctionalInterface(String pkgName, TypeSpec.Builder invocationHandlerBuilder, ExecutableElement methodElement, Optional<TypeSpec> functionalInterfaceSpec) {
-    functionalInterfaceSpec.ifPresent(f -> {
-      final TypeSpec funcInterfaceSpec = functionalInterfaceSpec.get();
-
-      final ClassName bestGuess = ClassName.get(pkgName, funcInterfaceSpec.name);
-      final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
-
-      final MethodSpec adapterMethodSpec = MethodSpec
-          .methodBuilder(methodElement.getSimpleName().toString())
-          .addModifiers(Modifier.PUBLIC)
-          .returns(void.class)
-          .addParameter(parameterSpec)
-          .addCode(CodeBlock.builder().addStatement("addAdapter(adapter)").build())
-          .build();
-      invocationHandlerBuilder.addMethod(adapterMethodSpec);
-    });
-  }
-
-  private TypeSpec.Builder createTypedTypeSpecBuilder(TypeElement typeElement, Class class2Extend, String classnamePostFix) {
-    // Get the full QualifiedTypeName
-    final ClassName extendedInvocationHandlerClassName = ClassName.get(class2Extend);
-    final ParameterizedTypeName typedExtendedInvocationHandler = ParameterizedTypeName.get(extendedInvocationHandlerClassName, TypeName.get(typeElement.asType()));
-
-    return TypeSpec
-        .classBuilder(typeElement.getSimpleName().toString() + classnamePostFix)
-        .superclass(typedExtendedInvocationHandler)
-        .addModifiers(Modifier.PUBLIC);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("e = " + e);
+    }
   }
 
   private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
@@ -213,7 +215,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
     return methodSpecBuilder;
   }
-
 
   /**
    * @param typeElement
@@ -254,31 +255,22 @@ public class AnnotationProcessor extends AbstractProcessor {
     return Optional.empty();
   }
 
-  private void writeDefinedClass(String pkgName, TypeSpec.Builder typeSpecBuilder) {
-    final TypeSpec typeSpec = typeSpecBuilder.build();
-    final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
-    final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
-    try {
-      JavaFileObject jfo = filer.createSourceFile(className);
-      Writer writer = jfo.openWriter();
-      javaFile.writeTo(writer);
-      writer.flush();
-//        return Optional.of(functionalInterface);
+  private void addBuilderMethodForFunctionalInterface(String pkgName, TypeSpec.Builder invocationHandlerBuilder, ExecutableElement methodElement, Optional<TypeSpec> functionalInterfaceSpec) {
+    functionalInterfaceSpec.ifPresent(f -> {
+      final TypeSpec funcInterfaceSpec = functionalInterfaceSpec.get();
 
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("e = " + e);
-    }
-  }
+      final ClassName bestGuess = ClassName.get(pkgName, funcInterfaceSpec.name);
+      final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
 
-
-  @Override
-  public SourceVersion getSupportedSourceVersion() {
-    return SourceVersion.latestSupported();
-  }
-
-  public void error(Element e, String msg, Object... args) {
-    messager.printMessage(Diagnostic.Kind.ERROR, String.format(msg, args), e);
+      final MethodSpec adapterMethodSpec = MethodSpec
+          .methodBuilder(methodElement.getSimpleName().toString())
+          .addModifiers(Modifier.PUBLIC)
+          .returns(void.class)
+          .addParameter(parameterSpec)
+          .addCode(CodeBlock.builder().addStatement("addAdapter(adapter)").build())
+          .build();
+      invocationHandlerBuilder.addMethod(adapterMethodSpec);
+    });
   }
 
 }

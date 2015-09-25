@@ -33,16 +33,14 @@ import java.util.WeakHashMap;
 public class ProxyGenerator<I, C extends I> {
 
   private static final WeakHashMap CACHE = new WeakHashMap();
-
-  private ProxyGenerator() {
-  }
-
   private Class<I> subject;
   private Class<C> realClass;
   private Concurrency concurrency;
   private ProxyType type;
   private ServiceFactory<C> serviceFactory;
   private ServiceStrategyFactory<C> serviceStrategyFactory;
+  private ProxyGenerator() {
+  }
 
   private ProxyGenerator(final Builder builder) {
     subject = builder.subject;
@@ -53,6 +51,9 @@ public class ProxyGenerator<I, C extends I> {
     serviceStrategyFactory = builder.serviceStrategyFactory;
   }
 
+  public static <I, C extends I> Builder<I, C> newBuilder() {
+    return new Builder<>();
+  }
 
   public I make() {
     Object proxy = null;
@@ -96,22 +97,6 @@ public class ProxyGenerator<I, C extends I> {
     }
   }
 
-  private static VirtualProxySourceGenerator create(Class subject, Class realClass, Concurrency concurrency) {
-    switch (concurrency) {
-      case NONE:
-        return new VirtualProxySourceGeneratorNotThreadsafe(subject, realClass);
-      case SOME_DUPLICATES:
-        return new VirtualProxySourceGeneratorSomeDuplicates(subject, realClass);
-      case NO_DUPLICATES:
-        return new VirtualProxySourceGeneratorNoDuplicates(subject, realClass);
-      case OnExistingObject:
-        return new VirtualProxySourceGeneratorOnExistingObject(subject, realClass);
-      default:
-        throw new IllegalArgumentException(
-            "Unsupported Concurrency: " + concurrency);
-    }
-  }
-
   private static <I, C extends I> I createDynamicProxy(ClassLoader loader,
                                                        Class<I> subject,
                                                        Concurrency concurrency,
@@ -139,8 +124,20 @@ public class ProxyGenerator<I, C extends I> {
         dynamicProxy);
   }
 
-  public static <I, C extends I> Builder<I, C> newBuilder() {
-    return new Builder<>();
+  private static VirtualProxySourceGenerator create(Class subject, Class realClass, Concurrency concurrency) {
+    switch (concurrency) {
+      case NONE:
+        return new VirtualProxySourceGeneratorNotThreadsafe(subject, realClass);
+      case SOME_DUPLICATES:
+        return new VirtualProxySourceGeneratorSomeDuplicates(subject, realClass);
+      case NO_DUPLICATES:
+        return new VirtualProxySourceGeneratorNoDuplicates(subject, realClass);
+      case OnExistingObject:
+        return new VirtualProxySourceGeneratorOnExistingObject(subject, realClass);
+      default:
+        throw new IllegalArgumentException(
+            "Unsupported Concurrency: " + concurrency);
+    }
   }
 
   private static class CacheKey {
@@ -152,16 +149,16 @@ public class ProxyGenerator<I, C extends I> {
       this.concurrency = concurrency;
     }
 
+    public int hashCode() {
+      return 31 * subject.hashCode() + concurrency.hashCode();
+    }
+
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       CacheKey that = (CacheKey) o;
       if (concurrency != that.concurrency) return false;
       return subject.equals(that.subject);
-    }
-
-    public int hashCode() {
-      return 31 * subject.hashCode() + concurrency.hashCode();
     }
   }
 

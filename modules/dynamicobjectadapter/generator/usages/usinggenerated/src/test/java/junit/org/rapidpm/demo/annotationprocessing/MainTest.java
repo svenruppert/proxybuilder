@@ -5,7 +5,8 @@ import org.junit.Test;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by svenruppert on 06.07.15.
@@ -38,7 +39,7 @@ public class MainTest {
         .withDoWorkA(txt -> "DOA-Builder Method A " + txt)
         .buildForTarget(Service.class);
 
-    assertEquals("DOA-Builder Method A XX",serviceX.doWorkA("XX"));
+    assertEquals("DOA-Builder Method A XX", serviceX.doWorkA("XX"));
 
 
   }

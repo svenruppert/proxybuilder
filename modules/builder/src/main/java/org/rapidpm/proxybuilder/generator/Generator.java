@@ -16,7 +16,10 @@
 
 package org.rapidpm.proxybuilder.generator;
 
-import javax.tools.*;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -29,8 +32,6 @@ public class Generator {
 
   private static final Method DEFINE_CLASS_METHOD;
   private static final JavaCompiler JAVA_COMPILER;
-
-  private Generator() { }
 
   static {
     try {
@@ -45,6 +46,9 @@ public class Generator {
           "Cannot find java compiler! " +
               "Probably only JRE installed.");
     }
+  }
+
+  private Generator() {
   }
 
   public static Class make(ClassLoader loader, String className, CharSequence javaSource) {

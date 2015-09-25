@@ -8,6 +8,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class NestedBuilder<T, V> {
+  protected T parent;
+
   /**
    * To get the parent builder
    *
@@ -33,10 +35,9 @@ public abstract class NestedBuilder<T, V> {
 
   public abstract V build();
 
-  protected T parent;
-
   /**
    * @param parent
+   *
    * @return
    */
   public <P extends NestedBuilder<T, V>> P withParentBuilder(T parent) {

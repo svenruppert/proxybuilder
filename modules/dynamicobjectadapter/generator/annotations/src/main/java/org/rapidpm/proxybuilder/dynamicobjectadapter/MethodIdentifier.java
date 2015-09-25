@@ -23,23 +23,23 @@ import java.util.Arrays;
  * Created by Sven Ruppert
  */
 public class MethodIdentifier {
-    private final String name;
-    private final Class[] parameters;
+  private final String name;
+  private final Class[] parameters;
 
-    public MethodIdentifier(Method m) {
-        name = m.getName();
-        parameters = m.getParameterTypes();
-    }
+  public MethodIdentifier(Method m) {
+    name = m.getName();
+    parameters = m.getParameterTypes();
+  }
 
-      // we can save time by assuming that we only compare against
-    // other MethodIdentifier objects
-    public boolean equals(Object o) {
-        MethodIdentifier mid = (MethodIdentifier) o;
-        return name.equals(mid.name) &&
-                Arrays.equals(parameters, mid.parameters);
-    }
+  public int hashCode() {
+    return name.hashCode();
+  }
 
-    public int hashCode() {
-        return name.hashCode();
-    }
+  // we can save time by assuming that we only compare against
+  // other MethodIdentifier objects
+  public boolean equals(Object o) {
+    MethodIdentifier mid = (MethodIdentifier) o;
+    return name.equals(mid.name) &&
+        Arrays.equals(parameters, mid.parameters);
+  }
 }
