@@ -19,21 +19,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
   </parent>
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
-
+  <version>0.0.2</version>
 
   <packaging>pom</packaging>
-  <description>ProxyBuilder</description>
-
   <modules>
     <module>modules</module>
   </modules>
@@ -52,6 +48,10 @@
     <name>RapidPM</name>
     <url>http://www.rapidpm.org</url>
   </organization>
+  <url>https://github.com/RapidPM/proxybuilder</url>
+  <name>RapidPM ProxyBuilder</name>
+  <description>Builder-Pattern for different types of proxies</description>
+
   <scm>
     <url>https://github.com/RapidPM/proxybuilder</url>
     <connection>scm:git:https://github.com/RapidPM/proxybuilder.git</connection>

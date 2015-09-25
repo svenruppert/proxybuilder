@@ -26,12 +26,12 @@ import javax.annotation.PostConstruct;
 public class Model_A {
 
 
-  public static interface Service {
-    public String work(String txt);
+  public interface Service {
+    String work(String txt);
 
-    public SubService getSubService();
+    SubService getSubService();
 
-    public boolean isPostconstructed();
+    boolean isPostconstructed();
   }
 
   public static class BusinessModule {
