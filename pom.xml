@@ -22,12 +22,12 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1</version>
   </parent>
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.3</version>
 
   <packaging>pom</packaging>
   <modules>
