@@ -6,11 +6,11 @@
 
   <parent>
     <groupId>org.rapidpm.proxybuilder</groupId>
-    <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter</artifactId>
+    <artifactId>rapidpm-proxybuilder-modules-objectadapter</artifactId>
     <version>0.0.4-SNAPSHOT</version>
   </parent>
 
-  <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter-generator</artifactId>
+  <artifactId>rapidpm-proxybuilder-modules-objectadapter-generator</artifactId>
   <packaging>pom</packaging>
 
   <modules>

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.dynamicobjectadapter;
+package org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

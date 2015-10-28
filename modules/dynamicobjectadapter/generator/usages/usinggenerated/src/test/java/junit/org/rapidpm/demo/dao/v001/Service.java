@@ -1,6 +1,7 @@
 package junit.org.rapidpm.demo.dao.v001;
 
-import org.rapidpm.proxybuilder.dynamicobjectadapter.DynamicObjectAdapterBuilder;
+
+import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 
 /**
  * Created by svenruppert on 07.08.15.

@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>rapidpm-proxybuilder-modules-dynamicobjectadapter</artifactId>
+  <artifactId>rapidpm-proxybuilder-modules-objectadapter</artifactId>
   <packaging>pom</packaging>
 
 

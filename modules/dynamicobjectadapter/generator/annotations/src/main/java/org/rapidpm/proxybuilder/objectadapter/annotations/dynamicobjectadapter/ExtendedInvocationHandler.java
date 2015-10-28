@@ -1,4 +1,4 @@
-package org.rapidpm.proxybuilder.dynamicobjectadapter;
+package org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter;
 
 
 import java.lang.reflect.InvocationHandler;
