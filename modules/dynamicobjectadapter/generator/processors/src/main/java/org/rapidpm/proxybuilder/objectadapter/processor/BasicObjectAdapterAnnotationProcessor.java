@@ -50,11 +50,9 @@ public abstract class BasicObjectAdapterAnnotationProcessor<T> extends AbstractP
   }
 
 
+  protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate);
 
-  protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement , final String methodName2Delegate);
   protected abstract void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv);
-
-
 
 
   protected Optional<TypeSpec> writeFunctionalInterface(ExecutableElement methodElement, MethodSpec.Builder methodSpecBuilder) {
@@ -122,6 +120,7 @@ public abstract class BasicObjectAdapterAnnotationProcessor<T> extends AbstractP
         .addCode(codeBlock)
         .build();
   }
+
   public List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
     return methodElement
         .getParameters()
@@ -163,8 +162,8 @@ public abstract class BasicObjectAdapterAnnotationProcessor<T> extends AbstractP
       return Optional.of(typeSpec);
     } catch (IOException e) {
       e.printStackTrace();
-      if (e instanceof FilerException){
-        if (e.getMessage().contains("Attempt to recreate a file for type")){
+      if (e instanceof FilerException) {
+        if (e.getMessage().contains("Attempt to recreate a file for type")) {
           return Optional.of(typeSpec);
         }
       }

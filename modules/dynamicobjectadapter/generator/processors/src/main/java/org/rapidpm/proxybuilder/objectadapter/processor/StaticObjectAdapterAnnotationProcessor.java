@@ -48,28 +48,28 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
 
     final CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
 
-    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface( methodElement, methodSpecBuilder);
-    functionalInterfaceSpec.ifPresent(f->{
+    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
+    functionalInterfaceSpec.ifPresent(f -> {
       final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);
       final ClassName className = ClassName.get(pkgName(typeElement), f.name);
       final FieldSpec adapterAttributFieldSpec = FieldSpec.builder(className, adapterAttributeName, Modifier.PRIVATE).build();
       specBuilderForTargetClass.addField(adapterAttributFieldSpec);
 
       codeBlockBuilder
-          .beginControlFlow("if("+ adapterAttributeName  +" != null)")
-            .addStatement("return " + adapterAttributeName+"."+delegatorMethodCall(methodElement,methodName2Delegate))
+          .beginControlFlow("if(" + adapterAttributeName + " != null)")
+          .addStatement("return " + adapterAttributeName + "." + delegatorMethodCall(methodElement, methodName2Delegate))
           .endControlFlow();
 
       //add method to set adapter
       specBuilderForTargetClass
-          .addMethod(MethodSpec.methodBuilder("with"+className.simpleName())
+          .addMethod(MethodSpec.methodBuilder("with" + className.simpleName())
               .addModifiers(Modifier.PUBLIC)
-              .addParameter(className,adapterAttributeName,Modifier.FINAL)
+              .addParameter(className, adapterAttributeName, Modifier.FINAL)
               .addCode(CodeBlock.builder()
-                  .addStatement("this."+adapterAttributeName+"="+adapterAttributeName)
+                  .addStatement("this." + adapterAttributeName + "=" + adapterAttributeName)
                   .addStatement("return this").build())
-              .returns(ClassName.get(pkgName(typeElement),targetClassNameSimple(typeElement)))
-      .build());
+              .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
+              .build());
     });
 
     final String delegateStatement = delegatorStatementWithReturn(methodElement, methodName2Delegate);
@@ -99,15 +99,14 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
     specBuilderForTargetClass.addField(delegatorFieldSpec);
 
     specBuilderForTargetClass
-        .addMethod(MethodSpec.methodBuilder("with"+typeElement.getSimpleName())
+        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
             .addModifiers(Modifier.PUBLIC)
-            .addParameter(interface2Implement,"delegator",Modifier.FINAL)
+            .addParameter(interface2Implement, "delegator", Modifier.FINAL)
             .addCode(CodeBlock.builder()
-                .addStatement("this."+"delegator"+"="+"delegator")
+                .addStatement("this." + "delegator" + "=" + "delegator")
                 .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement),targetClassNameSimple(typeElement)))
+            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
             .build());
-
 
 
   }
@@ -124,7 +123,7 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
           final TypeName interface2Implement = TypeName.get(typeElement.asType());
           final TypeSpec.Builder forTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
 
-          addClassLevelSpecs(typeElement,roundEnv);
+          addClassLevelSpecs(typeElement, roundEnv);
 
           //iter over the Methods from the Interface
           typeElement
