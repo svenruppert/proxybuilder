@@ -14,25 +14,15 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.type.staticvirtual;
-
-import java.io.PrintWriter;
+package org.rapidpm.proxybuilder.type.dymamic.virtual;
 
 /**
- * Created by ts40 on 19.02.14.
+ * Created by Sven Ruppert on 14.01.14.
  */
-public class VirtualProxySourceGeneratorOnExistingObject extends VirtualProxySourceGenerator {
-
-  public VirtualProxySourceGeneratorOnExistingObject(
-      Class subject, Class realSubject) {
-    super(subject, realSubject, CreationStrategy.OnExistingObject);
-  }
-
-  protected void addRealSubjectCreation(PrintWriter out, String name, String realName) {
-    out.printf(" public %s realSubject;%n", name);
-    out.println();
-    out.printf(" private %s realSubject() {%n", name);
-    out.println(" return realSubject;");
-    out.println(" }");
-  }
+public enum CreationStrategy {
+  NONE,
+  SOME_DUPLICATES,
+  NO_DUPLICATES,
+  SYNCHRONIZED,
+  METHOD_SCOPED
 }

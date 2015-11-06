@@ -34,12 +34,12 @@ public class ProxyGenerator {
 
   private static final WeakHashMap CACHE = new WeakHashMap();
 
-  public static <T> T make(Class<T> subject, Class<? extends T> realClass, Concurrency concurrency) {
-    return make(subject, realClass, concurrency, ProxyType.STATIC);
+  public static <T> T make(Class<T> subject, Class<? extends T> realClass, CreationStrategy creationStrategy) {
+    return make(subject, realClass, creationStrategy, ProxyType.STATIC);
   }
 
-  public static <T> T make(Class<T> subject, Class<? extends T> realClass, Concurrency concurrency, ProxyType type) {
-    final T make = make(subject.getClassLoader(), subject, realClass, concurrency, type);
+  public static <T> T make(Class<T> subject, Class<? extends T> realClass, CreationStrategy creationStrategy, ProxyType type) {
+    final T make = make(subject.getClassLoader(), subject, realClass, creationStrategy, type);
     //hier ref auf realSubject einfuegen ??
     return make;
   }
@@ -47,20 +47,20 @@ public class ProxyGenerator {
   public static <T> T make(ClassLoader loader,
                            Class<T> subject,
                            Class<? extends T> realClass,
-                           Concurrency concurrency,
+                           CreationStrategy creationStrategy,
                            ProxyType type) {
     Object proxy = null;
     if (type == ProxyType.STATIC) {
-      proxy = createStaticProxy(loader, subject, realClass, concurrency);
+      proxy = createStaticProxy(loader, subject, realClass, creationStrategy);
     } else if (type == ProxyType.OnExistingObject) {
       //Hier den OnExistingObject Proxy erzeugen!
-      proxy = createStaticProxy(loader, subject, realClass, Concurrency.OnExistingObject);
+      proxy = createStaticProxy(loader, subject, realClass, CreationStrategy.OnExistingObject);
 //            proxy.setS
     }
     return subject.cast(proxy);
   }
 
-  private static Object createStaticProxy(ClassLoader loader, Class subject, Class realClass, Concurrency concurrency) {
+  private static Object createStaticProxy(ClassLoader loader, Class subject, Class realClass, CreationStrategy creationStrategy) {
     Map clcache;
     synchronized (CACHE) {
       clcache = (Map) CACHE.get(loader);
@@ -70,11 +70,11 @@ public class ProxyGenerator {
     }
     try {
       Class clazz;
-      CacheKey key = new CacheKey(subject, concurrency);
+      CacheKey key = new CacheKey(subject, creationStrategy);
       synchronized (clcache) {
         clazz = (Class) clcache.get(key);
         if (clazz == null) {
-          VirtualProxySourceGenerator vpsg = create(subject, realClass, concurrency);
+          VirtualProxySourceGenerator vpsg = create(subject, realClass, creationStrategy);
           clazz = Generator.make(loader, vpsg.getProxyName(), vpsg.getCharSequence());
           clcache.put(key, clazz);
         }
@@ -87,8 +87,8 @@ public class ProxyGenerator {
     }
   }
 
-  private static VirtualProxySourceGenerator create(Class subject, Class realClass, Concurrency concurrency) {
-    switch (concurrency) {
+  private static VirtualProxySourceGenerator create(Class subject, Class realClass, CreationStrategy creationStrategy) {
+    switch (creationStrategy) {
       case NONE:
         return new VirtualProxySourceGeneratorNotThreadsafe(subject, realClass);
       case SOME_DUPLICATES:
@@ -99,29 +99,29 @@ public class ProxyGenerator {
         return new VirtualProxySourceGeneratorOnExistingObject(subject, realClass);
       default:
         throw new IllegalArgumentException(
-            "Unsupported Concurrency: " + concurrency);
+            "Unsupported Concurrency: " + creationStrategy);
     }
   }
 
 
   private static class CacheKey {
     private final Class subject;
-    private final Concurrency concurrency;
+    private final CreationStrategy creationStrategy;
 
-    private CacheKey(Class subject, Concurrency concurrency) {
+    private CacheKey(Class subject, CreationStrategy creationStrategy) {
       this.subject = subject;
-      this.concurrency = concurrency;
+      this.creationStrategy = creationStrategy;
     }
 
     public int hashCode() {
-      return 31 * subject.hashCode() + concurrency.hashCode();
+      return 31 * subject.hashCode() + creationStrategy.hashCode();
     }
 
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       CacheKey that = (CacheKey) o;
-      if (concurrency != that.concurrency) return false;
+      if (creationStrategy != that.creationStrategy) return false;
       return subject.equals(that.subject);
     }
   }

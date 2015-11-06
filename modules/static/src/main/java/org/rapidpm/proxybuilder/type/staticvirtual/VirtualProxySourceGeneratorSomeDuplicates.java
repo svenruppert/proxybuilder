@@ -25,7 +25,7 @@ class VirtualProxySourceGeneratorSomeDuplicates
     extends VirtualProxySourceGenerator {
   public VirtualProxySourceGeneratorSomeDuplicates(
       Class subject, Class realSubject) {
-    super(subject, realSubject, Concurrency.SOME_DUPLICATES);
+    super(subject, realSubject, CreationStrategy.SOME_DUPLICATES);
   }
 
   protected void addImports(PrintWriter out) {

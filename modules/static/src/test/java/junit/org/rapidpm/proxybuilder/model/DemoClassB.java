@@ -14,25 +14,25 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.type.staticvirtual;
-
-import java.io.PrintWriter;
+package junit.org.rapidpm.proxybuilder.model;
 
 /**
- * Created by ts40 on 19.02.14.
+ * Created by Sven Ruppert on 19.02.14.
  */
-public class VirtualProxySourceGeneratorOnExistingObject extends VirtualProxySourceGenerator {
+public class DemoClassB {
+  public String value;
 
-  public VirtualProxySourceGeneratorOnExistingObject(
-      Class subject, Class realSubject) {
-    super(subject, realSubject, CreationStrategy.OnExistingObject);
+  public DemoClassC demoClassC;
+
+  public DemoClassC getDemoClassC() {
+    return demoClassC;
   }
 
-  protected void addRealSubjectCreation(PrintWriter out, String name, String realName) {
-    out.printf(" public %s realSubject;%n", name);
-    out.println();
-    out.printf(" private %s realSubject() {%n", name);
-    out.println(" return realSubject;");
-    out.println(" }");
+  public void setDemoClassC(DemoClassC demoClassC) {
+    this.demoClassC = demoClassC;
+  }
+
+  public String getValue() {
+    return value;
   }
 }

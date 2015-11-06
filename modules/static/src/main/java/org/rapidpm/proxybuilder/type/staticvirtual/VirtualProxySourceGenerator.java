@@ -30,9 +30,9 @@ public abstract class VirtualProxySourceGenerator {
   protected final Class realSubject;
   private final String proxy;
   private CharSequence charSequence;
-  private Concurrency type;
+  private CreationStrategy type;
 
-  public VirtualProxySourceGenerator(Class subject, Class realSubject, Concurrency type) {
+  public VirtualProxySourceGenerator(Class subject, Class realSubject, CreationStrategy type) {
     this.subject = subject;
     this.realSubject = realSubject;
     this.type = type;
@@ -40,7 +40,7 @@ public abstract class VirtualProxySourceGenerator {
 
   }
 
-  private static String makeProxyName(Class subject, Concurrency type) {
+  private static String makeProxyName(Class subject, CreationStrategy type) {
     return "$$_" + subject.getName().replace('.', '_') +
         "Proxy_" + Integer.toHexString(System.identityHashCode(
         subject.getClassLoader())) + "_" + type;
@@ -108,11 +108,11 @@ public abstract class VirtualProxySourceGenerator {
       if (!returnType.isPrimitive() && !returnType.isArray() && !aFinal) {
         final String typeName = returnType.getTypeName();
         final String proxyGenerator = ProxyGenerator.class.getCanonicalName();
-        final String concurrency = Concurrency.class.getCanonicalName();
+        final String concurrency = CreationStrategy.class.getCanonicalName();
         out.printf(" if (val == null) { System.out.println(\" val == null for method  + " + m.getName() + "\");} %n");
         out.printf(typeName + " proxyObj = " + proxyGenerator + ".make(" + typeName + ".class, " + typeName + ".class, " + concurrency + "." + type.toString() + "); %n");
 
-        if (type.equals(Concurrency.OnExistingObject)) {
+        if (type.equals(CreationStrategy.OnExistingObject)) {
           out.printf("try { %n");
           out.printf("    proxyObj.getClass().getDeclaredField(\"realSubject\").set(proxyObj, val);  %n");
           out.printf("} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {  %n");
