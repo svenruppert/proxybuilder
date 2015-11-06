@@ -14,21 +14,22 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.generator;
+package org.rapidpm.proxybuilder.type.staticvirtual.generator;
 
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
+import javax.tools.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Created by Sven Ruppert on 06.01.14.
  */
 public class Generator {
 
+
+  private Generator() {
+  }
 
   private static final Method DEFINE_CLASS_METHOD;
   private static final JavaCompiler JAVA_COMPILER;
@@ -48,9 +49,6 @@ public class Generator {
     }
   }
 
-  private Generator() {
-  }
-
   public static Class make(ClassLoader loader, String className, CharSequence javaSource) {
     GeneratedClassFile gcf = new GeneratedClassFile();
     DiagnosticCollector<JavaFileObject> dc = new DiagnosticCollector<>();
@@ -59,27 +57,32 @@ public class Generator {
   }
 
   private static boolean compile(String className, CharSequence javaSource, GeneratedClassFile gcf, DiagnosticCollector<JavaFileObject> dc) {
-    GeneratedJavaSourceFile gjsf = new GeneratedJavaSourceFile(className, javaSource);
-    GeneratingJavaFileManager fileManager = new GeneratingJavaFileManager(JAVA_COMPILER.getStandardFileManager(dc, null, null), gcf);
-    JavaCompiler.CompilationTask task = JAVA_COMPILER.getTask(null, fileManager, dc, null, null, Arrays.asList(gjsf));
+    final GeneratedJavaSourceFile gjsf = new GeneratedJavaSourceFile(className, javaSource);
+    final StandardJavaFileManager standardFileManager = JAVA_COMPILER.getStandardFileManager(dc, null, null);
+
+    final GeneratingJavaFileManager fileManager = new GeneratingJavaFileManager(standardFileManager, gcf);
+
+    JavaCompiler.CompilationTask task = JAVA_COMPILER.getTask(null, fileManager, dc, null, null, singletonList(gjsf));
+
     return task.call();
   }
 
-  private static Class processResults(
-      ClassLoader loader, CharSequence javaSource,
-      GeneratedClassFile gcf, DiagnosticCollector<?> dc,
-      boolean result) {
+  private static Class processResults(ClassLoader loader, CharSequence javaSource,
+                                      GeneratedClassFile gcf, DiagnosticCollector<?> dc, boolean result) {
     if (result) {
       return createClass(loader, gcf);
     } else {
 // use your logging system of choice here
       System.err.println("Compile failed:");
       System.err.println(javaSource);
-      dc.getDiagnostics().stream().forEach(System.err::println);
+      for (Diagnostic<?> d : dc.getDiagnostics()) {
+        System.err.println(d);
+      }
       throw new IllegalArgumentException("Could not create proxy - compile failed");
     }
   }
 
+  //go go to the classloader
   private static Class createClass(ClassLoader loader, GeneratedClassFile gcf) {
     try {
       byte[] data = gcf.getClassAsBytes();

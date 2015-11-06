@@ -17,7 +17,7 @@
 package org.rapidpm.proxybuilder.type.virtual;
 
 
-import org.rapidpm.proxybuilder.type.virtual.dynamic.*;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.creationstrategy.*;
@@ -77,11 +77,13 @@ public class ProxyGenerator<I, C extends I> {
         serviceStrategyFactory = new ServiceStrategyFactorySynchronized<>();
         break;
       case NO_DUPLICATES:
-        serviceStrategyFactory = new ServiceStrategyFactoryNoDuplicates<>();//missing
+        serviceStrategyFactory = new ServiceStrategyFactoryNoDuplicates<>(); //missing
         break;
       case METHOD_SCOPED:
         serviceStrategyFactory = new ServiceStrategyFactoryMethodScoped<>();
         break;
+      default:
+        serviceStrategyFactory = new ServiceStrategyFactoryNotThreadSafe<>();
     }
     return serviceStrategyFactory;
   }

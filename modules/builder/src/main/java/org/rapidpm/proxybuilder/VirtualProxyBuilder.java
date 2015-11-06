@@ -6,7 +6,6 @@ import com.codahale.metrics.MetricRegistry;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
-import org.rapidpm.proxybuilder.type.virtual.ProxyType;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 
@@ -37,7 +36,6 @@ public class VirtualProxyBuilder<I, T extends I> {
   }
 
   /**
-   *
    * @param clazz
    * @param original
    * @param creationStrategy
@@ -61,18 +59,18 @@ public class VirtualProxyBuilder<I, T extends I> {
     return virtualProxyBuilder;
   }
 
-  public static <I, T extends I> VirtualProxyBuilder<I, T> createBuilder(Class<I> clazz,
+  public static <I> VirtualProxyBuilder<I, I> createBuilder(Class<I> clazz,
                                                                          CreationStrategy creationStrategy,
-                                                                         VirtualDynamicProxyInvocationHandler.ServiceFactory serviceFactory) {
-    final VirtualProxyBuilder<I, T> virtualProxyBuilder = new VirtualProxyBuilder<>();
-    final I proxy = ProxyGenerator.<I, T>newBuilder()
+                                                                         VirtualDynamicProxyInvocationHandler.ServiceFactory<I> serviceFactory) {
+    final VirtualProxyBuilder<I, I> virtualProxyBuilder = new VirtualProxyBuilder<>();
+    final I proxy = ProxyGenerator.<I, I>newBuilder()
         .withSubject(clazz)
         .withCreationStrategy(creationStrategy)
         .withServiceFactory(serviceFactory)
         .build()
         .make();
 
-    virtualProxyBuilder.original = (T) proxy;
+    virtualProxyBuilder.original = proxy;
     virtualProxyBuilder.clazz = clazz;
     return virtualProxyBuilder;
   }

@@ -14,28 +14,11 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.generator;
-
-import javax.tools.SimpleJavaFileObject;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.net.URI;
+package org.rapidpm.proxybuilder.type.staticvirtual;
 
 /**
- * Created by Sven Ruppert on 06.01.14.
+ * Created by Sven Ruppert on 14.01.14.
  */
-public class GeneratedClassFile extends SimpleJavaFileObject {
-  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-  public GeneratedClassFile() {
-    super(URI.create("generated.class"), Kind.CLASS);
-  }
-
-  public OutputStream openOutputStream() {
-    return outputStream;
-  }
-
-  public byte[] getClassAsBytes() {
-    return outputStream.toByteArray();
-  }
+public enum Concurrency {
+  NONE, SOME_DUPLICATES, NO_DUPLICATES, OnExistingObject;
 }

@@ -14,32 +14,46 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.type.virtual;
-
+package org.rapidpm.proxybuilder.type.staticvirtual;
 
 import java.io.PrintWriter;
 
 /**
  * Created by Sven Ruppert on 14.01.14.
  */
-class VirtualProxySourceGeneratorNotThreadsafe
+class VirtualProxySourceGeneratorSomeDuplicates
     extends VirtualProxySourceGenerator {
-
-  public VirtualProxySourceGeneratorNotThreadsafe(
+  public VirtualProxySourceGeneratorSomeDuplicates(
       Class subject, Class realSubject) {
-    super(subject, realSubject, Concurrency.NONE);
+    super(subject, realSubject, Concurrency.SOME_DUPLICATES);
+  }
+
+  protected void addImports(PrintWriter out) {
+    out.println("import java.util.concurrent.atomic.*;");
+    out.println();
   }
 
   protected void addRealSubjectCreation(PrintWriter out,
                                         String name,
                                         String realName) {
-    out.printf(" private %s realSubject;%n", name);
+    out.printf(" private final AtomicReference<%s> ref = new AtomicReference<%1$s>();%n", name);
     out.println();
     out.printf(" private %s realSubject() {%n", name);
-    out.printf(" if (realSubject == null) {%n");
-    out.printf(" realSubject = new %s();%n", realName);
+    out.printf(" %s result = ref.get()%n;", name);
+    out.printf(" if (result == null) {%n");
+    out.printf(" result = new %s();%n", realName);
+    out.printf(" if (!ref.compareAndSet(null, result)) {%n");
+    out.printf(" result = ref.get();%n");
     out.println(" }");
-    out.println(" return realSubject;");
+    out.println(" }");
+    out.println(" return result;");
     out.println(" }");
   }
 }
+
+
+
+
+
+
+

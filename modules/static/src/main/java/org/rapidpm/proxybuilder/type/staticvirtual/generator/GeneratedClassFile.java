@@ -14,23 +14,28 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.generator;
+package org.rapidpm.proxybuilder.type.staticvirtual.generator;
 
-import javax.tools.*;
-import java.io.IOException;
+import javax.tools.SimpleJavaFileObject;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
 /**
  * Created by Sven Ruppert on 06.01.14.
  */
-public class GeneratingJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
-  private final GeneratedClassFile gcf;
+public class GeneratedClassFile extends SimpleJavaFileObject {
+  private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-  public GeneratingJavaFileManager(StandardJavaFileManager sjfm, GeneratedClassFile gcf) {
-    super(sjfm);
-    this.gcf = gcf;
+  public GeneratedClassFile() {
+    super(URI.create("generated.class"), Kind.CLASS);
   }
 
-  public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
-    return gcf;
+  public OutputStream openOutputStream() {
+    return outputStream;
+  }
+
+  public byte[] getClassAsBytes() {
+    return outputStream.toByteArray();
   }
 }

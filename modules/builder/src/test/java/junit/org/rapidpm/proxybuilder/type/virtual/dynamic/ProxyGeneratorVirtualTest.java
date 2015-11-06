@@ -21,7 +21,7 @@ public class ProxyGeneratorVirtualTest {
   public void test001() throws Exception {
     final ProxyGenerator<DemoInterface, DemoLogic> build = createBuilder4DemoLogic()
         .withCreationStrategy(CreationStrategy.NONE)
-        .withType(ProxyType.DYNAMIC)
+//        .withType(ProxyType.DYNAMIC)
         .build();
     final DemoInterface demoInterface = build.make();
 
@@ -33,9 +33,9 @@ public class ProxyGeneratorVirtualTest {
   private ProxyGenerator.Builder<DemoInterface, DemoLogic> createBuilder4DemoLogic() {
     return ProxyGenerator.<DemoInterface, DemoLogic>newBuilder()
         .withSubject(DemoInterface.class)
-        .withRealClass(DemoLogic.class)
-        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class))
-        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
+//        .withRealClass(DemoLogic.class)
+        .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoLogic.class));
+//        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());
   }
 
   @Test
@@ -53,7 +53,7 @@ public class ProxyGeneratorVirtualTest {
 
     final DemoInterface demoInterface = createBuilder4DemoLogic()
         .withCreationStrategy(CreationStrategy.NONE)
-        .withType(ProxyType.DYNAMIC)
+//        .withType(ProxyType.DYNAMIC)
         .withServiceFactory(serviceFactory)
         .build()
         .make();
@@ -67,7 +67,7 @@ public class ProxyGeneratorVirtualTest {
 
     final DemoInterface demoInterface = createBuilder4DemoLogic()
         .withCreationStrategy(CreationStrategy.NONE)
-        .withType(ProxyType.DYNAMIC)
+//        .withType(ProxyType.DYNAMIC)
         .withServiceFactory(new MyServiceFactory())
         .build()
         .make();

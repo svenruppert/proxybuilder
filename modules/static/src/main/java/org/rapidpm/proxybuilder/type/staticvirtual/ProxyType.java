@@ -14,29 +14,11 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.type.virtual;
+package org.rapidpm.proxybuilder.type.staticvirtual;
 
 /**
  * Created by Sven Ruppert on 14.01.14.
  */
-public class Util {
-
-  private Util() {
-  }
-
-  public static String prettyPrint(Class clazz) {
-    return prettyPrint(clazz, "");
-  }
-
-  public static String prettyPrint(Class c, String postfix) {
-    if (c.isArray()) {
-      return prettyPrint(c.getComponentType(), postfix + "[]");
-    } else {
-      Package pack = c.getPackage();
-      if (pack != null && pack.getName().equals("java.lang")) {
-        return c.getSimpleName() + postfix;
-      }
-      return c.getName() + postfix;
-    }
-  }
+public enum ProxyType {
+  STATIC, OnExistingObject
 }

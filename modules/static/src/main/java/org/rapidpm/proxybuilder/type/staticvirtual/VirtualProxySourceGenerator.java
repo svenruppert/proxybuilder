@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.type.virtual;
+package org.rapidpm.proxybuilder.type.staticvirtual;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -32,8 +32,7 @@ public abstract class VirtualProxySourceGenerator {
   private CharSequence charSequence;
   private Concurrency type;
 
-  public VirtualProxySourceGenerator(
-      Class subject, Class realSubject, Concurrency type) {
+  public VirtualProxySourceGenerator(Class subject, Class realSubject, Concurrency type) {
     this.subject = subject;
     this.realSubject = realSubject;
     this.type = type;
@@ -54,7 +53,7 @@ public abstract class VirtualProxySourceGenerator {
   public CharSequence getCharSequence() {
     if (charSequence == null) {
       StringWriter sw = new StringWriter();
-      generateProxyClass(new PrintWriter(sw));
+      generateProxyClass(new PrintWriter(sw)); //write it down
       charSequence = sw.getBuffer();
     }
     //System.out.println("charSequence = " + charSequence.toString());
@@ -108,8 +107,8 @@ public abstract class VirtualProxySourceGenerator {
       final boolean aFinal = Modifier.isFinal(returnType.getModifiers());
       if (!returnType.isPrimitive() && !returnType.isArray() && !aFinal) {
         final String typeName = returnType.getTypeName();
-        final String proxyGenerator = "org.rapidpm.proxybuilder.type.virtual.ProxyGenerator";
-        final String concurrency = "org.rapidpm.proxybuilder.type.virtual.Concurrency";
+        final String proxyGenerator = ProxyGenerator.class.getCanonicalName();
+        final String concurrency = Concurrency.class.getCanonicalName();
         out.printf(" if (val == null) { System.out.println(\" val == null for method  + " + m.getName() + "\");} %n");
         out.printf(typeName + " proxyObj = " + proxyGenerator + ".make(" + typeName + ".class, " + typeName + ".class, " + concurrency + "." + type.toString() + "); %n");
 

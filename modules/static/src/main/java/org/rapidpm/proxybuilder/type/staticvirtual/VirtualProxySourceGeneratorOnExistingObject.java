@@ -14,25 +14,25 @@
  *    limitations under the License.
  */
 
-package org.rapidpm.proxybuilder.generator;
+package org.rapidpm.proxybuilder.type.staticvirtual;
 
-import javax.tools.SimpleJavaFileObject;
-import java.io.IOException;
-import java.net.URI;
+import java.io.PrintWriter;
 
 /**
- * Created by Sven Ruppert on 06.01.14.
+ * Created by ts40 on 19.02.14.
  */
-public class GeneratedJavaSourceFile extends SimpleJavaFileObject {
-  private CharSequence javaSource;
+public class VirtualProxySourceGeneratorOnExistingObject extends VirtualProxySourceGenerator {
 
-  public GeneratedJavaSourceFile(String className, CharSequence javaSource) {
-    super(URI.create(className + ".java"), Kind.SOURCE);
-    this.javaSource = javaSource;
+  public VirtualProxySourceGeneratorOnExistingObject(
+      Class subject, Class realSubject) {
+    super(subject, realSubject, Concurrency.OnExistingObject);
   }
 
-  public CharSequence getCharContent(boolean ignoreEncodeErrors)
-      throws IOException {
-    return javaSource;
+  protected void addRealSubjectCreation(PrintWriter out, String name, String realName) {
+    out.printf(" public %s realSubject;%n", name);
+    out.println();
+    out.printf(" private %s realSubject() {%n", name);
+    out.println(" return realSubject;");
+    out.println(" }");
   }
 }
