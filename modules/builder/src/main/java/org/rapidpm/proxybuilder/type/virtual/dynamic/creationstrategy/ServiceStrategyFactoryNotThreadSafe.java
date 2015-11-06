@@ -1,5 +1,7 @@
-package org.rapidpm.proxybuilder.type.virtual.dynamic;
+package org.rapidpm.proxybuilder.type.virtual.dynamic.creationstrategy;
 
+
+import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 
 /**
  * Created by svenruppert on 21.07.15.

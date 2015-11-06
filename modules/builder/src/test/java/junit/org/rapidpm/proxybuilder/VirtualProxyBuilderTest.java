@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rapidpm.proxybuilder.VirtualProxyBuilder;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
-import org.rapidpm.proxybuilder.type.virtual.Concurrency;
+import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +49,7 @@ public class VirtualProxyBuilderTest {
     final VirtualProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = VirtualProxyBuilder.createBuilder(
         InnerDemoInterface.class,
         InnerDemoClass.class,
-        Concurrency.NONE);
+        CreationStrategy.NONE);
     final InnerDemoInterface demoLogic = builder.build();
     Assert.assertNotNull(demoLogic);
     final InnerDemoClass original = new InnerDemoClass();
@@ -61,7 +61,7 @@ public class VirtualProxyBuilderTest {
     final VirtualProxyBuilder<InnerDemoInterface, InnerDemoClass> builder = VirtualProxyBuilder.createBuilder(
         InnerDemoInterface.class,
         InnerDemoClass.class,
-        Concurrency.NONE);
+        CreationStrategy.NONE);
 
     builder.addSecurityRule(() -> true);
     builder.addMetrics();

@@ -4,11 +4,11 @@ import junit.org.rapidpm.proxybuilder.model.DemoInterface;
 import junit.org.rapidpm.proxybuilder.model.DemoLogic;
 import org.junit.Assert;
 import org.junit.Test;
-import org.rapidpm.proxybuilder.type.virtual.Concurrency;
+import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.creationstrategy.ServiceStrategyFactoryNotThreadSafe;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 
 /**
@@ -20,7 +20,7 @@ public class ProxyGeneratorVirtualTest {
   @Test
   public void test001() throws Exception {
     final ProxyGenerator<DemoInterface, DemoLogic> build = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NONE)
+        .withCreationStrategy(CreationStrategy.NONE)
         .withType(ProxyType.DYNAMIC)
         .build();
     final DemoInterface demoInterface = build.make();
@@ -52,7 +52,7 @@ public class ProxyGeneratorVirtualTest {
     };
 
     final DemoInterface demoInterface = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NONE)
+        .withCreationStrategy(CreationStrategy.NONE)
         .withType(ProxyType.DYNAMIC)
         .withServiceFactory(serviceFactory)
         .build()
@@ -66,7 +66,7 @@ public class ProxyGeneratorVirtualTest {
   public void test003() throws Exception {
 
     final DemoInterface demoInterface = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NONE)
+        .withCreationStrategy(CreationStrategy.NONE)
         .withType(ProxyType.DYNAMIC)
         .withServiceFactory(new MyServiceFactory())
         .build()

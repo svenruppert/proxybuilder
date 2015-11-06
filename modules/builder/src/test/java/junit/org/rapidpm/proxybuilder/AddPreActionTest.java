@@ -3,7 +3,7 @@ package junit.org.rapidpm.proxybuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rapidpm.proxybuilder.VirtualProxyBuilder;
-import org.rapidpm.proxybuilder.type.virtual.Concurrency;
+import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class AddPreActionTest {
   @Test
   public void test001() throws Exception {
     final DemoService build = VirtualProxyBuilder
-        .createBuilder(DemoService.class, DemoServiceImplementation.class, Concurrency.NONE)
+        .createBuilder(DemoService.class, DemoServiceImplementation.class, CreationStrategy.NONE)
         .addIPreAction((original, method, args) -> {
           System.out.println("original = " + original);
         })
@@ -32,7 +32,7 @@ public class AddPreActionTest {
     final List<Boolean> done = new ArrayList<>();
 
     final Map build = VirtualProxyBuilder
-        .createBuilder(Map.class, HashMap.class, Concurrency.NONE)
+        .createBuilder(Map.class, HashMap.class, CreationStrategy.NONE)
         .addIPreAction((original, method, args) -> {
           System.out.println("original = " + original);
           done.add(true);

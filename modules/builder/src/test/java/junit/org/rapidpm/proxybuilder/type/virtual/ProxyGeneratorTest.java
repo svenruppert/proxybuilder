@@ -22,11 +22,11 @@ import junit.org.rapidpm.proxybuilder.model.DemoLogic;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.rapidpm.proxybuilder.type.virtual.Concurrency;
+import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.creationstrategy.ServiceStrategyFactoryNotThreadSafe;
 
 import java.lang.reflect.Proxy;
 
@@ -40,7 +40,7 @@ public class ProxyGeneratorTest {
   public void testGenerator001() throws Exception {
 
     final DemoInterface demoInterface = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.NO_DUPLICATES)
+        .withCreationStrategy(CreationStrategy.NO_DUPLICATES)
         .withType(ProxyType.STATIC)
         .build()
         .make();
@@ -63,7 +63,7 @@ public class ProxyGeneratorTest {
   public void testGenerator003() throws Exception {
 //    final DemoLogic demoInterface = ProxyGenerator.make(aClass, aClass, Concurrency.NO_DUPLICATES);
     final DemoInterface demoInterface = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.SOME_DUPLICATES)
+        .withCreationStrategy(CreationStrategy.SOME_DUPLICATES)
         .withType(ProxyType.STATIC)
         .build()
         .make();
@@ -77,7 +77,7 @@ public class ProxyGeneratorTest {
   public void testGenerator004() throws Exception {
 //    final DemoLogic demoInterface = ProxyGenerator.make(aClass, aClass, Concurrency.NO_DUPLICATES);
     final DemoInterface demoInterface = createBuilder4DemoLogic()
-        .withConcurrency(Concurrency.OnExistingObject)
+        .withCreationStrategy(CreationStrategy.OnExistingObject)
         .withType(ProxyType.STATIC)
         .build()
         .make();
@@ -123,7 +123,7 @@ public class ProxyGeneratorTest {
     final ProxyGenerator.Builder<DemoInterface, DemoClassA> proxyBuilder = ProxyGenerator.<DemoInterface, DemoClassA>newBuilder()
         .withSubject(DemoInterface.class)
         .withRealClass(aClass)
-        .withConcurrency(Concurrency.OnExistingObject)
+        .withConcurrency(CreationStrategy.OnExistingObject)
         .withType(ProxyType.OnExistingObject)
         .withServiceFactory(new DefaultConstructorServiceFactory<>(DemoClassA.class))
         .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<>());

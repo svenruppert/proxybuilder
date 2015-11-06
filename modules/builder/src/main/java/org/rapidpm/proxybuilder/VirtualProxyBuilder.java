@@ -4,11 +4,11 @@ package org.rapidpm.proxybuilder;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import org.rapidpm.proxybuilder.type.metrics.MetricsRegistry;
-import org.rapidpm.proxybuilder.type.virtual.Concurrency;
+import org.rapidpm.proxybuilder.type.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.virtual.ProxyGenerator;
 import org.rapidpm.proxybuilder.type.virtual.ProxyType;
 import org.rapidpm.proxybuilder.type.virtual.dynamic.DefaultConstructorServiceFactory;
-import org.rapidpm.proxybuilder.type.virtual.dynamic.ServiceStrategyFactoryNotThreadSafe;
+import org.rapidpm.proxybuilder.type.virtual.dynamic.VirtualDynamicProxyInvocationHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -37,26 +37,38 @@ public class VirtualProxyBuilder<I, T extends I> {
   }
 
   /**
-   * Hier noch die Kombinationen abfangen zwischen Dynamic und Concurrent
    *
    * @param clazz
    * @param original
-   * @param concurrency
+   * @param creationStrategy
    * @param <I>
    * @param <T>
    *
    * @return
    */
 
-  public static <I, T extends I> VirtualProxyBuilder<I, T> createBuilder(Class<I> clazz, Class<T> original, Concurrency concurrency) {
+  public static <I, T extends I> VirtualProxyBuilder<I, T> createBuilder(Class<I> clazz, Class<T> original, CreationStrategy creationStrategy) {
     final VirtualProxyBuilder<I, T> virtualProxyBuilder = new VirtualProxyBuilder<>();
     final I proxy = ProxyGenerator.<I, T>newBuilder()
         .withSubject(clazz)
-        .withRealClass(original)
-        .withConcurrency(concurrency)
+        .withCreationStrategy(creationStrategy)
         .withServiceFactory(new DefaultConstructorServiceFactory<>(original))
-        .withServiceStrategyFactory(new ServiceStrategyFactoryNotThreadSafe<T>())
-        .withType(ProxyType.DYNAMIC)
+        .build()
+        .make();
+
+    virtualProxyBuilder.original = (T) proxy;
+    virtualProxyBuilder.clazz = clazz;
+    return virtualProxyBuilder;
+  }
+
+  public static <I, T extends I> VirtualProxyBuilder<I, T> createBuilder(Class<I> clazz,
+                                                                         CreationStrategy creationStrategy,
+                                                                         VirtualDynamicProxyInvocationHandler.ServiceFactory serviceFactory) {
+    final VirtualProxyBuilder<I, T> virtualProxyBuilder = new VirtualProxyBuilder<>();
+    final I proxy = ProxyGenerator.<I, T>newBuilder()
+        .withSubject(clazz)
+        .withCreationStrategy(creationStrategy)
+        .withServiceFactory(serviceFactory)
         .build()
         .make();
 
