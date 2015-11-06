@@ -27,19 +27,15 @@ import java.util.WeakHashMap;
 /**
  * Created by Sven Ruppert on 14.01.14.
  */
-public class ProxyGenerator {
+public class StaticProxyGenerator {
 
-  private ProxyGenerator() {
+  private StaticProxyGenerator() {
   }
 
   private static final WeakHashMap CACHE = new WeakHashMap();
 
   public static <T> T make(Class<T> subject, Class<? extends T> realClass, CreationStrategy creationStrategy) {
-    return make(subject, realClass, creationStrategy, ProxyType.STATIC);
-  }
-
-  public static <T> T make(Class<T> subject, Class<? extends T> realClass, CreationStrategy creationStrategy, ProxyType type) {
-    final T make = make(subject.getClassLoader(), subject, realClass, creationStrategy, type);
+    final T make = make(subject.getClassLoader(), subject, realClass, creationStrategy);
     //hier ref auf realSubject einfuegen ??
     return make;
   }
@@ -47,16 +43,12 @@ public class ProxyGenerator {
   public static <T> T make(ClassLoader loader,
                            Class<T> subject,
                            Class<? extends T> realClass,
-                           CreationStrategy creationStrategy,
-                           ProxyType type) {
-    Object proxy = null;
-    if (type == ProxyType.STATIC) {
-      proxy = createStaticProxy(loader, subject, realClass, creationStrategy);
-    } else if (type == ProxyType.OnExistingObject) {
-      //Hier den OnExistingObject Proxy erzeugen!
-      proxy = createStaticProxy(loader, subject, realClass, CreationStrategy.OnExistingObject);
-//            proxy.setS
-    }
+                           CreationStrategy creationStrategy) {
+    final Object proxy = createStaticProxy(loader, subject, realClass, creationStrategy);
+//    if (type == ProxyType.STATIC) {
+//    } else if (type == ProxyType.OnExistingObject) {
+//      proxy = createStaticProxy(loader, subject, realClass, CreationStrategy.OnExistingObject);
+//    }
     return subject.cast(proxy);
   }
 

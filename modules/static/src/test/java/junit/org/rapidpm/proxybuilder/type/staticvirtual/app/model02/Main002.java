@@ -2,7 +2,7 @@ package junit.org.rapidpm.proxybuilder.type.staticvirtual.app.model02;
 
 
 import org.rapidpm.proxybuilder.type.staticvirtual.CreationStrategy;
-import org.rapidpm.proxybuilder.type.staticvirtual.ProxyGenerator;
+import org.rapidpm.proxybuilder.type.staticvirtual.StaticProxyGenerator;
 
 /**
  * Created by svenruppert on 23.10.15.
@@ -50,7 +50,7 @@ public class Main002 {
 
   private static <T> T proxy( T orig) {
     final Class<T> aClass = (Class<T>) orig.getClass();
-    final T demo = ProxyGenerator.make(aClass, aClass, CreationStrategy.OnExistingObject);
+    final T demo = StaticProxyGenerator.make(aClass, aClass, CreationStrategy.OnExistingObject);
 
     final Class<?> aClassProxy = demo.getClass();
     try {

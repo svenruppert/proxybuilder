@@ -107,7 +107,7 @@ public abstract class VirtualProxySourceGenerator {
       final boolean aFinal = Modifier.isFinal(returnType.getModifiers());
       if (!returnType.isPrimitive() && !returnType.isArray() && !aFinal) {
         final String typeName = returnType.getTypeName();
-        final String proxyGenerator = ProxyGenerator.class.getCanonicalName();
+        final String proxyGenerator = StaticProxyGenerator.class.getCanonicalName();
         final String concurrency = CreationStrategy.class.getCanonicalName();
         out.printf(" if (val == null) { System.out.println(\" val == null for method  + " + m.getName() + "\");} %n");
         out.printf(typeName + " proxyObj = " + proxyGenerator + ".make(" + typeName + ".class, " + typeName + ".class, " + concurrency + "." + type.toString() + "); %n");
