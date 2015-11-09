@@ -1,0 +1,22 @@
+rapidpm/rapidpm-proxybuilder:
+
+  #Learn about the distelli-manifest.yml at https://www.distelli.com/docs/reference/distelli-manifest
+  PkgInclude:
+    - '*'
+    #- ["lib/*.jar", "lib/"]
+
+  Build:
+    - echo "Begin Build"
+    #- javac -g Program.java
+
+  PreInstall:
+    - echo "Begin PreInstall"
+    #- echo "Installing Java"
+    #- 'wget -c -O jre-8u45-linux-x64.tar.gz --no-check-certificate --no-cookies--header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jre-8u45-linux-x64.tar.gz"'
+    #- tar -zxvf jre-8u45-linux-x64.tar.gz
+
+  PostInstall:
+    - echo "Begin PostInstall"
+
+  Exec:
+    #- java Program
