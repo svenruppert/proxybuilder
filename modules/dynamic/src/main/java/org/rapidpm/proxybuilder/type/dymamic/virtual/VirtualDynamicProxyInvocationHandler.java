@@ -17,8 +17,11 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual;
 
 
+import org.rapidpm.proxybuilder.type.dymamic.DynamicProxyBuilder;
+
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -37,13 +40,18 @@ public class VirtualDynamicProxyInvocationHandler<I, C extends I> implements Inv
     serviceStrategyFactory = builder.serviceStrategyFactory;
   }
 
+
+
+
   public static <I, C extends I> Builder<I, C> newBuilder() {
     return new Builder<>();
   }
 
 
   public Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
-    return method.invoke(serviceStrategyFactory.realSubject(serviceFactory), args);
+    final C obj = serviceStrategyFactory.realSubject(serviceFactory);
+    return DynamicProxyBuilder.invoke(obj, method,args);
+//    invoke(obj, method, args);
   }
 
   /**

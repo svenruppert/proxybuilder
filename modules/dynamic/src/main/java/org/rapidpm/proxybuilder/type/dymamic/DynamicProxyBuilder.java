@@ -9,7 +9,9 @@ import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFa
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DynamicProxyGenerator;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -96,7 +98,8 @@ public class DynamicProxyBuilder<I, T extends I> {
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final boolean checkRule = rule.checkRule();
         if (checkRule) {
-          return method.invoke(original, args);
+//          return method.invoke(original, args);
+          return DynamicProxyBuilder.invoke(original, method,args);
         } else {
           return null;
         }
@@ -125,7 +128,8 @@ public class DynamicProxyBuilder<I, T extends I> {
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final long start = System.nanoTime();
-        final Object invoke = method.invoke(original, args);
+//        final Object invoke = method.invoke(original, args);
+        final Object invoke = DynamicProxyBuilder.invoke(original, method,args);
         final long stop = System.nanoTime();
         Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
         methodCalls.update((stop - start));
@@ -196,5 +200,12 @@ public class DynamicProxyBuilder<I, T extends I> {
 //    return this;
 //  }
 
+  public static Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
+    try {
+      return method.invoke(proxy, args);
+    } catch (InvocationTargetException ex) {
+      throw ex.getCause();
+    }
+  }
 
 }
