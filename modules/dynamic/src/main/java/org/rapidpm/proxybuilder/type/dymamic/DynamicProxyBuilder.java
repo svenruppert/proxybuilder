@@ -99,7 +99,7 @@ public class DynamicProxyBuilder<I, T extends I> {
         final boolean checkRule = rule.checkRule();
         if (checkRule) {
 //          return method.invoke(original, args);
-          return DynamicProxyBuilder.invoke(original, method,args);
+          return DynamicProxyBuilder.invoke(original, method, args);
         } else {
           return null;
         }
@@ -129,7 +129,7 @@ public class DynamicProxyBuilder<I, T extends I> {
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final long start = System.nanoTime();
 //        final Object invoke = method.invoke(original, args);
-        final Object invoke = DynamicProxyBuilder.invoke(original, method,args);
+        final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
         final long stop = System.nanoTime();
         Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
         methodCalls.update((stop - start));
