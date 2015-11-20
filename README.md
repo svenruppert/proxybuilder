@@ -16,6 +16,12 @@ develop:
 [![Coverage Status - develop](https://coveralls.io/repos/RapidPM/proxybuilder/badge.svg?branch=develop)](https://coveralls.io/r/RapidPM/proxybuilder?branch=develop)
 [![Dependency Status](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be)
 
+This project is sponsored with OpenSource Licenses from :
+
+![Jetbrains](_data/logo_intellij_idea.png)
+![YourKit](_data/yklogo.png)
+
+
 ## SNAPSHOTS
 If you are using maven you could add the following to your settings.xml to get the snapshots.
 
@@ -65,7 +71,7 @@ final DemoInterface demoLogic = VirtualProxyBuilder
 ```
 
 ### Security Proxy
-```java
+```'java
 final DemoLogic original = new DemoLogic();
 final DemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(DemoInterface.class, original)
