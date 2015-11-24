@@ -2,17 +2,24 @@
 
 [![Join the chat at https://gitter.im/RapidPM/proxybuilder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RapidPM/proxybuilder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build Status](https://travis-ci.org/RapidPM/proxybuilder.svg?branch=develop)](https://travis-ci.org/RapidPM/proxybuilder)
+[![Build Status - drone.io ](https://drone.io/github.com/RapidPM/proxybuilder/status.png)](https://drone.io/github.com/RapidPM/proxybuilder/latest)
 
 branch:
-+ master:
+
+master:
+[![Build Status - Travis   ](https://travis-ci.org/RapidPM/proxybuilder.svg?branch=develop)](https://travis-ci.org/RapidPM/proxybuilder)
 [![Coverage Status - master](https://coveralls.io/repos/RapidPM/proxybuilder/badge.svg?branch=master)](https://coveralls.io/r/RapidPM/proxybuilder?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/55a3ab9532393900210005cc/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55a3ab9532393900210005cc)
 
-
-+ develop:
+develop:
+[![Build Status - Travis   ](https://travis-ci.org/RapidPM/proxybuilder.svg?branch=master)](https://travis-ci.org/RapidPM/proxybuilder)
 [![Coverage Status - develop](https://coveralls.io/repos/RapidPM/proxybuilder/badge.svg?branch=develop)](https://coveralls.io/r/RapidPM/proxybuilder?branch=develop)
 [![Dependency Status](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55a3ab9a32393900170005be)
+
+This project is sponsored with OpenSource Licenses from :
+
+![Jetbrains](_data/logo_intellij_idea.png)
+![YourKit](_data/yklogo.png)
 
 
 ## SNAPSHOTS
@@ -64,7 +71,7 @@ final DemoInterface demoLogic = VirtualProxyBuilder
 ```
 
 ### Security Proxy
-```java
+```'java
 final DemoLogic original = new DemoLogic();
 final DemoInterface demoLogic = VirtualProxyBuilder
         .createBuilder(DemoInterface.class, original)
