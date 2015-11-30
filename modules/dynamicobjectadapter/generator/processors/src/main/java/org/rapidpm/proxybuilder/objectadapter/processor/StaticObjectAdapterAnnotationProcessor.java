@@ -1,11 +1,9 @@
 package org.rapidpm.proxybuilder.objectadapter.processor;
 
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.*;
 import org.rapidpm.proxybuilder.objectadapter.annotations.IsObjectAdapter;
 import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
 
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -19,7 +17,6 @@ import java.util.Set;
 /**
  * Created by svenruppert on 24.10.15.
  */
-@AutoService(Processor.class)
 public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAnnotationProcessor<StaticObjectAdapter> {
 
 

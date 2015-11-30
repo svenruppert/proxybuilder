@@ -1,12 +1,10 @@
 package org.rapidpm.proxybuilder.objectadapter.processor;
 
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.*;
 import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.AdapterBuilder;
 import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.ExtendedInvocationHandler;
 
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
@@ -19,7 +17,6 @@ import java.util.Set;
  * Created by sven on 13.05.15.
  */
 
-@AutoService(Processor.class)
 public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterAnnotationProcessor<DynamicObjectAdapterBuilder> {
 
   public static final String INVOCATION_HANDLER_CLASSNAME_POST_FIX = "InvocationHandler";
