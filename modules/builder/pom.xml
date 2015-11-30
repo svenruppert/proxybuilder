@@ -40,12 +40,7 @@
             </goals>
             <configuration>
               <dependencyReducedPomLocation>${project.build.directory}/reduced-pom.xml</dependencyReducedPomLocation>
-              <!--<transformers>-->
-              <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-              <!--<mainClass>org.rapidpm.microservice.Main</mainClass>-->
-              <!--</transformer>-->
-              <!--</transformers>-->
-              <minimizeJar>false</minimizeJar>
+              <minimizeJar>true</minimizeJar>
               <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
               <createSourcesJar>true</createSourcesJar>
               <shadeSourcesContent>true</shadeSourcesContent>
