@@ -18,14 +18,29 @@
       <artifactId>rapidpm-proxybuilder-modules-objectadapter-generator-annotations</artifactId>
     </dependency>
     <!-- Auto service annotation processor -->
-    <dependency>
-      <groupId>com.google.auto.service</groupId>
-      <artifactId>auto-service</artifactId>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>com.google.auto.service</groupId>-->
+      <!--<artifactId>auto-service</artifactId>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>com.squareup</groupId>
       <artifactId>javapoet</artifactId>
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <compilerArgument>-Xlint:all</compilerArgument>
+          <compilerArgument>-proc:none</compilerArgument>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
