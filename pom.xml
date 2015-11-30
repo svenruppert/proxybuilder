@@ -69,8 +69,9 @@
     </developer>
   </developers>
   <issueManagement>
-    <system>Github</system>
-    <url>https://github.com/RapidPM/proxybuilder/issues</url>
+    <system>Youtrack</system>
+    <!--<url>https://github.com/RapidPM/proxybuilder/issues</url>-->
+    <url>http://rapidpm.myjetbrains.com/youtrack/issues?q=project%3A+ProxyBuilder</url>
   </issueManagement>
   <ciManagement>
     <system>TravisCI</system>
@@ -151,16 +152,6 @@
     </plugins>
   </build>
 
-  <!-- Define explicit version to overcome problem with generated reports -->
-  <!--<reporting>-->
-  <!--<plugins>-->
-  <!--<plugin>-->
-  <!--<groupId>org.apache.maven.plugins</groupId>-->
-  <!--<artifactId>maven-jxr-plugin</artifactId>-->
-  <!--</plugin>-->
-  <!--</plugins>-->
-  <!--</reporting>-->
-
   <profiles>
     <profile>
       <id>sys-nexus-deploy</id>
@@ -197,12 +188,6 @@
         </snapshotRepository>
       </distributionManagement>
     </profile>
-
-
-
-
-
-
   </profiles>
 
 </project>
