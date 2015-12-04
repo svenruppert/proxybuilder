@@ -16,7 +16,6 @@
   <modules>
     <module>annotations</module>
     <module>processors</module>
-    <module>usages</module>
   </modules>
 
   <build>
