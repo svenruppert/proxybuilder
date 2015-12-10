@@ -25,7 +25,7 @@
     </dependency>
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
-      <artifactId>rapidpm-proxybuilder-modules-static-generated</artifactId>
+      <artifactId>rapidpm-proxybuilder-modules-static-generated-annotations</artifactId>
     </dependency>
   </dependencies>
 
