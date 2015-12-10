@@ -3,19 +3,27 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>rapidpm-proxybuilder-modules</artifactId>
+    <artifactId>rapidpm-proxybuilder-modules-static-generated</artifactId>
     <groupId>org.rapidpm.proxybuilder</groupId>
     <version>0.0.5-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>rapidpm-proxybuilder-modules-dynamic</artifactId>
-
+  <artifactId>rapidpm-proxybuilder-modules-static-generated-testusage</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
       <artifactId>rapidpm-proxybuilder-modules-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.rapidpm.proxybuilder</groupId>
+      <artifactId>rapidpm-proxybuilder-modules-static-generated-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.rapidpm.proxybuilder</groupId>
+      <artifactId>rapidpm-proxybuilder-modules-static-generated-processors</artifactId>
+    </dependency>
   </dependencies>
+
 </project>

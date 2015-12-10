@@ -9,8 +9,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.DynamicProxyBuilder;
-import org.rapidpm.proxybuilder.type.dymamic.metrics.MetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 
 import java.util.SortedMap;
@@ -145,7 +145,7 @@ public class DynamicProxyBuilderTest {
     Assert.assertNotNull(demoLogic);
     Assert.assertEquals(demoLogic.doWork(), original.doWork());
 
-    final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
+    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance().getMetrics();
     final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
         .convertRatesTo(TimeUnit.NANOSECONDS)
         .convertDurationsTo(TimeUnit.MILLISECONDS)

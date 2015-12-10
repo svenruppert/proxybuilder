@@ -28,12 +28,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected abstract void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv);
 
 
-
-
-
-
-
-
   @Override
   public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.latestSupported();
@@ -81,25 +75,24 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
 
-  private TypeSpec.Builder typeSpecBuilderForTargetClass;
+  protected TypeSpec.Builder typeSpecBuilderForTargetClass;
 
-  protected TypeSpec.Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName interface2Implement) {
+  protected TypeSpec.Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName type2inherit) {
     if (typeSpecBuilderForTargetClass == null) {
+      System.out.println("typeElement.getKind() = " + typeElement.getKind());
       if (typeElement.getKind() == ElementKind.INTERFACE){
         typeSpecBuilderForTargetClass = TypeSpec
             .classBuilder(targetClassNameSimple(typeElement))
-            .addSuperinterface(interface2Implement)
+            .addSuperinterface(type2inherit)
             .addModifiers(Modifier.PUBLIC);
-      }
-
-
-      if (typeElement.getKind() == ElementKind.CLASS){
+      } else if (typeElement.getKind() == ElementKind.CLASS){
         typeSpecBuilderForTargetClass = TypeSpec
             .classBuilder(targetClassNameSimple(typeElement))
-            .addSuperinterface(interface2Implement)
+            .superclass(type2inherit)
             .addModifiers(Modifier.PUBLIC);
+      } else {
+        throw new RuntimeException("alles doof");
       }
-
     }
     return typeSpecBuilderForTargetClass;
   }

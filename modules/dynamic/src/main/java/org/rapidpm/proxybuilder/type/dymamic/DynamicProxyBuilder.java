@@ -3,7 +3,7 @@ package org.rapidpm.proxybuilder.type.dymamic;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
-import org.rapidpm.proxybuilder.type.dymamic.metrics.MetricsRegistry;
+import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DynamicProxyGenerator;
@@ -121,7 +121,7 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   //wo die Metriken ablegen ?
   public DynamicProxyBuilder<I, T> addMetrics() {
-    final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
+    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance().getMetrics();
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 

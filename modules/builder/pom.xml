@@ -21,7 +21,11 @@
     </dependency>
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
-      <artifactId>rapidpm-proxybuilder-modules-static</artifactId>
+      <artifactId>rapidpm-proxybuilder-modules-static-runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.rapidpm.proxybuilder</groupId>
+      <artifactId>rapidpm-proxybuilder-modules-static-generated</artifactId>
     </dependency>
   </dependencies>
 
