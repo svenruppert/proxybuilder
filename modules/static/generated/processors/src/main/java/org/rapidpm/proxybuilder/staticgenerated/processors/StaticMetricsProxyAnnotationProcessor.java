@@ -21,15 +21,6 @@ import java.util.List;
  *
  * final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
  *
- * final long start = System.nanoTime();
- * //        final Object invoke = method.invoke(original, args);
- * final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
- * final long stop = System.nanoTime();
- * Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
- * methodCalls.update((stop - start));
- * return invoke;
- * }
- * };
  */
 public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticMetricsProxy> {
   @Override
