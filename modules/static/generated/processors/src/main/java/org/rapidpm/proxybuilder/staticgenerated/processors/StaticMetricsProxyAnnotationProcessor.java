@@ -24,6 +24,32 @@ import java.util.List;
  */
 public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticMetricsProxy> {
   @Override
+  protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
+    final TypeName targetTypeName = TypeName.get(typeElement.asType());
+//    final TypeSpec.Builder specBuilderForTargetClass = createTypeSpecBuilderForTargetClass(typeElement, targetTypeName);
+    typeSpecBuilderForTargetClass.addAnnotation(IsGeneratedProxy.class);
+    typeSpecBuilderForTargetClass.addAnnotation(IsMetricsProxy.class);
+
+
+    final FieldSpec delegatorFieldSpec = defineDelegatorField(typeElement);
+    typeSpecBuilderForTargetClass.addField(delegatorFieldSpec);
+
+    final FieldSpec metricsField = defineMetricsField();
+    typeSpecBuilderForTargetClass.addField(metricsField);
+
+    typeSpecBuilderForTargetClass
+        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(targetTypeName, "delegator", Modifier.FINAL)
+            .addCode(CodeBlock.builder()
+                .addStatement("this." + "delegator" + "=" + "delegator")
+                .addStatement("return this").build())
+            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
+            .build());
+
+  }
+
+  @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
 
     final TypeMirror returnType = methodElement.getReturnType();
@@ -47,6 +73,10 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
     return codeBlockBuilder.build();
   }
 
+  @Override
+  public Class<StaticMetricsProxy> responsibleFor() {
+    return StaticMetricsProxy.class;
+  }
 
   protected FieldSpec defineMetricsField() {
     final ClassName metricsClassname = ClassName.get(MetricRegistry.class);
@@ -60,40 +90,6 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
                 .build())
 
         .build();
-  }
-
-
-  @Override
-  protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
-    final TypeName targetTypeName = TypeName.get(typeElement.asType());
-    final TypeSpec.Builder specBuilderForTargetClass = createTypeSpecBuilderForTargetClass(typeElement, targetTypeName);
-
-    specBuilderForTargetClass.addAnnotation(IsGeneratedProxy.class);
-    specBuilderForTargetClass.addAnnotation(IsMetricsProxy.class);
-
-
-    final FieldSpec delegatorFieldSpec = defineDelegatorField(typeElement);
-    specBuilderForTargetClass.addField(delegatorFieldSpec);
-
-    final FieldSpec metricsField = defineMetricsField();
-    specBuilderForTargetClass.addField(metricsField);
-
-    specBuilderForTargetClass
-        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(targetTypeName, "delegator", Modifier.FINAL)
-            .addCode(CodeBlock.builder()
-                .addStatement("this." + "delegator" + "=" + "delegator")
-                .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
-            .build());
-
-  }
-
-
-  @Override
-  public Class<StaticMetricsProxy> responsibleFor() {
-    return StaticMetricsProxy.class;
   }
 
 }
