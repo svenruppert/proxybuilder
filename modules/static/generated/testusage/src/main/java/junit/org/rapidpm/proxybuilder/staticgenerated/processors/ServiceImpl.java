@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @StaticMetricsProxy
 public class ServiceImpl {
 
-  public String doWork(String txt){
+  public String doWork(String txt) {
     return txt + LocalDateTime.now();
   }
 

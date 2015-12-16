@@ -5,14 +5,12 @@ import org.rapidpm.proxybuilder.objectadapter.annotations.IsObjectAdapter;
 import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Created by svenruppert on 24.10.15.
