@@ -105,10 +105,6 @@
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.javassist</groupId>-->
-      <!--<artifactId>javassist</artifactId>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-vfs2</artifactId>
@@ -125,26 +121,12 @@
     <!--Logging-->
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- Generate coveralls reports from Travis -->
-      <plugin>
-        <groupId>org.eluder.coveralls</groupId>
-        <artifactId>coveralls-maven-plugin</artifactId>
-        <configuration>
-          <repoToken>MW5SHM1zQ5fPBDkjNL651ixpwkfOradfQ</repoToken>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <profiles>
     <profile>
       <id>sys-nexus-deploy</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <!--for development of features/develop branch-->
       <distributionManagement>
         <repository>
           <id>sonatype-nexus-snapshots</id>
@@ -153,26 +135,6 @@
         <snapshotRepository>
           <id>sonatype-nexus-snapshots</id>
           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-    <profile>
-      <id>sys-nexus-deploy-reply</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <!--for development of features/develop branch-->
-      <distributionManagement>
-        <repository>
-          <id>releasesReply</id>
-          <name>macrosreply Releases</name>
-          <!--<url>http://10.64.54.53/nexus/content/repositories/releases</url>-->
-          <url>http://78.47.221.68/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-          <id>snapshotsReply</id>
-          <!--<url>http://10.64.54.53/nexus/content/repositories/snapshots</url>-->
-          <url>http://78.47.221.68/content/repositories/snapshots</url>
         </snapshotRepository>
       </distributionManagement>
     </profile>
