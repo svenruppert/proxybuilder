@@ -15,9 +15,9 @@
     <module>core</module>
     <module>core-annotationprocessor</module>
 
+    <module>dynamic</module>
     <module>objectadapter</module>
     <module>static</module>
-    <module>dynamic</module>
     <module>builder</module>
   </modules>
 

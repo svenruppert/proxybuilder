@@ -19,6 +19,7 @@
       <groupId>org.rapidpm.proxybuilder</groupId>
       <artifactId>rapidpm-proxybuilder-modules-dynamic</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
       <artifactId>rapidpm-proxybuilder-modules-static-runtime</artifactId>

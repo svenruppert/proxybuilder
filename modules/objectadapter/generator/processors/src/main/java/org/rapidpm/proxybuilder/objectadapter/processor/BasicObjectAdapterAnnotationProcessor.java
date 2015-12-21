@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 /**
  * Created by svenruppert on 24.10.15.
  */
-public abstract class BasicObjectAdapterAnnotationProcessor<T  extends Annotation> extends BasicAnnotationProcessor<T> {
+public abstract class BasicObjectAdapterAnnotationProcessor<T extends Annotation> extends BasicAnnotationProcessor<T> {
 
 
 }

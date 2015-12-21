@@ -19,13 +19,13 @@ public class ProxyBuilder {
   }
 
 
-  public static <I, T extends I> DynamicProxyBuilder<I, T> newDynamicProxyBuilder(Class<I> clazz, Class<T> original, CreationStrategy creationStrategy) {
+  public static <I, T extends I> DynamicProxyBuilder<I, T> newDynamicVirtualProxyBuilder(Class<I> clazz, Class<T> original, CreationStrategy creationStrategy) {
     return DynamicProxyBuilder.createBuilder(clazz, original, creationStrategy);
   }
 
-  public static <I> DynamicProxyBuilder<I, I> newDynamicProxyBuilder(Class<I> clazz,
-                                                                     CreationStrategy creationStrategy,
-                                                                     VirtualDynamicProxyInvocationHandler.ServiceFactory<I> serviceFactory) {
+  public static <I> DynamicProxyBuilder<I, I> newDynamicVirtualProxyBuilder(Class<I> clazz,
+                                                                            CreationStrategy creationStrategy,
+                                                                            VirtualDynamicProxyInvocationHandler.ServiceFactory<I> serviceFactory) {
     return DynamicProxyBuilder.createBuilder(clazz, creationStrategy, serviceFactory);
   }
 

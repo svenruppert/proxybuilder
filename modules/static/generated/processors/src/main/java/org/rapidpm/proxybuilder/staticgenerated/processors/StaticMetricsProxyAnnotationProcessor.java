@@ -12,37 +12,33 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import java.util.List;
 
 
 /**
  * Created by svenruppert on 09.12.15.
  *
  * final MetricRegistry metrics = MetricsRegistry.getInstance().getMetrics();
- *
  */
 public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticMetricsProxy> {
+
   @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
     final TypeName targetTypeName = TypeName.get(typeElement.asType());
-//    final TypeSpec.Builder specBuilderForTargetClass = createTypeSpecBuilderForTargetClass(typeElement, targetTypeName);
     typeSpecBuilderForTargetClass.addAnnotation(IsGeneratedProxy.class);
     typeSpecBuilderForTargetClass.addAnnotation(IsMetricsProxy.class);
 
-
-    final FieldSpec delegatorFieldSpec = defineDelegatorField(typeElement);
-    typeSpecBuilderForTargetClass.addField(delegatorFieldSpec);
-
-    final FieldSpec metricsField = defineMetricsField();
-    typeSpecBuilderForTargetClass.addField(metricsField);
+    typeSpecBuilderForTargetClass.addField(defineDelegatorField(typeElement));
+    typeSpecBuilderForTargetClass.addField(defineMetricsField());
+    typeSpecBuilderForTargetClass.addField(defineSimpleClassNameField(typeElement));
 
     typeSpecBuilderForTargetClass
         .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
             .addModifiers(Modifier.PUBLIC)
-            .addParameter(targetTypeName, "delegator", Modifier.FINAL)
+            .addParameter(targetTypeName, DELEGATOR_FIELD_NAME, Modifier.FINAL)
             .addCode(CodeBlock.builder()
-                .addStatement("this." + "delegator" + "=" + "delegator")
+                .addStatement("this." + DELEGATOR_FIELD_NAME + " = " + DELEGATOR_FIELD_NAME)
                 .addStatement("return this").build())
             .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
             .build());
@@ -51,25 +47,24 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
-
     final TypeMirror returnType = methodElement.getReturnType();
-    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-
-    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-        .methodBuilder(methodElement.getSimpleName().toString())
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-        .returns(TypeName.get(returnType));
-
-    parameterSpecList.forEach(methodSpecBuilder::addParameter);
     final CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
-
-    codeBlockBuilder
-        .addStatement("final long start = System.nanoTime();")
-        .addStatement("$T result = " + "delegator" + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
-        .addStatement("final long stop = System.nanoTime();")
-        .addStatement("final $T methodCalls = metrics.histogram(this.getClass().getSimpleName() + \".\" + \"" + methodElement.getSimpleName() + "\");", Histogram.class)
-        .addStatement("return result");
-
+    if (returnType.getKind() == TypeKind.VOID) {
+      codeBlockBuilder
+          .addStatement("final long start = System.nanoTime()")
+          .addStatement(DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate))
+          .addStatement("final long stop = System.nanoTime()")
+          .addStatement("final $T methodCalls = metrics.histogram(" + SIMPLE_CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("methodCalls.update(stop - start)");
+    } else {
+      codeBlockBuilder
+          .addStatement("final long start = System.nanoTime()")
+          .addStatement("$T result = " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
+          .addStatement("final long stop = System.nanoTime()")
+          .addStatement("final $T methodCalls = metrics.histogram(" + SIMPLE_CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("methodCalls.update(stop - start)")
+          .addStatement("return result");
+    }
     return codeBlockBuilder.build();
   }
 
@@ -83,12 +78,7 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
     return FieldSpec
         .builder(metricsClassname, "metrics")
         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-        .initializer(
-
-            CodeBlock.builder()
-                .addStatement("$T.getInstance().getMetrics()", RapidPMMetricsRegistry.class)
-                .build())
-
+        .initializer("$T.getInstance().getMetrics()", RapidPMMetricsRegistry.class)
         .build();
   }
 

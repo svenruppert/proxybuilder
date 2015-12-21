@@ -27,6 +27,8 @@ import static java.util.stream.Collectors.toList;
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
 
 
+  protected static final String SIMPLE_CLASS_NAME = "SIMPLE_CLASS_NAME";
+  protected static final String DELEGATOR_FIELD_NAME = "delegator";
   protected Filer filer;
   protected Messager messager;
   protected Elements elementUtils;
@@ -73,7 +75,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
               .stream()
               .filter(e -> e.getKind() == ElementKind.METHOD)
               .map(methodElement -> (ExecutableElement) methodElement) //cast only
-              .filter(methodElement -> methodElement.getModifiers().contains(Modifier.PUBLIC)) //nur public ? evtl auch protected
+              .filter(methodElement -> {
+                final Set<Modifier> modifiers = methodElement.getModifiers();
+                return modifiers.contains(Modifier.PUBLIC) || modifiers.contains(Modifier.PROTECTED);
+              })
               .forEach(methodElement -> {
 
                 final String methodName2Delegate = methodElement.getSimpleName().toString();
@@ -96,16 +101,17 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       if (typeElement.getKind() == ElementKind.INTERFACE) {
         typeSpecBuilderForTargetClass = TypeSpec
             .classBuilder(targetClassNameSimple(typeElement))
-            .addSuperinterface(type2inherit)
-            .addModifiers(Modifier.PUBLIC);
+            .addSuperinterface(type2inherit);
       } else if (typeElement.getKind() == ElementKind.CLASS) {
         typeSpecBuilderForTargetClass = TypeSpec
             .classBuilder(targetClassNameSimple(typeElement))
-            .superclass(type2inherit)
-            .addModifiers(Modifier.PUBLIC);
+            .superclass(type2inherit);
+//            .addModifiers(Modifier.PUBLIC);
       } else {
         throw new RuntimeException("alles doof");
       }
+      typeElement.getModifiers().forEach(m -> typeSpecBuilderForTargetClass.addModifiers(m)
+      );
     }
     typeSpecBuilderForTargetClass.addAnnotation(createAnnotationSpecGenerated());
     return typeSpecBuilderForTargetClass;
@@ -123,7 +129,13 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .addModifiers(reducedMethodModifiers)
         .returns(TypeName.get(methodElement.getReturnType()))
         .addParameters(defineParamsForMethod(methodElement))
+        .addExceptions(methodElement
+            .getThrownTypes()
+            .stream()
+            .map(TypeName::get)
+            .collect(toList()))
         .addCode(codeBlock)
+
         .build();
   }
 
@@ -209,16 +221,25 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return writeDefinedClass(packageName, functionalInterfaceTypeSpecBuilder);
   }
 
+  protected FieldSpec defineSimpleClassNameField(final TypeElement typeElement) {
+    final ClassName className = ClassName.get(typeElement);
+    return FieldSpec
+        .builder(ClassName.get(String.class), SIMPLE_CLASS_NAME)
+        .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+        .initializer("\"" + className.simpleName() + "\"")
+        .build();
+  }
+
   protected FieldSpec defineDelegatorField(final TypeElement typeElement) {
     final ClassName delegatorClassName = ClassName.get(pkgName(typeElement), className(typeElement));
     return FieldSpec
-        .builder(delegatorClassName, "delegator")
+        .builder(delegatorClassName, DELEGATOR_FIELD_NAME)
         .addModifiers(Modifier.PRIVATE)
         .build();
   }
 
   public String delegatorStatementWithReturn(final ExecutableElement methodElement, final String methodName2Delegate) {
-    return "return delegator." + delegatorMethodCall(methodElement, methodName2Delegate);
+    return "return " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate);
   }
 
   public String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
