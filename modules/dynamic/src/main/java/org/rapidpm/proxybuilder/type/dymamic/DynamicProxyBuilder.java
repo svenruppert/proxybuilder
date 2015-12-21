@@ -109,6 +109,14 @@ public class DynamicProxyBuilder<I, T extends I> {
     return this;
   }
 
+  public static Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
+    try {
+      return method.invoke(proxy, args);
+    } catch (InvocationTargetException ex) {
+      throw ex.getCause();
+    }
+  }
+
   private void createProxy(InvocationHandler invocationHandler) {
     final ClassLoader classLoader = original.getClass().getClassLoader();
     final Class<?>[] interfaces = {clazz};
@@ -128,7 +136,6 @@ public class DynamicProxyBuilder<I, T extends I> {
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final long start = System.nanoTime();
-//        final Object invoke = method.invoke(original, args);
         final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
         final long stop = System.nanoTime();
         Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
@@ -174,10 +181,6 @@ public class DynamicProxyBuilder<I, T extends I> {
     void execute(T original, Method method, Object[] args) throws Throwable;
   }
 
-  public interface PostAction<T> {
-    void execute(T original, Method method, Object[] args) throws Throwable;
-  }
-
 
 //  public ProxyBuilder<I, T> addLogging() {
 //
@@ -200,12 +203,8 @@ public class DynamicProxyBuilder<I, T extends I> {
 //    return this;
 //  }
 
-  public static Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
-    try {
-      return method.invoke(proxy, args);
-    } catch (InvocationTargetException ex) {
-      throw ex.getCause();
-    }
+  public interface PostAction<T> {
+    void execute(T original, Method method, Object[] args) throws Throwable;
   }
 
 }

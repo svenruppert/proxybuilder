@@ -19,24 +19,36 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
 
 
   @Override
-  public Class<StaticObjectAdapter> responsibleFor() {
-    return StaticObjectAdapter.class;
+  protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
+    final TypeName interface2Implement = TypeName.get(typeElement.asType());
+    typeSpecBuilderForTargetClass.addAnnotation(IsObjectAdapter.class);
+
+    final FieldSpec delegatorFieldSpec = defineDelegatorField(typeElement);
+    typeSpecBuilderForTargetClass.addField(delegatorFieldSpec);
+
+    typeSpecBuilderForTargetClass
+        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(interface2Implement, "delegator", Modifier.FINAL)
+            .addCode(CodeBlock.builder()
+                .addStatement("this." + "delegator" + "=" + "delegator")
+                .addStatement("return this").build())
+            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
+            .build());
+
+
   }
 
   @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
 
     final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
-    final TypeName interface2Implement = TypeName.get(typeElement.asType());
-
-    final TypeSpec.Builder specBuilderForTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
-
     final TypeMirror returnType = methodElement.getReturnType();
     final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
 
     final MethodSpec.Builder methodSpecBuilder = MethodSpec
         .methodBuilder(methodElement.getSimpleName().toString())
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addModifiers(Modifier.PUBLIC)
         .returns(TypeName.get(returnType));
 
     parameterSpecList.forEach(methodSpecBuilder::addParameter);
@@ -48,7 +60,7 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
       final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);
       final ClassName className = ClassName.get(pkgName(typeElement), f.name);
       final FieldSpec adapterAttributFieldSpec = FieldSpec.builder(className, adapterAttributeName, Modifier.PRIVATE).build();
-      specBuilderForTargetClass.addField(adapterAttributFieldSpec);
+      typeSpecBuilderForTargetClass.addField(adapterAttributFieldSpec);
 
       codeBlockBuilder
           .beginControlFlow("if(" + adapterAttributeName + " != null)")
@@ -56,7 +68,7 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
           .endControlFlow();
 
       //add method to set adapter
-      specBuilderForTargetClass
+      typeSpecBuilderForTargetClass
           .addMethod(MethodSpec.methodBuilder("with" + className.simpleName())
               .addModifiers(Modifier.PUBLIC)
               .addParameter(className, adapterAttributeName, Modifier.FINAL)
@@ -75,35 +87,8 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
   }
 
   @Override
-  protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
-    final TypeName interface2Implement = TypeName.get(typeElement.asType());
-    final TypeSpec.Builder specBuilderForTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
-
-//    final ClassName implClassName = ClassName.get(pkgName(typeElement), className(typeElement)+ "Impl");
-//    final ClassName factoryClassName = ClassName.get(pkgName(typeElement), FACTORY);
-//    final ClassName strategyFactoryClassName = ClassName.get(pkgName(typeElement), STRATEGY_FACTORY);
-
-    specBuilderForTargetClass.addAnnotation(IsObjectAdapter.class);
-
-    //add Adapter fields
-
-    //add Adapter addMethods
-    //add delegator method
-
-    final FieldSpec delegatorFieldSpec = defineDelegatorField(typeElement);
-    specBuilderForTargetClass.addField(delegatorFieldSpec);
-
-    specBuilderForTargetClass
-        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(interface2Implement, "delegator", Modifier.FINAL)
-            .addCode(CodeBlock.builder()
-                .addStatement("this." + "delegator" + "=" + "delegator")
-                .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
-            .build());
-
-
+  public Class<StaticObjectAdapter> responsibleFor() {
+    return StaticObjectAdapter.class;
   }
 
 }
