@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
 
 
-  protected static final String SIMPLE_CLASS_NAME = "SIMPLE_CLASS_NAME";
+  protected static final String CLASS_NAME = "CLASS_NAME";
   protected static final String DELEGATOR_FIELD_NAME = "delegator";
   protected Filer filer;
   protected Messager messager;
@@ -91,7 +91,9 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
               });
 
           writeDefinedClass(pkgName(typeElement), forTargetClass);
+          typeSpecBuilderForTargetClass = null;
         });
+
     return true;
   }
 
@@ -224,9 +226,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected FieldSpec defineSimpleClassNameField(final TypeElement typeElement) {
     final ClassName className = ClassName.get(typeElement);
     return FieldSpec
-        .builder(ClassName.get(String.class), SIMPLE_CLASS_NAME)
+        .builder(ClassName.get(String.class), CLASS_NAME)
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-        .initializer("\"" + className.simpleName() + "\"")
+//        .initializer("\"" + className.simpleName() + "\"")
+        .initializer("\"" + className + "\"")
         .build();
   }
 
