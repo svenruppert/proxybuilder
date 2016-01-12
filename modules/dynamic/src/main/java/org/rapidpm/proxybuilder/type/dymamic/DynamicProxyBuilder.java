@@ -138,7 +138,7 @@ public class DynamicProxyBuilder<I, T extends I> {
         final long start = System.nanoTime();
         final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
         final long stop = System.nanoTime();
-        Histogram methodCalls = metrics.histogram(clazz.getSimpleName() + "." + method.getName());
+        Histogram methodCalls = metrics.histogram(clazz.getName() + "." + method.getName());
         methodCalls.update((stop - start));
         return invoke;
       }

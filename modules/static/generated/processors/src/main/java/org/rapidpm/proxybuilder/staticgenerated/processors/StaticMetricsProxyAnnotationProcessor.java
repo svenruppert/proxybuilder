@@ -54,14 +54,14 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
           .addStatement("final long start = System.nanoTime()")
           .addStatement(DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate))
           .addStatement("final long stop = System.nanoTime()")
-          .addStatement("final $T methodCalls = metrics.histogram(" + SIMPLE_CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("final $T methodCalls = metrics.histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
           .addStatement("methodCalls.update(stop - start)");
     } else {
       codeBlockBuilder
           .addStatement("final long start = System.nanoTime()")
           .addStatement("$T result = " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
           .addStatement("final long stop = System.nanoTime()")
-          .addStatement("final $T methodCalls = metrics.histogram(" + SIMPLE_CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("final $T methodCalls = metrics.histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
           .addStatement("methodCalls.update(stop - start)")
           .addStatement("return result");
     }
