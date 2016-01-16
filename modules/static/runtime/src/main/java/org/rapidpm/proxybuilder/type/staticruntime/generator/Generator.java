@@ -17,6 +17,7 @@
 package org.rapidpm.proxybuilder.type.staticruntime.generator;
 
 import javax.tools.*;
+import javax.tools.JavaCompiler.CompilationTask;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -27,9 +28,6 @@ import static java.util.Collections.singletonList;
  */
 public class Generator {
 
-
-  private Generator() {
-  }
 
   private static final Method DEFINE_CLASS_METHOD;
   private static final JavaCompiler JAVA_COMPILER;
@@ -49,6 +47,9 @@ public class Generator {
     }
   }
 
+  private Generator() {
+  }
+
   public static Class make(ClassLoader loader, String className, CharSequence javaSource) {
     GeneratedClassFile gcf = new GeneratedClassFile();
     DiagnosticCollector<JavaFileObject> dc = new DiagnosticCollector<>();
@@ -62,7 +63,7 @@ public class Generator {
 
     final GeneratingJavaFileManager fileManager = new GeneratingJavaFileManager(standardFileManager, gcf);
 
-    JavaCompiler.CompilationTask task = JAVA_COMPILER.getTask(null, fileManager, dc, null, null, singletonList(gjsf));
+    CompilationTask task = JAVA_COMPILER.getTask(null, fileManager, dc, null, null, singletonList(gjsf));
 
     return task.call();
   }
@@ -75,9 +76,7 @@ public class Generator {
 // use your logging system of choice here
       System.err.println("Compile failed:");
       System.err.println(javaSource);
-      for (Diagnostic<?> d : dc.getDiagnostics()) {
-        System.err.println(d);
-      }
+      dc.getDiagnostics().forEach(System.err::println);
       throw new IllegalArgumentException("Could not create proxy - compile failed");
     }
   }

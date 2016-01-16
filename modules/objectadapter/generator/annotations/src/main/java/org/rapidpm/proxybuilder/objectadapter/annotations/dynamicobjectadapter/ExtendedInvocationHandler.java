@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by sven on 12.05.15.
+ * Created by Sven Ruppert on 12.05.15.
  */
 public abstract class ExtendedInvocationHandler<T> implements InvocationHandler {
 
-  private Map<MethodIdentifier, Method> adaptedMethods = new HashMap<>();
-  private Map<MethodIdentifier, Object> adapters = new HashMap<>();
+  private final Map<MethodIdentifier, Method> adaptedMethods = new HashMap<>();
+  private final Map<MethodIdentifier, Object> adapters = new HashMap<>();
   private T original;
 
   public void setOriginal(T original) {

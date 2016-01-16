@@ -2,6 +2,7 @@ package org.rapidpm.proxybuilder.core.annotationprocessor;
 
 import com.google.common.base.Joiner;
 import com.squareup.javapoet.*;
+import com.squareup.javapoet.TypeSpec.Builder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
@@ -22,7 +23,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Created by svenruppert on 09.12.15.
+ * Created by Sven Ruppert on 09.12.15.
  */
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
 
@@ -33,7 +34,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected Messager messager;
   protected Elements elementUtils;
   protected Types typeUtils;
-  protected TypeSpec.Builder typeSpecBuilderForTargetClass;
+  protected Builder typeSpecBuilderForTargetClass;
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
@@ -65,7 +66,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .map(e -> (TypeElement) e)
         .forEach(typeElement -> {
           final TypeName interface2Implement = TypeName.get(typeElement.asType());
-          final TypeSpec.Builder forTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
+          final Builder forTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
 
           addClassLevelSpecs(typeElement, roundEnv);
 
@@ -97,7 +98,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return true;
   }
 
-  protected TypeSpec.Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName type2inherit) {
+  protected Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName type2inherit) {
     if (typeSpecBuilderForTargetClass == null) {
       System.out.println("typeElement.getKind() = " + typeElement.getKind());
       if (typeElement.getKind() == ElementKind.INTERFACE) {
@@ -141,7 +142,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .build();
   }
 
-  protected Optional<TypeSpec> writeDefinedClass(String pkgName, TypeSpec.Builder typeSpecBuilder) {
+  protected Optional<TypeSpec> writeDefinedClass(String pkgName, Builder typeSpecBuilder) {
     final TypeSpec typeSpec = typeSpecBuilder.build();
     final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
     final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
@@ -211,7 +212,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
     final Element typeElement = methodElement.getEnclosingElement();
 
-    final TypeSpec.Builder functionalInterfaceTypeSpecBuilder = TypeSpec
+    final Builder functionalInterfaceTypeSpecBuilder = TypeSpec
         .interfaceBuilder(typeElement.getSimpleName().toString() + "Method" + finalMethodName)
         .addAnnotation(createAnnotationSpecGenerated())
         .addAnnotation(FunctionalInterface.class)

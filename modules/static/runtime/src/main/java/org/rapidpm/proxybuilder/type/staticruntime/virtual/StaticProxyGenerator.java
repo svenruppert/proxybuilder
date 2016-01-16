@@ -29,15 +29,14 @@ import java.util.WeakHashMap;
  */
 public class StaticProxyGenerator {
 
+  private static final WeakHashMap CACHE = new WeakHashMap();
+
   private StaticProxyGenerator() {
   }
 
-  private static final WeakHashMap CACHE = new WeakHashMap();
-
   public static <T> T make(Class<T> subject, Class<? extends T> realClass, CreationStrategy creationStrategy) {
-    final T make = make(subject.getClassLoader(), subject, realClass, creationStrategy);
     //hier ref auf realSubject einfuegen ??
-    return make;
+    return make(subject.getClassLoader(), subject, realClass, creationStrategy);
   }
 
   public static <T> T make(ClassLoader loader,

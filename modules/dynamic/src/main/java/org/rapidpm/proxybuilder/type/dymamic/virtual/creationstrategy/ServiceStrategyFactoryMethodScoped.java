@@ -1,15 +1,16 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual.creationstrategy;
 
 
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 
 /**
- * Created by svenruppert on 06.11.15.
+ * Created by Sven Ruppert on 06.11.15.
  */
-public class ServiceStrategyFactoryMethodScoped<T> implements VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory<T> {
+public class ServiceStrategyFactoryMethodScoped<T> implements ServiceStrategyFactory<T> {
 
   @Override
-  public synchronized T realSubject(VirtualDynamicProxyInvocationHandler.ServiceFactory<T> factory) {
+  public synchronized T realSubject(ServiceFactory<T> factory) {
     return factory.createInstance();
   }
 }

@@ -1,14 +1,15 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual;
 
 
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 
 /**
- * Created by svenruppert on 22.07.15.
+ * Created by Sven Ruppert on 22.07.15.
  */
-public class DefaultConstructorServiceFactory<C> implements VirtualDynamicProxyInvocationHandler.ServiceFactory<C> {
+public class DefaultConstructorServiceFactory<C> implements ServiceFactory<C> {
 
 
-  private Class<C> realClass;
+  private final Class<C> realClass;
 
   public DefaultConstructorServiceFactory(final Class<C> realClass) {
     this.realClass = realClass;

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by svenruppert on 09.12.15.
+ * Created by Sven Ruppert on 09.12.15.
  */
 @StaticMetricsProxy
 public class ServiceImpl {

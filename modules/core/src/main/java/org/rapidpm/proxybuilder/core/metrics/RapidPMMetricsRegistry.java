@@ -7,7 +7,7 @@ import com.codahale.metrics.MetricRegistry;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by sven on 28.04.15.
+ * Created by Sven Ruppert on 28.04.15.
  */
 public class RapidPMMetricsRegistry {
 
@@ -15,7 +15,7 @@ public class RapidPMMetricsRegistry {
   public static final TimeUnit DURATION_UNIT = TimeUnit.MILLISECONDS;
   public static final TimeUnit RATE_UNIT = TimeUnit.MILLISECONDS;
   private static final Object LOCK = new Object();
-  private static RapidPMMetricsRegistry ourInstance = new RapidPMMetricsRegistry();
+  private static final RapidPMMetricsRegistry ourInstance = new RapidPMMetricsRegistry();
   private final MetricRegistry metrics = new MetricRegistry();
 
   private JmxReporter jmxReporter;

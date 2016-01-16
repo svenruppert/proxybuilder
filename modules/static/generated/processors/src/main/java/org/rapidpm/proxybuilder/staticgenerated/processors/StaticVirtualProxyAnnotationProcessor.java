@@ -11,7 +11,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 /**
- * Created by svenruppert on 14.12.15.
+ * Created by Sven Ruppert on 14.12.15.
  */
 public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticVirtualProxy> {
   @Override

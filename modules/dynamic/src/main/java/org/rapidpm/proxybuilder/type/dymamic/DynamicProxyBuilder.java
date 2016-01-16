@@ -7,7 +7,7 @@ import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DynamicProxyGenerator;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by sven on 28.04.15.
+ * Created by Sven Ruppert on 28.04.15.
  */
 public class DynamicProxyBuilder<I, T extends I> {
 
+  private final List<SecurityRule> securityRules = new ArrayList<>();
   private T original;
   private Class<I> clazz;
-  private List<SecurityRule> securityRules = new ArrayList<>();
 
   private DynamicProxyBuilder() {
   }
@@ -63,16 +63,15 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   public static <I> DynamicProxyBuilder<I, I> createBuilder(Class<I> clazz,
                                                             CreationStrategy creationStrategy,
-                                                            VirtualDynamicProxyInvocationHandler.ServiceFactory<I> serviceFactory) {
+                                                            ServiceFactory<I> serviceFactory) {
     final DynamicProxyBuilder<I, I> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    final I proxy = DynamicProxyGenerator.<I, I>newBuilder()
+
+    dynamicProxyBuilder.original = DynamicProxyGenerator.<I, I>newBuilder()
         .withSubject(clazz)
         .withCreationStrategy(creationStrategy)
         .withServiceFactory(serviceFactory)
         .build()
         .make();
-
-    dynamicProxyBuilder.original = proxy;
     dynamicProxyBuilder.clazz = clazz;
     return dynamicProxyBuilder;
   }
@@ -92,7 +91,7 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   private DynamicProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
-      private T original = DynamicProxyBuilder.this.original;
+      private final T original = DynamicProxyBuilder.this.original;
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -154,8 +153,7 @@ public class DynamicProxyBuilder<I, T extends I> {
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         preAction.execute(original, method, args);
-        final Object invoke = method.invoke(original, args);
-        return invoke;
+        return method.invoke(original, args);
       }
     };
     createProxy(invocationHandler);

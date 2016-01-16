@@ -3,7 +3,7 @@ package org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter;
 import java.lang.reflect.Proxy;
 
 /**
- * Created by sven on 12.05.15.
+ * Created by Sven Ruppert on 12.05.15.
  */
 public abstract class AdapterBuilder<T> {
 

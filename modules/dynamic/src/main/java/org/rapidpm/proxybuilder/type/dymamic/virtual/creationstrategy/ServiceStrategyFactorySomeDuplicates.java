@@ -1,18 +1,19 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual.creationstrategy;
 
 
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Created by svenruppert on 06.11.15.
+ * Created by Sven Ruppert on 06.11.15.
  */
-public class ServiceStrategyFactorySomeDuplicates<T> implements VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory<T> {
+public class ServiceStrategyFactorySomeDuplicates<T> implements ServiceStrategyFactory<T> {
   private final AtomicReference<T> ref = new AtomicReference<>();
 
   @Override
-  public T realSubject(VirtualDynamicProxyInvocationHandler.ServiceFactory<T> factory) {
+  public T realSubject(ServiceFactory<T> factory) {
 
     T service = ref.get();
     if (service == null) {

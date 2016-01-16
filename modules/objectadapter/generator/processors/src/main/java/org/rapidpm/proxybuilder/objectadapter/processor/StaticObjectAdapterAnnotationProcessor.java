@@ -1,6 +1,7 @@
 package org.rapidpm.proxybuilder.objectadapter.processor;
 
 import com.squareup.javapoet.*;
+import com.squareup.javapoet.CodeBlock.Builder;
 import org.rapidpm.proxybuilder.objectadapter.annotations.IsObjectAdapter;
 import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by svenruppert on 24.10.15.
+ * Created by Sven Ruppert on 24.10.15.
  */
 public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAnnotationProcessor<StaticObjectAdapter> {
 
@@ -53,7 +54,7 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
 
     parameterSpecList.forEach(methodSpecBuilder::addParameter);
 
-    final CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
+    final Builder codeBlockBuilder = CodeBlock.builder();
 
     final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
     functionalInterfaceSpec.ifPresent(f -> {

@@ -1,21 +1,22 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual.creationstrategy;
 
 
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by svenruppert on 06.11.15.
+ * Created by Sven Ruppert on 06.11.15.
  */
-public class ServiceStrategyFactoryNoDuplicates<T> implements VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory<T> {
+public class ServiceStrategyFactoryNoDuplicates<T> implements ServiceStrategyFactory<T> {
 
-  private volatile T realSubject;
   private final Lock initializationLock = new ReentrantLock();
+  private volatile T realSubject;
 
   @Override
-  public T realSubject(VirtualDynamicProxyInvocationHandler.ServiceFactory<T> factory) {
+  public T realSubject(ServiceFactory<T> factory) {
     T result = realSubject;
     if (result == null) {
       initializationLock.lock();

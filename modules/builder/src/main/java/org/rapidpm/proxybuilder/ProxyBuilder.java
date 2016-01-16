@@ -2,10 +2,10 @@ package org.rapidpm.proxybuilder;
 
 import org.rapidpm.proxybuilder.type.dymamic.DynamicProxyBuilder;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 
 /**
- * Created by svenruppert on 06.11.15.
+ * Created by Sven Ruppert on 06.11.15.
  */
 public class ProxyBuilder {
 
@@ -25,7 +25,7 @@ public class ProxyBuilder {
 
   public static <I> DynamicProxyBuilder<I, I> newDynamicVirtualProxyBuilder(Class<I> clazz,
                                                                             CreationStrategy creationStrategy,
-                                                                            VirtualDynamicProxyInvocationHandler.ServiceFactory<I> serviceFactory) {
+                                                                            ServiceFactory<I> serviceFactory) {
     return DynamicProxyBuilder.createBuilder(clazz, creationStrategy, serviceFactory);
   }
 

@@ -5,7 +5,7 @@ import org.rapidpm.proxybuilder.core.annotationprocessor.BasicAnnotationProcesso
 import java.lang.annotation.Annotation;
 
 /**
- * Created by svenruppert on 24.10.15.
+ * Created by Sven Ruppert on 24.10.15.
  */
 public abstract class BasicObjectAdapterAnnotationProcessor<T extends Annotation> extends BasicAnnotationProcessor<T> {
 
