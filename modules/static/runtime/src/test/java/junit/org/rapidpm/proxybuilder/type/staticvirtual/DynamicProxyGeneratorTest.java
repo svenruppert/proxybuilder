@@ -16,9 +16,6 @@
 
 package junit.org.rapidpm.proxybuilder.type.staticvirtual;
 
-/**
- * Created by Sven Ruppert on 19.02.14.
- */
 public class DynamicProxyGeneratorTest {
 
 

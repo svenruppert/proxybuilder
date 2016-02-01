@@ -23,9 +23,6 @@ import java.lang.reflect.Proxy;
 
 import static java.util.Collections.singletonList;
 
-/**
- * Created by Sven Ruppert on 06.01.14.
- */
 public class Generator {
 
 

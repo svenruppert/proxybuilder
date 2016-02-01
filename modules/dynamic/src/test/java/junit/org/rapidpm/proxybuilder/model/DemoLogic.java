@@ -16,12 +16,9 @@
 
 package junit.org.rapidpm.proxybuilder.model;
 
-/**
- * Created by Sven Ruppert on 19.02.14.
- */
 public class DemoLogic implements DemoInterface {
 
-  public String value = null;
+  public String value;
 
   @Override
   public String doSomething() {

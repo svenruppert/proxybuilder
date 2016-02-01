@@ -20,11 +20,8 @@ import javax.tools.SimpleJavaFileObject;
 import java.io.IOException;
 import java.net.URI;
 
-/**
- * Created by Sven Ruppert on 06.01.14.
- */
 public class GeneratedJavaSourceFile extends SimpleJavaFileObject {
-  private CharSequence javaSource;
+  private final CharSequence javaSource;
 
   public GeneratedJavaSourceFile(String className, CharSequence javaSource) {
     super(URI.create(className + ".java"), Kind.SOURCE);

@@ -20,9 +20,6 @@ import demo.reflections.Inject;
 
 import javax.annotation.PostConstruct;
 
-/**
- * Created by Sven Ruppert on 07.12.2014.
- */
 public class Model_A {
 
 
@@ -47,7 +44,7 @@ public class Model_A {
   public static class ServiceImplA implements Service {
     @Inject
     SubService subService;
-    boolean postconstructed = false;
+    boolean postconstructed;
 
     public String work(String txt) {
       return subService.work(txt);
@@ -71,7 +68,7 @@ public class Model_A {
   public static class ServiceImplB implements Service {
     @Inject
     SubService subService;
-    boolean postconstructed = false;
+    boolean postconstructed;
 
     @PostConstruct
     public void postconstruct() {
@@ -96,7 +93,7 @@ public class Model_A {
   public static class SubService {
     @Inject
     SubSubService subSubService;
-    boolean postconstructed = false;
+    boolean postconstructed;
 
     public String work(final String txt) {
       return subSubService.work(txt);

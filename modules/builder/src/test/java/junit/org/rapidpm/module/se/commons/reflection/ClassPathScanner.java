@@ -22,9 +22,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 
-/**
- * Created by Sven Ruppert on 06.12.2014.
- */
 public class ClassPathScanner {
 
   public List<String> scannForClasses() {

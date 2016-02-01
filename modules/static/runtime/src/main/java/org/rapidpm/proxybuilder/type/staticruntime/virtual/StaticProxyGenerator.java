@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public class StaticProxyGenerator {
 
   private static final WeakHashMap CACHE = new WeakHashMap();

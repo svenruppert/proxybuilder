@@ -1,3 +1,22 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package junit.org.rapidpm.proxybuilder.type.dynamic.virtual;
 
 import org.junit.Assert;
@@ -6,29 +25,8 @@ import org.rapidpm.proxybuilder.type.dymamic.DynamicProxyBuilder;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 
 
-/**
- * Created by svenruppert on 10.11.15.
- */
 public class DynamicVirtualproxyTest001 {
 
-
-  public static class MyException extends Exception {
-
-  }
-
-  public interface Service {
-    String doWork() throws MyException;
-  }
-
-  public static class MyService implements Service {
-    @Override
-    public String doWork() throws MyException {
-
-      System.out.println("MyService = " + true);
-
-      throw new MyException();
-    }
-  }
 
   @Test(expected = MyException.class)
   public void test001() throws Exception {
@@ -66,6 +64,7 @@ public class DynamicVirtualproxyTest001 {
 
     work(service);
   }
+
   @Test(expected = MyException.class)
   public void test004() throws Exception {
     final Service service = DynamicProxyBuilder
@@ -89,6 +88,24 @@ public class DynamicVirtualproxyTest001 {
         .build();
 
     work(service);
+  }
+
+  public interface Service {
+    String doWork() throws MyException;
+  }
+
+  public static class MyException extends Exception {
+
+  }
+
+  public static class MyService implements Service {
+    @Override
+    public String doWork() throws MyException {
+
+      System.out.println("MyService = " + true);
+
+      throw new MyException();
+    }
   }
 
 }

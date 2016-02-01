@@ -17,21 +17,19 @@
 package org.rapidpm.proxybuilder.type.dymamic.virtual;
 
 
-
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.creationstrategy.*;
 
 import java.lang.reflect.Proxy;
 
 import static org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy.NONE;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public class DynamicProxyGenerator<I, C extends I> {
 
   private Class<I> subject; // Interface
   private CreationStrategy creationStrategy; // StrategyFactory Selector
-  private VirtualDynamicProxyInvocationHandler.ServiceFactory<C> serviceFactory;
+  private ServiceFactory<C> serviceFactory;
 
   private DynamicProxyGenerator() {
   }
@@ -62,8 +60,8 @@ public class DynamicProxyGenerator<I, C extends I> {
     return subject.cast(newProxyInstance);
   }
 
-  private VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory<C> createStrategyFactory() {
-    VirtualDynamicProxyInvocationHandler.ServiceStrategyFactory<C> serviceStrategyFactory;
+  private ServiceStrategyFactory<C> createStrategyFactory() {
+    ServiceStrategyFactory<C> serviceStrategyFactory;
     switch (creationStrategy) {
       case NONE:
         serviceStrategyFactory = new ServiceStrategyFactoryNotThreadSafe<>();
@@ -89,7 +87,7 @@ public class DynamicProxyGenerator<I, C extends I> {
   public static final class Builder<I, C extends I> {
     private Class<I> subject;
     private CreationStrategy creationStrategy = NONE;
-    private VirtualDynamicProxyInvocationHandler.ServiceFactory<C> serviceFactory;
+    private ServiceFactory<C> serviceFactory;
 
     private Builder() {
     }
@@ -104,7 +102,7 @@ public class DynamicProxyGenerator<I, C extends I> {
       return this;
     }
 
-    public Builder<I, C> withServiceFactory(final VirtualDynamicProxyInvocationHandler.ServiceFactory<C> serviceFactory) {
+    public Builder<I, C> withServiceFactory(final ServiceFactory<C> serviceFactory) {
       this.serviceFactory = serviceFactory;
       return this;
     }

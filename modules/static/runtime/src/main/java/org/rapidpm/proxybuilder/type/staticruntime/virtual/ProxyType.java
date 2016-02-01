@@ -16,9 +16,6 @@
 
 package org.rapidpm.proxybuilder.type.staticruntime.virtual;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public enum ProxyType {
   STATIC, OnExistingObject
 }

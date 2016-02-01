@@ -18,9 +18,6 @@ package org.rapidpm.proxybuilder.type.staticruntime.virtual;
 
 import java.io.PrintWriter;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 class VirtualProxySourceGeneratorSomeDuplicates
     extends VirtualProxySourceGenerator {
   public VirtualProxySourceGeneratorSomeDuplicates(

@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * Created by Sven Ruppert
+ * Created by RapidPM - Team
  */
 public class MethodIdentifier {
   private final String name;

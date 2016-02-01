@@ -20,9 +20,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-/**
- * Created by Sven Ruppert on 07.12.2014.
- */
 public class PackageClassLoaderTest {
 
 

@@ -23,9 +23,6 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public class VirtualDynamicProxyInvocationHandler<I, C extends I> implements InvocationHandler {
 
   private ServiceFactory<C> serviceFactory;

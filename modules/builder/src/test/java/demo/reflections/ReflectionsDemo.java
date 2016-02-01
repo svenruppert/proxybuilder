@@ -26,9 +26,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Set;
 
-/**
- * Created by Sven Ruppert on 07.12.2014.
- */
 public class ReflectionsDemo {
 
 

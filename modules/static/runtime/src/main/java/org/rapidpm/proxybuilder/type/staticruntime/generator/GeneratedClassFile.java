@@ -21,9 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
-/**
- * Created by Sven Ruppert on 06.01.14.
- */
 public class GeneratedClassFile extends SimpleJavaFileObject {
   private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 

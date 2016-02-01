@@ -16,9 +16,6 @@
 
 package org.rapidpm.proxybuilder.type.staticruntime.virtual;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public enum CreationStrategy {
   NONE, SOME_DUPLICATES, NO_DUPLICATES, OnExistingObject, METHOD_SCOPED
 }

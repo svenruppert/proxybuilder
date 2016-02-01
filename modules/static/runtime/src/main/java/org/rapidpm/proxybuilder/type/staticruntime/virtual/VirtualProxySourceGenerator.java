@@ -21,16 +21,13 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-/**
- * Created by Sven Ruppert on 14.01.14.
- */
 public abstract class VirtualProxySourceGenerator {
 
   protected final Class subject;
   protected final Class realSubject;
   private final String proxy;
+  private final CreationStrategy type;
   private CharSequence charSequence;
-  private CreationStrategy type;
 
   public VirtualProxySourceGenerator(Class subject, Class realSubject, CreationStrategy type) {
     this.subject = subject;

@@ -16,8 +16,5 @@
 
 package junit.org.rapidpm.module.se.commons.reflection.test001.a;
 
-/**
- * Created by Sven Ruppert on 07.12.2014.
- */
 public class KlasseA {
 }
