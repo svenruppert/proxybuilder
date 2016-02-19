@@ -17,9 +17,21 @@
  * under the License.
  */
 
-package org.rapidpm.proxybuilder.core.proxy.virtual;
+package org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy;
 
-@FunctionalInterface
-public interface InstanceFactory<T> {
-  T createInstance();
+
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceFactory;
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceStrategyFactory;
+
+public class SynchronizedStrategyFactory<T> implements InstanceStrategyFactory<T> {
+
+  private T delegator;
+
+  @Override
+  public synchronized T realSubject(final InstanceFactory<T> instanceFactory) {
+    if (delegator == null) {
+      delegator = instanceFactory.createInstance();
+    }
+    return delegator;
+  }
 }

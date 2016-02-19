@@ -22,11 +22,11 @@ package org.rapidpm.proxybuilder.staticgenerated.processors;
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.CodeBlock.Builder;
 import org.jetbrains.annotations.NotNull;
-import org.rapidpm.proxybuilder.core.proxy.virtual.InstanceFactory;
-import org.rapidpm.proxybuilder.core.proxy.virtual.InstanceStrategyFactory;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsGeneratedProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsVirtualProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.StaticVirtualProxy;
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceFactory;
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceStrategyFactory;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ExecutableElement;
@@ -39,6 +39,11 @@ public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   public static final String INSTANCE_STRATEGYFACTORY_FIELD_NAME = "instanceStrategyFactory";
   public static final String INSTANCE_FACTORY_FIELD_NAME = "instanceFactory";
+
+  @Override
+  public Class<StaticVirtualProxy> responsibleFor() {
+    return StaticVirtualProxy.class;
+  }
 
   @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
@@ -54,7 +59,6 @@ public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnot
         .addModifiers(Modifier.PRIVATE)
         .build();
     typeSpecBuilderForTargetClass.addField(instanceStrategyFactoryFieldSpec);
-
 
     // add InstanceFactory field
     final ClassName instanceFactoryClassName = ClassName.get(InstanceFactory.class);
@@ -89,11 +93,6 @@ public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnot
   @NotNull
   private String createMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return INSTANCE_STRATEGYFACTORY_FIELD_NAME + ".realSubject(" + INSTANCE_FACTORY_FIELD_NAME + ")." + delegatorMethodCall(methodElement, methodName2Delegate);
-  }
-
-  @Override
-  public Class<StaticVirtualProxy> responsibleFor() {
-    return StaticVirtualProxy.class;
   }
 
 

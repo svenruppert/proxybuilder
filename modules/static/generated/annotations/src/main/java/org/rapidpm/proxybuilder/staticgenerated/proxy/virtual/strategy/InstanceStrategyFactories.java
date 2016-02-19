@@ -17,21 +17,11 @@
  * under the License.
  */
 
-package org.rapidpm.proxybuilder.staticgenerated.annotations;
+package org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy;
 
-import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy.InstanceStrategyFactories;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import static org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy.InstanceStrategyFactories.NOT_THREAD_SAVE;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface StaticVirtualProxy {
-  InstanceStrategyFactories strategy() default NOT_THREAD_SAVE;
-
-
+public enum InstanceStrategyFactories {
+  NOT_THREAD_SAVE,
+  SNYCHRONIZED,
+  REENTRANT_RW_LOCK,
+  COMPARE_AND_SWAP
 }

@@ -17,9 +17,12 @@
  * under the License.
  */
 
-package org.rapidpm.proxybuilder.core.proxy.virtual;
+package junit.org.rapidpm.proxybuilder.staticgenerated.processors.v005;
 
-@FunctionalInterface
-public interface InstanceStrategyFactory<T> {
-  T realSubject(final InstanceFactory<T> instanceFactory);
+import org.rapidpm.proxybuilder.staticgenerated.annotations.StaticMetricsProxy;
+
+@StaticMetricsProxy
+public interface BaseInterface {
+
+  String doWork(String str);
 }

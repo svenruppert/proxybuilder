@@ -17,21 +17,18 @@
  * under the License.
  */
 
-package org.rapidpm.proxybuilder.staticgenerated.annotations;
-
-import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy.InstanceStrategyFactories;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import static org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy.InstanceStrategyFactories.NOT_THREAD_SAVE;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface StaticVirtualProxy {
-  InstanceStrategyFactories strategy() default NOT_THREAD_SAVE;
+package org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.strategy;
 
 
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceFactory;
+import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceStrategyFactory;
+
+public class ReentrantRWLockStrategyFactory<T> implements InstanceStrategyFactory<T> {
+
+  private final T delegator;
+
+  @Override
+  public T realSubject(final InstanceFactory<T> instanceFactory) {
+    throw new RuntimeException("not yet implemented");
+  }
 }
