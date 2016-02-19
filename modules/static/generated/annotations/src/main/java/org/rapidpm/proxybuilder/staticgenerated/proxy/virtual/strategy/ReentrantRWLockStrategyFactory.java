@@ -25,7 +25,7 @@ import org.rapidpm.proxybuilder.staticgenerated.proxy.virtual.InstanceStrategyFa
 
 public class ReentrantRWLockStrategyFactory<T> implements InstanceStrategyFactory<T> {
 
-  private final T delegator;
+  private T delegator;
 
   @Override
   public T realSubject(final InstanceFactory<T> instanceFactory) {
