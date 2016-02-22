@@ -176,7 +176,7 @@ public class DynamicProxyBuilder<I, T extends I> {
     return this;
   }
 
-  public DynamicProxyBuilder<I, T> addIPostAction(PreAction<I> postAction) {
+  public DynamicProxyBuilder<I, T> addIPostAction(PostAction<I> postAction) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
