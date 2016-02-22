@@ -43,6 +43,8 @@ import javax.lang.model.type.TypeMirror;
  */
 public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticMetricsProxy> {
 
+  public static final String WITH_DELEGATOR = "withDelegator";
+
   @Override
   public Class<StaticMetricsProxy> responsibleFor() {
     return StaticMetricsProxy.class;
@@ -59,7 +61,8 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
     typeSpecBuilderForTargetClass.addField(defineSimpleClassNameField(typeElement));
 
     typeSpecBuilderForTargetClass
-        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
+//        .addMethod(MethodSpec.methodBuilder("with" + typeElement.getSimpleName())
+        .addMethod(MethodSpec.methodBuilder(WITH_DELEGATOR)
             .addModifiers(Modifier.PUBLIC)
             .addParameter(targetTypeName, DELEGATOR_FIELD_NAME, Modifier.FINAL)
             .addCode(CodeBlock.builder()
