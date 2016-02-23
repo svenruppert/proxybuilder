@@ -44,6 +44,9 @@ import static java.util.stream.Collectors.toList;
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
 
 
+  public static final String METHOD_NAME_FINALIZE = "finalize";
+  public static final String METHOD_NAME_HASH_CODE = "hashCode";
+  public static final String METHOD_NAME_EQUALS = "equals";
   protected static final String CLASS_NAME = "CLASS_NAME";
   protected static final String DELEGATOR_FIELD_NAME = "delegator";
   private final Set<MethodIdentifier> executableElementSet = new HashSet<>();
@@ -87,7 +90,8 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           addClassLevelSpecs(typeElement, roundEnv);
           System.out.println(" ============================================================ ");
           executableElementSet.clear();
-          defineMetricsMethods(typeElement, forTargetClass);
+          defineNewGeneratedMethod(typeElement, forTargetClass);
+
           executableElementSet.clear();
           System.out.println(" ============================================================ ");
 
@@ -100,53 +104,85 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
   public abstract Class<T> responsibleFor();
 
-  private void defineMetricsMethods(final TypeElement typeElement, final Builder forTargetClass) {
-    System.out.println("defineMetricsMethods.typeElement = " + typeElement.getQualifiedName().toString());
+  private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
+    System.out.println("defineNewGeneratedMethod.typeElement = " + typeElement.getQualifiedName().toString());
 
     if (typeElement == null) {
       //loggen
     } else {
+
+//      final Map<Boolean, List<ExecutableElement>> nativeNoneNativeMethodMap = typeElement
       typeElement
           .getEnclosedElements()
           .stream()
           .filter(e -> e.getKind() == ElementKind.METHOD)
           .map(methodElement -> (ExecutableElement) methodElement) //cast only
-//          .filter(methodElement -> {
-//            final Set<Modifier> modifiers = methodElement.getModifiers();
-//            return modifiers.contains(Modifier.PUBLIC) || modifiers.contains(Modifier.PROTECTED);
-//            return modifiers.contains(Modifier.PUBLIC);
-//          })
           .filter(methodElement -> methodElement.getModifiers().contains(Modifier.PUBLIC))
           .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
-          .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.NATIVE))
-          .filter(methodElement -> !methodElement.getSimpleName().toString().equals("finalize"))
+          .filter(methodElement -> !methodElement.getSimpleName().toString().equals(METHOD_NAME_FINALIZE))
           .filter(methodElement -> !executableElementSet.contains(new MethodIdentifier(methodElement)))
-          .forEach(methodElement -> {
-            executableElementSet.add(new MethodIdentifier(methodElement));
-            final String methodName2Delegate = methodElement.getSimpleName().toString();
-            System.out.println("methodName2Delegate = " + methodName2Delegate);
-            final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
+          .forEach(
+              methodElement -> {
+                executableElementSet.add(new MethodIdentifier(methodElement));
+                final String methodName2Delegate = methodElement.getSimpleName().toString();
+                final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
+                final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
+                forTargetClass.addMethod(delegatedMethodSpec);
+              }
+          );
 
-            final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
+//      .collect(Collectors.groupingBy(methodElement -> methodElement.getModifiers().contains(Modifier.NATIVE)));
 
-            forTargetClass.addMethod(delegatedMethodSpec);
-          });
+//      Optional - multipleMaps(MapStep... steps)
+//      filter
 
+      // NOW work on NON-native Methods
+//      if (nativeNoneNativeMethodMap.get(false) != null)
+//        nativeNoneNativeMethodMap
+//            .get(false)
+//            .forEach(
+//                methodElement -> {
+//                  executableElementSet.add(new MethodIdentifier(methodElement));
+//                  final String methodName2Delegate = methodElement.getSimpleName().toString();
+//                  System.out.println("methodName2Delegate non-native = " + methodName2Delegate);
+//                  final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
+//
+//                  final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
+//
+//                  forTargetClass.addMethod(delegatedMethodSpec);
+//                }
+//            );
+//
+//      // NOW work on native Methods
+//      if (nativeNoneNativeMethodMap.get(true) != null)
+//        nativeNoneNativeMethodMap
+//            .get(true)
+//            .forEach(methodElement -> {
+//              executableElementSet.add(new MethodIdentifier(methodElement));
+//              final String methodName2Delegate = methodElement.getSimpleName().toString();
+//              System.out.println("methodName2Delegate native = " + methodName2Delegate);
+//              final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
+//              final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
+//              forTargetClass.addMethod(delegatedMethodSpec);
+//            });
+
+      // work on Parent class
       final TypeMirror superclass = typeElement.getSuperclass();
       if (superclass != null && !"none".equals(superclass.toString())) {
         final TypeElement typeElement1 = (TypeElement) typeUtils.asElement(superclass);
-        defineMetricsMethods(typeElement1, forTargetClass);
+        defineNewGeneratedMethod(typeElement1, forTargetClass);
       }
 
+      // work on Interfaces
       typeElement.getInterfaces()
           .stream()
-          .forEach(t -> defineMetricsMethods((TypeElement) typeUtils.asElement(t), forTargetClass));
+          .forEach(t -> defineNewGeneratedMethod((TypeElement) typeUtils.asElement(t), forTargetClass));
 
     }
 
   }
 
-  protected Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName type2inherit) {
+  private Builder createTypeSpecBuilderForTargetClass(final TypeElement typeElement, final TypeName type2inherit) {
     if (typeSpecBuilderForTargetClass == null) {
       if (typeElement.getKind() == ElementKind.INTERFACE) {
         typeSpecBuilderForTargetClass = TypeSpec
@@ -160,8 +196,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       } else {
         throw new RuntimeException("alles doof");
       }
-//      typeElement.getModifiers().forEach(m -> typeSpecBuilderForTargetClass.addModifiers(m)
-//      );
       typeElement.getModifiers()
           .stream()
           .filter(m -> !m.equals(Modifier.ABSTRACT))
@@ -178,8 +212,9 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate);
 
   protected MethodSpec defineDelegatorMethod(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
-    final Set<Modifier> reducedMethodModifiers = new HashSet<>(methodElement.getModifiers());
+    final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
+    reducedMethodModifiers.remove(Modifier.NATIVE);
 
     return MethodSpec.methodBuilder(methodName2Delegate)
         .addModifiers(reducedMethodModifiers)
@@ -276,15 +311,15 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
   }
 
-  protected String className(final Element typeElement) {
+  private String className(final Element typeElement) {
     return typeElement.getSimpleName().toString();
   }
 
-  public String delegatorStatementWithReturn(final ExecutableElement methodElement, final String methodName2Delegate) {
+  protected String delegatorStatementWithReturn(final ExecutableElement methodElement, final String methodName2Delegate) {
     return "return " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate);
   }
 
-  public String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
+  protected String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return methodName2Delegate + "(" +
         Joiner.on(", ")
             .skipNulls()
@@ -295,7 +330,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         ")";
   }
 
-  public List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
+  protected List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
     return methodElement
         .getParameters()
         .stream()
@@ -311,6 +346,17 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   private static class MethodIdentifier {
     private final String name;
     private final TypeName[] parameters;
+
+    public MethodIdentifier(final String name) {
+      this.name = name;
+      parameters = new TypeName[0];
+    }
+
+    public MethodIdentifier(final String name, TypeName... typeNames) {
+      this.name = name;
+      parameters = new TypeName[typeNames.length];
+      System.arraycopy(typeNames, 0, parameters, 0, parameters.length);
+    }
 
 
     public MethodIdentifier(final ExecutableElement methodElement) {

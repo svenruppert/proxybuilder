@@ -70,7 +70,6 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
                 .addStatement("return this").build())
             .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
             .build());
-
   }
 
   @Override
