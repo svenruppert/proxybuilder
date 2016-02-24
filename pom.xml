@@ -27,7 +27,7 @@
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.7</version>
 
   <packaging>pom</packaging>
   <modules>
