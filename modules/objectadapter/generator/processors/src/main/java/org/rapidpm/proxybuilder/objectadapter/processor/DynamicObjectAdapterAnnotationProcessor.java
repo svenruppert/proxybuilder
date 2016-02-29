@@ -74,6 +74,11 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
   }
 
   @Override
+  public Class<DynamicObjectAdapterBuilder> responsibleFor() {
+    return DynamicObjectAdapterBuilder.class;
+  }
+
+  @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
 
   }
@@ -81,11 +86,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
   @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
     return null;
-  }
-
-  @Override
-  public Class<DynamicObjectAdapterBuilder> responsibleFor() {
-    return DynamicObjectAdapterBuilder.class;
   }
 
   public void error(Element e, String msg, Object... args) {
@@ -152,13 +152,11 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
         .filter(enclosed -> enclosed.getKind() == ElementKind.METHOD).forEach(enclosed -> {
       final ExecutableElement methodElement = (ExecutableElement) enclosed;
       if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
-        final TypeMirror returnType = methodElement.getReturnType();
-
-        final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-
-        final MethodSpec.Builder methodSpecBuilder = createMethodSpecBuilder(methodElement, returnType, parameterSpecList);
-
-        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
+//        final TypeMirror returnType = methodElement.getReturnType();
+//        final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
+//        final MethodSpec.Builder methodSpecBuilder = createMethodSpecBuilder(methodElement, returnType, parameterSpecList);
+//        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
+        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
         addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
         //nun alle Delegator Methods
 
@@ -182,18 +180,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
     });
   }
 
-
-  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
-    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-        .methodBuilder(methodElement.getSimpleName().toString())
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-        .returns(TypeName.get(returnType));
-
-    parameterSpecs.forEach(methodSpecBuilder::addParameter);
-    return methodSpecBuilder;
-  }
-
-
   private void addBuilderMethodForFunctionalInterface(String pkgName, Builder invocationHandlerBuilder, ExecutableElement methodElement, Optional<TypeSpec> functionalInterfaceSpec) {
     functionalInterfaceSpec.ifPresent(f -> {
       final TypeSpec funcInterfaceSpec = functionalInterfaceSpec.get();
@@ -210,6 +196,16 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
           .build();
       invocationHandlerBuilder.addMethod(adapterMethodSpec);
     });
+  }
+
+  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
+    final MethodSpec.Builder methodSpecBuilder = MethodSpec
+        .methodBuilder(methodElement.getSimpleName().toString())
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .returns(TypeName.get(returnType));
+
+    parameterSpecs.forEach(methodSpecBuilder::addParameter);
+    return methodSpecBuilder;
   }
 
 }

@@ -28,12 +28,15 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import java.util.List;
 import java.util.Optional;
 
 public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAnnotationProcessor<StaticObjectAdapter> {
 
+
+  @Override
+  public Class<StaticObjectAdapter> responsibleFor() {
+    return StaticObjectAdapter.class;
+  }
 
   @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
@@ -60,19 +63,20 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
 
     final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
-    final TypeMirror returnType = methodElement.getReturnType();
-    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-
-    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-        .methodBuilder(methodElement.getSimpleName().toString())
-        .addModifiers(Modifier.PUBLIC)
-        .returns(TypeName.get(returnType));
-
-    parameterSpecList.forEach(methodSpecBuilder::addParameter);
+////    final TypeMirror returnType = methodElement.getReturnType();
+////    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
+//
+////    final MethodSpec.Builder methodSpecBuilder = MethodSpec
+////        .methodBuilder(methodElement.getSimpleName().toString())
+////        .addModifiers(Modifier.PUBLIC)
+////        .returns(TypeName.get(returnType));
+//
+//    parameterSpecList.forEach(methodSpecBuilder::addParameter);
 
     final Builder codeBlockBuilder = CodeBlock.builder();
 
-    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
+//    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
+    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
     functionalInterfaceSpec.ifPresent(f -> {
       final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);
       final ClassName className = ClassName.get(pkgName(typeElement), f.name);
@@ -101,11 +105,6 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
     return codeBlockBuilder
         .addStatement(delegateStatement)
         .build();
-  }
-
-  @Override
-  public Class<StaticObjectAdapter> responsibleFor() {
-    return StaticObjectAdapter.class;
   }
 
 }

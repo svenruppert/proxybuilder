@@ -6,8 +6,6 @@ Here we will describe the ProxyBuilder from [github.com/ProxyBuilder/proxybuilde
 If you want to have an overview of the Proxy-Pattern itself I can recommend
 the following sources.
 
-<iframe src="//de.slideshare.net/slideshow/embed_code/key/qOl1Sz53XkmKTh" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//de.slideshare.net/svenruppert/proxy-deepdive-javaone20151027001" title="JavaOne 2015 Tutorial - Proxy DeepDive" target="_blank">JavaOne 2015 Tutorial - Proxy DeepDive</a> </strong> from <strong><a target="_blank" href="//de.slideshare.net/svenruppert">Sven Ruppert</a></strong> </div>
-
 ## What goal we want to reach?
 This project was born, because I had to work a lot with old hughe projects. The only thing I could relay on, is the pure JDK.
 So I started playing with different DesignPatterns and figured out, that Proxies are one of the most powerfull patterngroup for me.

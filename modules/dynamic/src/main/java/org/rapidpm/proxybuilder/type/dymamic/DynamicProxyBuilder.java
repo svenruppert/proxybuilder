@@ -40,16 +40,25 @@ import java.util.List;
 public class DynamicProxyBuilder<I, T extends I> {
 
   private final List<SecurityRule> securityRules = new ArrayList<>();
-  private T original;
+  private final List<PreAction> preActionList = new ArrayList<>();
+  private final List<PostAction> postActionList = new ArrayList<>();
+
+
   private Class<I> clazz;
+  private Class<I> clazzOrigin;
+  private CreationStrategy creationStrategy;
+  private ServiceFactory serviceFactory;
+  private T original;
+  private boolean metrics;
+
 
   private DynamicProxyBuilder() {
   }
 
   public static <I, T extends I> DynamicProxyBuilder<I, T> createBuilder(Class<I> clazz, T original) {
     final DynamicProxyBuilder<I, T> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    dynamicProxyBuilder.original = original;
     dynamicProxyBuilder.clazz = clazz;
+    dynamicProxyBuilder.original = original;
     return dynamicProxyBuilder;
   }
 
@@ -65,15 +74,9 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   public static <I, T extends I> DynamicProxyBuilder<I, T> createBuilder(Class<I> clazz, Class<T> original, CreationStrategy creationStrategy) {
     final DynamicProxyBuilder<I, T> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    final I proxy = DynamicProxyGenerator.<I, T>newBuilder()
-        .withSubject(clazz)
-        .withCreationStrategy(creationStrategy)
-        .withServiceFactory(new DefaultConstructorServiceFactory<>(original))
-        .build()
-        .make();
-
-    dynamicProxyBuilder.original = (T) proxy;
     dynamicProxyBuilder.clazz = clazz;
+    dynamicProxyBuilder.clazzOrigin = (Class<I>) original;
+    dynamicProxyBuilder.creationStrategy = creationStrategy;
     return dynamicProxyBuilder;
   }
 
@@ -81,14 +84,9 @@ public class DynamicProxyBuilder<I, T extends I> {
                                                             CreationStrategy creationStrategy,
                                                             ServiceFactory<I> serviceFactory) {
     final DynamicProxyBuilder<I, I> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-
-    dynamicProxyBuilder.original = DynamicProxyGenerator.<I, I>newBuilder()
-        .withSubject(clazz)
-        .withCreationStrategy(creationStrategy)
-        .withServiceFactory(serviceFactory)
-        .build()
-        .make();
     dynamicProxyBuilder.clazz = clazz;
+    dynamicProxyBuilder.serviceFactory = serviceFactory;
+    dynamicProxyBuilder.creationStrategy = creationStrategy;
     return dynamicProxyBuilder;
   }
 
@@ -100,28 +98,49 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   //die originalReihenfolge behalten in der die Methoden aufgerufen worden sind.
   public I build() {
+
+    if (original == null) {
+      //virtual
+      this.original = (T) DynamicProxyGenerator.<I, I>newBuilder()
+          .withSubject(clazz)
+          .withCreationStrategy((creationStrategy != null) ? creationStrategy : CreationStrategy.NONE)
+          .withServiceFactory((serviceFactory != null) ? serviceFactory : new DefaultConstructorServiceFactory<>(clazzOrigin))
+//          .withPostActions(postActionList)
+          .build()
+          .make();
+    }
+
+    //post
+    postActionList.forEach(this::buildPostActionProxy);
+
+    //pre
+    Collections.reverse(preActionList);
+    preActionList.forEach(this::buildPreActionProxy);
+
     Collections.reverse(securityRules);
     securityRules.forEach(this::buildAddSecurityRule);
+
+    buildMetricsProxy();
+
     return this.original;
   }
 
-  private DynamicProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
+  private void buildMetricsProxy() {
+    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance().getMetrics();
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final boolean checkRule = rule.checkRule();
-        if (checkRule) {
-//          return method.invoke(original, args);
-          return DynamicProxyBuilder.invoke(original, method, args);
-        } else {
-          return null;
-        }
+        final long start = System.nanoTime();
+        final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
+        final long stop = System.nanoTime();
+        Histogram methodCalls = metrics.histogram(clazz.getName() + "." + method.getName());
+        methodCalls.update((stop - start));
+        return invoke;
       }
     };
     createProxy(invocationHandler);
-    return this;
   }
 
   public static Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
@@ -142,27 +161,37 @@ public class DynamicProxyBuilder<I, T extends I> {
     original = (T) clazz.cast(nextProxy);
   }
 
-  //wo die Metriken ablegen ?
-  public DynamicProxyBuilder<I, T> addMetrics() {
-    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance().getMetrics();
+  private DynamicProxyBuilder<I, T> buildAddSecurityRule(SecurityRule rule) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final long start = System.nanoTime();
-        final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
-        final long stop = System.nanoTime();
-        Histogram methodCalls = metrics.histogram(clazz.getName() + "." + method.getName());
-        methodCalls.update((stop - start));
-        return invoke;
+        final boolean checkRule = rule.checkRule();
+        if (checkRule) {
+          return DynamicProxyBuilder.invoke(original, method, args);
+        } else {
+          return null;
+        }
       }
     };
     createProxy(invocationHandler);
     return this;
   }
 
+  //wo die Metriken ablegen ?
+  public DynamicProxyBuilder<I, T> addMetrics() {
+    this.metrics = true;
+    return this;
+  }
+
   public DynamicProxyBuilder<I, T> addIPreAction(PreAction<I> preAction) {
+    preActionList.add(preAction);
+    //buildPreActionProxy(preAction);
+    return this;
+  }
+
+  private void buildPreActionProxy(final PreAction<I> preAction) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
@@ -173,10 +202,16 @@ public class DynamicProxyBuilder<I, T extends I> {
       }
     };
     createProxy(invocationHandler);
+  }
+
+
+  public DynamicProxyBuilder<I, T> addIPostAction(PostAction<I> postAction) {
+    postActionList.add(postAction);
+    //buildPostActionProxy(postAction);
     return this;
   }
 
-  public DynamicProxyBuilder<I, T> addIPostAction(PostAction<I> postAction) {
+  private void buildPostActionProxy(final PostAction<I> postAction) {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
@@ -188,7 +223,6 @@ public class DynamicProxyBuilder<I, T extends I> {
       }
     };
     createProxy(invocationHandler);
-    return this;
   }
 
   public interface PreAction<T> {

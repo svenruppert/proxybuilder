@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.squareup.javapoet.MethodSpec.methodBuilder;
 import static java.util.stream.Collectors.toList;
 
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
@@ -131,41 +132,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
               }
           );
 
-//      .collect(Collectors.groupingBy(methodElement -> methodElement.getModifiers().contains(Modifier.NATIVE)));
-
-//      Optional - multipleMaps(MapStep... steps)
-//      filter
-
-      // NOW work on NON-native Methods
-//      if (nativeNoneNativeMethodMap.get(false) != null)
-//        nativeNoneNativeMethodMap
-//            .get(false)
-//            .forEach(
-//                methodElement -> {
-//                  executableElementSet.add(new MethodIdentifier(methodElement));
-//                  final String methodName2Delegate = methodElement.getSimpleName().toString();
-//                  System.out.println("methodName2Delegate non-native = " + methodName2Delegate);
-//                  final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
-//
-//                  final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
-//
-//                  forTargetClass.addMethod(delegatedMethodSpec);
-//                }
-//            );
-//
-//      // NOW work on native Methods
-//      if (nativeNoneNativeMethodMap.get(true) != null)
-//        nativeNoneNativeMethodMap
-//            .get(true)
-//            .forEach(methodElement -> {
-//              executableElementSet.add(new MethodIdentifier(methodElement));
-//              final String methodName2Delegate = methodElement.getSimpleName().toString();
-//              System.out.println("methodName2Delegate native = " + methodName2Delegate);
-//              final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
-//              final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
-//              forTargetClass.addMethod(delegatedMethodSpec);
-//            });
-
       // work on Parent class
       final TypeMirror superclass = typeElement.getSuperclass();
       if (superclass != null && !"none".equals(superclass.toString())) {
@@ -216,7 +182,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
     reducedMethodModifiers.remove(Modifier.NATIVE);
 
-    return MethodSpec.methodBuilder(methodName2Delegate)
+    return methodBuilder(methodName2Delegate)
         .addModifiers(reducedMethodModifiers)
         .returns(TypeName.get(methodElement.getReturnType()))
         .addParameters(defineParamsForMethod(methodElement))
@@ -238,7 +204,19 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return responsibleFor().getSimpleName();
   }
 
-  protected Optional<TypeSpec> writeFunctionalInterface(ExecutableElement methodElement, MethodSpec.Builder methodSpecBuilder) {
+  //  protected Optional<TypeSpec> writeFunctionalInterface(final ExecutableElement methodElement, final MethodSpec.Builder methodSpecBuilder) {
+  protected Optional<TypeSpec> writeFunctionalInterface(final ExecutableElement methodElement) {
+
+    final TypeMirror returnType = methodElement.getReturnType();
+    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
+    final MethodSpec.Builder methodSpecBuilder =
+        methodBuilder(methodElement.getSimpleName().toString())
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .returns(TypeName.get(returnType));
+
+    parameterSpecList.forEach(methodSpecBuilder::addParameter);
+
+
     final String methodNameRaw = methodElement.getSimpleName().toString();
     final String firstCharUpper = (methodNameRaw.charAt(0) + "").toUpperCase();
 
@@ -258,6 +236,19 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return writeDefinedClass(packageName, functionalInterfaceTypeSpecBuilder);
   }
 
+  protected List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
+    return methodElement
+        .getParameters()
+        .stream()
+        .map(parameter -> {
+          final Name simpleName = parameter.getSimpleName();
+          final TypeMirror typeMirror = parameter.asType();
+          TypeName typeName = TypeName.get(typeMirror);
+          return ParameterSpec.builder(typeName, simpleName.toString(), Modifier.FINAL).build();
+        })
+        .collect(toList());
+  }
+
   @NotNull
   private AnnotationSpec createAnnotationSpecGenerated() {
     return AnnotationSpec.builder(Generated.class)
@@ -268,6 +259,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
   protected Optional<TypeSpec> writeDefinedClass(String pkgName, Builder typeSpecBuilder) {
+
+    System.out.println("typeSpecBuilder = " + typeSpecBuilder);
+
+
     final TypeSpec typeSpec = typeSpecBuilder.build();
     final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
     final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
@@ -328,19 +323,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
                 .map(v -> v.name)
                 .collect(toList())) +
         ")";
-  }
-
-  protected List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
-    return methodElement
-        .getParameters()
-        .stream()
-        .map(parameter -> {
-          final Name simpleName = parameter.getSimpleName();
-          final TypeMirror typeMirror = parameter.asType();
-          TypeName typeName = TypeName.get(typeMirror);
-          return ParameterSpec.builder(typeName, simpleName.toString(), Modifier.FINAL).build();
-        })
-        .collect(toList());
   }
 
   private static class MethodIdentifier {
