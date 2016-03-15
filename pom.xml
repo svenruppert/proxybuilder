@@ -25,6 +25,7 @@
     <version>3.0.6-SNAPSHOT</version>
   </parent>
 
+
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
   <version>0.1.0-SNAPSHOT</version>
@@ -34,28 +35,19 @@
     <module>modules</module>
   </modules>
 
-
-  <!--
-    There are several build profiles available:
-    - checks: Applies style checks to the source files. (activated by default, activated on release)
-    Additionally, the following reports are configured:
-    - cobertura:cobertura - Computes line coverage for test suite
-    - org.pitest:pitest-maven:mutationCoverage - Runs mutation tests
-  -->
-
   <inceptionYear>2013</inceptionYear>
   <organization>
     <name>RapidPM</name>
     <url>http://www.rapidpm.org</url>
   </organization>
-  <url>https://github.com/RapidPM/proxybuilder</url>
+  <url>http://www.proxybuilder.org</url>
   <name>RapidPM ProxyBuilder</name>
   <description>Builder-Pattern for different types of proxies</description>
 
   <scm>
-    <url>https://github.com/RapidPM/proxybuilder</url>
-    <connection>scm:git:https://github.com/RapidPM/proxybuilder.git</connection>
-    <developerConnection>scm:git:https://github.com/RapidPM/proxybuilder.git</developerConnection>
+    <url>https://github.com/ProxyBuilder/proxybuilder</url>
+    <connection>scm:git:https://github.com/ProxyBuilder/proxybuilder.git</connection>
+    <developerConnection>scm:git:https://github.com/ProxyBuilder/proxybuilder.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <developers>
@@ -70,12 +62,11 @@
   </developers>
   <issueManagement>
     <system>Youtrack</system>
-    <!--<url>https://github.com/RapidPM/proxybuilder/issues</url>-->
     <url>http://rapidpm.myjetbrains.com/youtrack/issues?q=project%3A+ProxyBuilder</url>
   </issueManagement>
   <ciManagement>
-    <system>TravisCI</system>
-    <url>https://travis-ci.org/RapidPM/proxybuilder/</url>
+    <system>TeamCity</system>
+    <url>http://78.47.22.54/project.html?projectId=RapidPM_RapidPMProxyBuilder</url>
   </ciManagement>
   <licenses>
     <license>
@@ -85,7 +76,6 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
-
 
   <dependencies>
     <dependency>
