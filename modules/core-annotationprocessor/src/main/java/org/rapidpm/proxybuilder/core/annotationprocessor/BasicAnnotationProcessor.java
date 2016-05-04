@@ -28,6 +28,7 @@ import javax.annotation.Generated;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -38,6 +39,7 @@ import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.squareup.javapoet.MethodSpec.methodBuilder;
 import static java.util.stream.Collectors.toList;
@@ -59,7 +61,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    Set<String> annotataions = new LinkedHashSet<>();
+    final Set<String> annotataions = new LinkedHashSet<>();
     annotataions.add(responsibleFor().getCanonicalName());
     return annotataions;
   }
@@ -178,13 +180,48 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate);
 
   protected MethodSpec defineDelegatorMethod(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
+    System.out.println("defineDelegatorMethod.methodElement = " + methodElement);
     final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
     reducedMethodModifiers.remove(Modifier.NATIVE);
 
-    return methodBuilder(methodName2Delegate)
+    final MethodSpec.Builder methodBuilder = methodBuilder(methodName2Delegate);
+
+    final TypeMirror returnType = methodElement.getReturnType();
+    if (returnType instanceof DeclaredType) { // <T> or <T extends List>
+      final boolean primitive = returnType.getKind().isPrimitive();
+      if (!primitive && !returnType.toString().equals("void")) {
+        System.out.println("defineDelegatorMethod.returnType " + returnType);
+
+        final String name = TypeName.get(returnType).toString();
+        System.out.println("name = " + name);
+
+        final List<? extends TypeMirror> directSupertypes = typeUtils.directSupertypes(returnType);
+        if (directSupertypes != null && directSupertypes.size() > 1) { // <T extends List>
+          System.out.println("directSupertypes = " + directSupertypes);
+
+          final List<TypeName> typeNames = directSupertypes
+              .stream()
+              .filter((typeMirror) -> !typeMirror.toString().equals("java.lang.Object"))
+              .map(TypeName::get)
+              .collect(Collectors.toList());
+
+          System.out.println("typeNames = " + typeNames);
+          final TypeName typeName = TypeVariableName.get(returnType);
+          methodBuilder.addTypeVariable(
+              TypeVariableName.get(
+                  typeName.toString(),
+                  typeNames.toArray(new TypeName[typeNames.size()])));
+        } else { // <T>
+          final TypeName typeName = TypeVariableName.get(returnType);
+          methodBuilder.addTypeVariable(TypeVariableName.get(typeName.toString()));
+        }
+      }
+    }
+
+    return methodBuilder
         .addModifiers(reducedMethodModifiers)
-        .returns(TypeName.get(methodElement.getReturnType()))
+        .returns(TypeName.get(returnType))
         .addParameters(defineParamsForMethod(methodElement))
         .addExceptions(methodElement
             .getThrownTypes()
