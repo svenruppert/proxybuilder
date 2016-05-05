@@ -29,6 +29,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -188,17 +189,20 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final MethodSpec.Builder methodBuilder = methodBuilder(methodName2Delegate);
 
     final TypeMirror returnType = methodElement.getReturnType();
-    if (returnType instanceof DeclaredType) { // <T> or <T extends List>
-      final boolean primitive = returnType.getKind().isPrimitive();
-      if (!primitive && !returnType.toString().equals("void")) {
+    final TypeKind returnTypeKind = returnType.getKind();
+    final boolean primitive = returnTypeKind.isPrimitive();
+
+    if (!primitive && !returnType.toString().equals("void")) {
+      final boolean isDeclaredType = returnType instanceof DeclaredType;
+      if (!isDeclaredType) { // <T extends List>
         System.out.println("defineDelegatorMethod.returnType " + returnType);
 
         final String name = TypeName.get(returnType).toString();
-        System.out.println("name = " + name);
+        System.out.println("defineDelegatorMethod.name = " + name);
 
         final List<? extends TypeMirror> directSupertypes = typeUtils.directSupertypes(returnType);
         if (directSupertypes != null && directSupertypes.size() > 1) { // <T extends List>
-          System.out.println("directSupertypes = " + directSupertypes);
+          System.out.println("defineDelegatorMethod.directSupertypes = " + directSupertypes);
 
           final List<TypeName> typeNames = directSupertypes
               .stream()
@@ -206,14 +210,19 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
               .map(TypeName::get)
               .collect(Collectors.toList());
 
-          System.out.println("typeNames = " + typeNames);
-          final TypeName typeName = TypeVariableName.get(returnType);
-          methodBuilder.addTypeVariable(
-              TypeVariableName.get(
-                  typeName.toString(),
-                  typeNames.toArray(new TypeName[typeNames.size()])));
+          System.out.println("defineDelegatorMethod.typeNames = " + typeNames);
+          final ElementKind elementKind = typeUtils.asElement(returnType).getKind();
+          if (!elementKind.equals(ElementKind.CLASS) && !elementKind.equals(ElementKind.INTERFACE)) {
+            System.out.println("defineDelegatorMethod.kind (no Class no Interface ) = " + returnTypeKind);
+            final TypeName typeName = TypeVariableName.get(returnType);
+            methodBuilder.addTypeVariable(
+                TypeVariableName.get(
+                    typeName.toString(),
+                    typeNames.toArray(new TypeName[typeNames.size()])));
+          }
         } else { // <T>
           final TypeName typeName = TypeVariableName.get(returnType);
+          System.out.println("defineDelegatorMethod.typeName (else) = " + typeName);
           methodBuilder.addTypeVariable(TypeVariableName.get(typeName.toString()));
         }
       }
