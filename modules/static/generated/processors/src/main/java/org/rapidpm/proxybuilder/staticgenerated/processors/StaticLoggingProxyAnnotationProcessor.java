@@ -1,5 +1,6 @@
 package org.rapidpm.proxybuilder.staticgenerated.processors;
 
+import com.google.common.base.Joiner;
 import com.squareup.javapoet.*;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsGeneratedProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsLoggingProxy;
@@ -10,8 +11,10 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.List;
 
 /**
  * Copyright (C) 2010 RapidPM
@@ -58,15 +61,9 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   }
 
-
   protected FieldSpec defineLoggerField(final TypeElement typeElement) {
-    // import org.slf4j.Logger;
-    // import org.slf4j.LoggerFactory;
-    //private static final Logger logger = LoggerFactory.getLogger(HelloWorld.class);
-
     final ClassName loggingClassName = ClassName.get(pkgName(typeElement), className(typeElement));
     final ClassName loggerClassName = ClassName.get(Logger.class);
-
     return FieldSpec
         .builder(loggerClassName, LOGGER)
         .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
@@ -78,16 +75,26 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
     final TypeMirror returnType = methodElement.getReturnType();
     final CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
+
+    final List<? extends VariableElement> methodElementParameters = methodElement.getParameters();
+
+    codeBlockBuilder
+        .beginControlFlow("if(logger.isInfoEnabled())")
+          .addStatement("logger.info(\""
+              + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
+              + " values - \" + "
+                + Joiner
+                  .on(" + \" - \" + ")
+                  .join(methodElementParameters)
+              + ")")
+        .endControlFlow();
+
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
-          .addStatement("// Aufruf Logger")
-
           .addStatement(DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate));
     } else {
       codeBlockBuilder
-          .addStatement("// Aufruf Logger")
           .addStatement("$T result = " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
-
           .addStatement("return result");
     }
     return codeBlockBuilder.build();
