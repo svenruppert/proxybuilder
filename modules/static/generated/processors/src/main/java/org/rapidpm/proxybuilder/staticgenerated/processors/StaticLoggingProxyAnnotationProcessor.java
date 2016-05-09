@@ -80,14 +80,15 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
     codeBlockBuilder
         .beginControlFlow("if(logger.isInfoEnabled())")
-          .addStatement("logger.info(\""
-              + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
-              + " values - \" + "
-                + Joiner
-                  .on(" + \" - \" + ")
-                  .join(methodElementParameters)
-              + ")")
-        .endControlFlow();
+        .addStatement("logger.info(\""
+            + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
+            + ((methodElementParameters.isEmpty()) ? "\")" :
+                " values - \" + "
+                    + Joiner
+                    .on(" + \" - \" + ")
+                    .join(methodElementParameters)
+                    + ")"))
+                .endControlFlow();
 
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
