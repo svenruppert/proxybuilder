@@ -1,3 +1,4 @@
 org.rapidpm.proxybuilder.staticgenerated.processors.StaticMetricsProxyAnnotationProcessor
+org.rapidpm.proxybuilder.staticgenerated.processors.StaticLoggingProxyAnnotationProcessor
 org.rapidpm.proxybuilder.staticgenerated.processors.StaticVirtualProxyAnnotationProcessor
 

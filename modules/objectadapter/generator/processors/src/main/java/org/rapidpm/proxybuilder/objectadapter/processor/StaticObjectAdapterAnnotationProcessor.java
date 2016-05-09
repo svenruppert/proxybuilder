@@ -107,4 +107,9 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
         .build();
   }
 
+  @Override
+  protected void addStaticImports(final JavaFile.Builder builder) {
+
+  }
+
 }

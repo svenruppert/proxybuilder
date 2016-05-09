@@ -192,7 +192,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final TypeKind returnTypeKind = returnType.getKind();
     final boolean primitive = returnTypeKind.isPrimitive();
 
-    if (!primitive && !returnType.toString().equals("void")) {
+    final boolean isNotPrimitiveAndReturnsNonVoid = !primitive && !returnType.toString().equals("void");
+    final boolean isNotPrimitiveAndReturnsVoid = !primitive && returnType.toString().equals("void");
+
+    if (isNotPrimitiveAndReturnsNonVoid) {
       final boolean isDeclaredType = returnType instanceof DeclaredType;
       if (!isDeclaredType) { // <T extends List>
         System.out.println("defineDelegatorMethod.returnType " + returnType);
@@ -227,6 +230,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         }
       }
     }
+//    else if (isNotPrimitiveAndReturnsVoid) {
+//    } else {
+//      System.out.println("defineDelegatorMethod. return is Primitive = ");
+//    }
 
     return methodBuilder
         .addModifiers(reducedMethodModifiers)
@@ -304,13 +311,24 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .build();
   }
 
+
+
+  protected abstract void addStaticImports(JavaFile.Builder builder);
+
   protected Optional<TypeSpec> writeDefinedClass(String pkgName, Builder typeSpecBuilder) {
 
     System.out.println("typeSpecBuilder = " + typeSpecBuilder);
 
 
     final TypeSpec typeSpec = typeSpecBuilder.build();
-    final JavaFile javaFile = JavaFile.builder(pkgName, typeSpec).skipJavaLangImports(true).build();
+    final JavaFile.Builder javaFileBuilder = JavaFile
+        .builder(pkgName, typeSpec)
+        .skipJavaLangImports(true);
+
+    addStaticImports(javaFileBuilder);
+
+    final JavaFile javaFile = javaFileBuilder.build();
+
     final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
     try {
       JavaFileObject jfo = filer.createSourceFile(className);
@@ -352,7 +370,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return elementUtils.getPackageOf(typeElement).getQualifiedName().toString();
   }
 
-  private String className(final Element typeElement) {
+  protected String className(final Element typeElement) {
     return typeElement.getSimpleName().toString();
   }
 

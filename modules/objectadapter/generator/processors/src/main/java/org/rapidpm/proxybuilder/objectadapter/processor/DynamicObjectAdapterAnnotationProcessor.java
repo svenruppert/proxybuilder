@@ -88,6 +88,11 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
     return null;
   }
 
+  @Override
+  protected void addStaticImports(final JavaFile.Builder builder) {
+
+  }
+
   public void error(Element e, String msg, Object... args) {
     messager.printMessage(Kind.ERROR, String.format(msg, args), e);
   }

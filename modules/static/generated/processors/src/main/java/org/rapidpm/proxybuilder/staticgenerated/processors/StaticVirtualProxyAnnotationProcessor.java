@@ -90,6 +90,11 @@ public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnot
     return codeBlockBuilder.build();
   }
 
+  @Override
+  protected void addStaticImports(final JavaFile.Builder builder) {
+
+  }
+
   @NotNull
   private String createMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return INSTANCE_STRATEGYFACTORY_FIELD_NAME + ".realSubject(" + INSTANCE_FACTORY_FIELD_NAME + ")." + delegatorMethodCall(methodElement, methodName2Delegate);

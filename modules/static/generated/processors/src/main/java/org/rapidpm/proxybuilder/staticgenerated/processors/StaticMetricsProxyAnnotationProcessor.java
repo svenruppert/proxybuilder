@@ -95,6 +95,11 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
     return codeBlockBuilder.build();
   }
 
+  @Override
+  protected void addStaticImports(final JavaFile.Builder builder) {
+
+  }
+
   protected FieldSpec defineMetricsField() {
     final ClassName metricsClassname = ClassName.get(MetricRegistry.class);
     return FieldSpec
