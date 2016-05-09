@@ -6,7 +6,12 @@ public class MyClass {
 
   public MyClass(String name) {
     // Default constructor
+    super();
     this.name = name;
+  }
+
+  protected MyClass(int i) {
+
   }
 
 }

@@ -95,7 +95,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           System.out.println(" ============================================================ ");
           executableElementSet.clear();
           defineNewGeneratedMethod(typeElement, forTargetClass);
-
+          defineGeneratedConstructorMethod(typeElement, forTargetClass);
           executableElementSet.clear();
           System.out.println(" ============================================================ ");
 
@@ -108,6 +108,43 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
   public abstract Class<T> responsibleFor();
 
+
+  private void defineGeneratedConstructorMethod(final TypeElement typeElement, final Builder forTargetClass) {
+    System.out.println("defineGeneratedConstructorMethod.typeElement = " + typeElement.getQualifiedName().toString());
+    // create the constructors
+    typeElement
+        .getEnclosedElements()
+        .stream()
+        .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
+        .map(methodElement -> (ExecutableElement) methodElement) //cast only
+        .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.PRIVATE))
+        .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
+        .filter(methodElement -> !methodElement.isDefault())
+        .filter(methodElement -> !executableElementSet.contains(new MethodIdentifier(methodElement)))
+        .peek(methodElement -> executableElementSet.add(new MethodIdentifier(methodElement)))
+        .forEach(
+            methodElement -> {
+
+
+              final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
+              reducedMethodModifiers.remove(Modifier.ABSTRACT);
+              reducedMethodModifiers.remove(Modifier.NATIVE);
+              final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
+
+              final MethodSpec.Builder constructorBuilder = MethodSpec.constructorBuilder()
+                  .addModifiers(reducedMethodModifiers)
+                  .addParameters(parameterSpecList);
+
+              final String delegatorMethodCall = delegatorMethodCall(methodElement, "super");
+              constructorBuilder.addStatement(delegatorMethodCall);
+
+              final MethodSpec constructorMethodSpec = constructorBuilder.build();
+              forTargetClass.addMethod(constructorMethodSpec);
+            }
+        );
+  }
+
+
   private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
     System.out.println("defineNewGeneratedMethod.typeElement = " + typeElement.getQualifiedName().toString());
 
@@ -115,7 +152,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       //loggen
     } else {
 
-//      final Map<Boolean, List<ExecutableElement>> nativeNoneNativeMethodMap = typeElement
       typeElement
           .getEnclosedElements()
           .stream()
@@ -125,9 +161,9 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
           .filter(methodElement -> !methodElement.getSimpleName().toString().equals(METHOD_NAME_FINALIZE))
           .filter(methodElement -> !executableElementSet.contains(new MethodIdentifier(methodElement)))
+          .peek(methodElement -> executableElementSet.add(new MethodIdentifier(methodElement)))
           .forEach(
               methodElement -> {
-                executableElementSet.add(new MethodIdentifier(methodElement));
                 final String methodName2Delegate = methodElement.getSimpleName().toString();
                 final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
                 final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
@@ -196,6 +232,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final boolean isNotPrimitiveAndReturnsVoid = !primitive && returnType.toString().equals("void");
 
     if (isNotPrimitiveAndReturnsNonVoid) {
+      System.out.println("isNotPrimitiveAndReturnsNonVoid = " + isNotPrimitiveAndReturnsNonVoid);
       final boolean isDeclaredType = returnType instanceof DeclaredType;
       if (!isDeclaredType) { // <T extends List>
         System.out.println("defineDelegatorMethod.returnType " + returnType);
@@ -229,11 +266,12 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           methodBuilder.addTypeVariable(TypeVariableName.get(typeName.toString()));
         }
       }
+    } else if (isNotPrimitiveAndReturnsVoid) {
+      System.out.println("isNotPrimitiveAndReturnsVoid = " + isNotPrimitiveAndReturnsVoid);
+
+    } else {
+      System.out.println("defineDelegatorMethod. return is Primitive = ");
     }
-//    else if (isNotPrimitiveAndReturnsVoid) {
-//    } else {
-//      System.out.println("defineDelegatorMethod. return is Primitive = ");
-//    }
 
     return methodBuilder
         .addModifiers(reducedMethodModifiers)
@@ -310,7 +348,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .addMember("comments", "$S", "www.proxybuilder.org")
         .build();
   }
-
 
 
   protected abstract void addStaticImports(JavaFile.Builder builder);

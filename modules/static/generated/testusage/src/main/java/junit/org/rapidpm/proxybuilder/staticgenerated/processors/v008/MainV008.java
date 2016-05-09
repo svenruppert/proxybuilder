@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 /**
  * Copyright (C) 2010 RapidPM
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,12 +29,7 @@ public class MainV008 {
         = new MyLoggingInterfaceStaticLoggingProxy()
         .withDelegator(new LoggerExample());
 
-
-    final List<Integer> ints = Arrays.asList(1,2,3,4);
-
-    final List<Integer> list = demo.unwrapList(ints, "AEAEA");
-    System.out.println("list = " + list);
-
+    final List<Integer> list = demo.unwrapList(asList(1,2,3,4), "AEAEA");
 
   }
 

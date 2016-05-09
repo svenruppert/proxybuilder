@@ -8,4 +8,8 @@ public class MyChildClass extends MyClass {
   public MyChildClass(String name) {
     super(name);
   }
+
+  protected MyChildClass(final int i) {
+    super(i);
+  }
 }
