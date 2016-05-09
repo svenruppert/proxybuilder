@@ -27,6 +27,7 @@ public interface MyLoggingInterface {
   <T> T unwrap(java.lang.Class<T> iface) throws java.sql.SQLException;
 
   <T extends List> T unwrapList(T type);
+  <T extends List> T unwrapList(T type, String str);
 
 
 //  <X extends List>  void unwrapVoid(java.lang.Class<X> iface) throws java.sql.SQLException;
