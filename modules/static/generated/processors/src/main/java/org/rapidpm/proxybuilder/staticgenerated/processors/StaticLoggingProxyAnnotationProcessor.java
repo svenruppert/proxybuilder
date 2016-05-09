@@ -79,15 +79,13 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
     final List<? extends VariableElement> methodElementParameters = methodElement.getParameters();
 
     codeBlockBuilder
-        .beginControlFlow("if( logger.isInfoEnabled() )")
+        .beginControlFlow("if(logger.isInfoEnabled())")
           .addStatement("logger.info(\""
-
               + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
               + " values - \" + "
                 + Joiner
                   .on(" + \" - \" + ")
                   .join(methodElementParameters)
-
               + ")")
         .endControlFlow();
 
