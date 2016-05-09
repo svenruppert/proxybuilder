@@ -124,8 +124,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .peek(methodElement -> executableElementSet.add(new MethodIdentifier(methodElement)))
         .forEach(
             methodElement -> {
-
-
               final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
               reducedMethodModifiers.remove(Modifier.ABSTRACT);
               reducedMethodModifiers.remove(Modifier.NATIVE);
