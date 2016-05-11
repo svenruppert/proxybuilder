@@ -22,11 +22,14 @@ package org.rapidpm.proxybuilder.type.dymamic;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.base.Joiner;
 import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFactory;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DynamicProxyGenerator;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
@@ -50,6 +53,7 @@ public class DynamicProxyBuilder<I, T extends I> {
   private ServiceFactory serviceFactory;
   private T original;
   private boolean metrics;
+  private boolean logging;
 
 
   private DynamicProxyBuilder() {
@@ -120,7 +124,9 @@ public class DynamicProxyBuilder<I, T extends I> {
     Collections.reverse(securityRules);
     securityRules.forEach(this::buildAddSecurityRule);
 
-    buildMetricsProxy();
+    if (logging) buildLoggingProxy();
+
+    if (metrics) buildMetricsProxy();
 
     return this.original;
   }
@@ -142,6 +148,29 @@ public class DynamicProxyBuilder<I, T extends I> {
     };
     createProxy(invocationHandler);
   }
+
+  private void buildLoggingProxy() {
+    final InvocationHandler invocationHandler = new InvocationHandler() {
+      private final T original = DynamicProxyBuilder.this.original;
+      private final Logger logger = LoggerFactory.getLogger(clazzOrigin);;
+
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        final int length = (args == null) ? 0 : args.length;
+        if (logger.isInfoEnabled()) {
+          logger.info(method.getName() + " (" + ((length == 0) ? ")" :
+              ""
+                  + Joiner
+                  .on(" +  -  + ")
+                  .join(args)
+                  + ")"));
+        }
+        return method.invoke(original, args);
+      }
+    };
+    createProxy(invocationHandler);
+  }
+
 
   public static Object invoke(Object proxy, @Nonnull Method method, Object[] args) throws Throwable {
     try {
@@ -182,6 +211,11 @@ public class DynamicProxyBuilder<I, T extends I> {
   //wo die Metriken ablegen ?
   public DynamicProxyBuilder<I, T> addMetrics() {
     this.metrics = true;
+    return this;
+  }
+
+  public DynamicProxyBuilder<I, T> addLogging() {
+    this.logging = true;
     return this;
   }
 
@@ -228,28 +262,6 @@ public class DynamicProxyBuilder<I, T extends I> {
   public interface PreAction<T> {
     void execute(T original, Method method, Object[] args) throws Throwable;
   }
-
-
-//  public ProxyBuilder<I, T> addLogging() {
-//
-//    final InvocationHandler invocationHandler = new InvocationHandler() {
-//
-//      private final T original = ProxyBuilder.this.original;
-//
-//      @Override
-//      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//        final long start = System.nanoTime();
-//        final Object invoke = method.invoke(original, args);
-//        final long stop = System.nanoTime();
-////        methodCalls.update((stop - start));
-//        return invoke;
-//      }
-//    };
-//
-//
-//    createProxy(invocationHandler);
-//    return this;
-//  }
 
   public interface PostAction<T> {
     void execute(T original, Method method, Object[] args) throws Throwable;

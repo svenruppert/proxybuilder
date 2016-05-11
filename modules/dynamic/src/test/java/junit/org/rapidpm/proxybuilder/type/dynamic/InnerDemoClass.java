@@ -22,7 +22,7 @@ package junit.org.rapidpm.proxybuilder.type.dynamic;
 public class InnerDemoClass implements InnerDemoInterface {
 
   public InnerDemoClass() {
-    System.out.println("InnerDemoClass = init");
+    System.out.println("InnerDemoClass = init " + System.nanoTime());
   }
 
   @Override
