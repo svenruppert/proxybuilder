@@ -409,8 +409,24 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return typeElement.getSimpleName().toString();
   }
 
+
+  protected String defineMethodReferenzePoint(final ExecutableElement methodElement) {
+    // static -> ClassNme non-static DELEGATOR_FIELD_NAME
+    return (methodElement.getModifiers().contains(Modifier.STATIC)) ?
+        targetClassNameSimple((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
+  }
+
+
   protected String delegatorStatementWithReturn(final ExecutableElement methodElement, final String methodName2Delegate) {
-    return "return " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate);
+    return "return " + delegatorStatementWithOutReturn(methodElement, methodName2Delegate);
+  }
+
+  protected String delegatorStatementWithOutReturn(final ExecutableElement methodElement, final String methodName2Delegate) {
+    return defineMethodReferenzePoint(methodElement) + "." + delegatorMethodCall(methodElement, methodName2Delegate);
+  }
+
+  protected String delegatorStatementWithLocalVariableResult(final ExecutableElement methodElement, final String methodName2Delegate) {
+    return "final $T result = " + defineMethodReferenzePoint(methodElement) + "." + delegatorMethodCall(methodElement, methodName2Delegate);
   }
 
   protected String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
@@ -423,6 +439,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
                 .collect(toList())) +
         ")";
   }
+
 
   private static class MethodIdentifier {
     private final String name;

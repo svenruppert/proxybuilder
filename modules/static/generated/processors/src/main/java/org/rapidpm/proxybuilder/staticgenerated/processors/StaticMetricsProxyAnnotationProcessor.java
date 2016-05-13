@@ -76,19 +76,24 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
     final TypeMirror returnType = methodElement.getReturnType();
     final Builder codeBlockBuilder = CodeBlock.builder();
+
+    final String metricsReference = (methodElement.getModifiers().contains(Modifier.STATIC)) ?
+        "RapidPMMetricsRegistry.getInstance().getMetrics()"
+        : "metrics";
+
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
           .addStatement("final long start = System.nanoTime()")
-          .addStatement(DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate))
+          .addStatement(delegatorStatementWithOutReturn(methodElement, methodName2Delegate))
           .addStatement("final long stop = System.nanoTime()")
-          .addStatement("final $T methodCalls = metrics.histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("final $T methodCalls = " + metricsReference + ".histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
           .addStatement("methodCalls.update(stop - start)");
     } else {
       codeBlockBuilder
           .addStatement("final long start = System.nanoTime()")
-          .addStatement("$T result = " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
+          .addStatement(delegatorStatementWithLocalVariableResult(methodElement, methodName2Delegate), returnType)
           .addStatement("final long stop = System.nanoTime()")
-          .addStatement("final $T methodCalls = metrics.histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
+          .addStatement("final $T methodCalls = " + metricsReference + ".histogram(" + CLASS_NAME + " + \".\" + \"" + methodElement.getSimpleName() + "\")", Histogram.class)
           .addStatement("methodCalls.update(stop - start)")
           .addStatement("return result");
     }

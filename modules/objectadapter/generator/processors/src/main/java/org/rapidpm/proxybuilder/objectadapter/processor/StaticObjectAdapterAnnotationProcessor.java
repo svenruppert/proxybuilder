@@ -61,21 +61,9 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
 
   @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
-
     final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
-////    final TypeMirror returnType = methodElement.getReturnType();
-////    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-//
-////    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-////        .methodBuilder(methodElement.getSimpleName().toString())
-////        .addModifiers(Modifier.PUBLIC)
-////        .returns(TypeName.get(returnType));
-//
-//    parameterSpecList.forEach(methodSpecBuilder::addParameter);
-
     final Builder codeBlockBuilder = CodeBlock.builder();
 
-//    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
     final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
     functionalInterfaceSpec.ifPresent(f -> {
       final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);

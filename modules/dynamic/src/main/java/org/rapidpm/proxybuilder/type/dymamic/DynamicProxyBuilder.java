@@ -152,7 +152,7 @@ public class DynamicProxyBuilder<I, T extends I> {
   private void buildLoggingProxy() {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
-      private final Logger logger = LoggerFactory.getLogger(clazzOrigin);;
+      private final Logger logger = LoggerFactory.getLogger((clazzOrigin == null) ? original.getClass() : clazzOrigin);
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

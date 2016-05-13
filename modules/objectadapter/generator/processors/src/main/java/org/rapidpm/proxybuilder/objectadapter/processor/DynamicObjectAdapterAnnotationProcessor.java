@@ -27,7 +27,6 @@ import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.E
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
 import java.util.List;
 import java.util.Optional;
@@ -157,10 +156,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
         .filter(enclosed -> enclosed.getKind() == ElementKind.METHOD).forEach(enclosed -> {
       final ExecutableElement methodElement = (ExecutableElement) enclosed;
       if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
-//        final TypeMirror returnType = methodElement.getReturnType();
-//        final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-//        final MethodSpec.Builder methodSpecBuilder = createMethodSpecBuilder(methodElement, returnType, parameterSpecList);
-//        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement, methodSpecBuilder);
         final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
         addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
         //nun alle Delegator Methods
@@ -203,14 +198,14 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
     });
   }
 
-  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
-    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-        .methodBuilder(methodElement.getSimpleName().toString())
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-        .returns(TypeName.get(returnType));
-
-    parameterSpecs.forEach(methodSpecBuilder::addParameter);
-    return methodSpecBuilder;
-  }
+//  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
+//    final MethodSpec.Builder methodSpecBuilder = MethodSpec
+//        .methodBuilder(methodElement.getSimpleName().toString())
+//        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+//        .returns(TypeName.get(returnType));
+//
+//    parameterSpecs.forEach(methodSpecBuilder::addParameter);
+//    return methodSpecBuilder;
+//  }
 
 }

@@ -83,20 +83,25 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
         .addStatement("logger.info(\""
             + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
             + ((methodElementParameters.isEmpty()) ? "\")" :
-                " values - \" + "
-                    + Joiner
-                    .on(" + \" - \" + ")
-                    .join(methodElementParameters)
-                    + ")"))
-                .endControlFlow();
+            " values - \" + "
+                + Joiner
+                .on(" + \" - \" + ")
+                .join(methodElementParameters)
+                + ")"))
+        .endControlFlow();
 
+//    // static -> ClassNme non-static DELEGATOR_FIELD_NAME
+//    final String methodRefPoint = (methodElement.getModifiers().contains(Modifier.STATIC)) ?
+//        targetClassNameSimple((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
+//
+//
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
-          .addStatement(DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate));
+          .addStatement(delegatorStatementWithOutReturn(methodElement, methodName2Delegate));
+
     } else {
       codeBlockBuilder
-          .addStatement("$T result = " + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate), returnType)
-          .addStatement("return result");
+          .addStatement(delegatorStatementWithReturn(methodElement, methodName2Delegate));
     }
     return codeBlockBuilder.build();
   }
