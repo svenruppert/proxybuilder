@@ -219,6 +219,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
     reducedMethodModifiers.remove(Modifier.NATIVE);
+    reducedMethodModifiers.remove(Modifier.DEFAULT);
 
     final MethodSpec.Builder methodBuilder = methodBuilder(methodName2Delegate);
 
