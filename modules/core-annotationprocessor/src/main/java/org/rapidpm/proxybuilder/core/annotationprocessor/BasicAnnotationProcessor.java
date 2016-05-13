@@ -189,11 +189,11 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     if (typeSpecBuilderForTargetClass == null) {
       if (typeElement.getKind() == ElementKind.INTERFACE) {
         typeSpecBuilderForTargetClass = TypeSpec
-            .classBuilder(targetClassNameSimple(typeElement))
+            .classBuilder(targetClassNameSimpleForGeneratedClass(typeElement))
             .addSuperinterface(type2inherit);
       } else if (typeElement.getKind() == ElementKind.CLASS) {
         typeSpecBuilderForTargetClass = TypeSpec
-            .classBuilder(targetClassNameSimple(typeElement))
+            .classBuilder(targetClassNameSimpleForGeneratedClass(typeElement))
             .superclass(type2inherit);
 //            .addModifiers(Modifier.PUBLIC);
       } else {
@@ -286,8 +286,12 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .build();
   }
 
-  protected String targetClassNameSimple(final TypeElement typeElement) {
+  protected String targetClassNameSimpleForGeneratedClass(final TypeElement typeElement) {
     return ClassName.get(pkgName(typeElement), className(typeElement) + classNamePostFix()).simpleName();
+  }
+
+  protected String targetClassNameSimpleForSourceClass(final TypeElement typeElement) {
+    return ClassName.get(pkgName(typeElement), className(typeElement)).simpleName();
   }
 
   private String classNamePostFix() {
@@ -412,9 +416,17 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
 
   protected String defineMethodReferenzePoint(final ExecutableElement methodElement) {
-    // static -> ClassNme non-static DELEGATOR_FIELD_NAME
-    return (methodElement.getModifiers().contains(Modifier.STATIC)) ?
-        targetClassNameSimple((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
+    System.out.println("defineMethodReferenzePoint.methodElement = " + methodElement);
+    // static -> ClassName non-static DELEGATOR_FIELD_NAME
+    if (methodElement.getModifiers().contains(Modifier.STATIC)) {
+      System.out.println("defineMethodReferenzePoint.isSTATIC");
+      boolean isClass = methodElement.getEnclosingElement().getKind().equals(ElementKind.CLASS);
+
+      System.out.println("defineMethodReferenzePoint.isClass - " + isClass);
+      return targetClassNameSimpleForSourceClass((TypeElement) methodElement.getEnclosingElement());
+    } else {
+      return DELEGATOR_FIELD_NAME;
+    }
   }
 
 

@@ -68,7 +68,7 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
             .addCode(CodeBlock.builder()
                 .addStatement("this." + DELEGATOR_FIELD_NAME + " = " + DELEGATOR_FIELD_NAME)
                 .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
+            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimpleForGeneratedClass(typeElement)))
             .build());
   }
 

@@ -56,7 +56,7 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
             .addCode(CodeBlock.builder()
                 .addStatement("this." + DELEGATOR_FIELD_NAME + " = " + DELEGATOR_FIELD_NAME)
                 .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimple(typeElement)))
+            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimpleForGeneratedClass(typeElement)))
             .build());
 
   }
@@ -92,7 +92,7 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
 //    // static -> ClassNme non-static DELEGATOR_FIELD_NAME
 //    final String methodRefPoint = (methodElement.getModifiers().contains(Modifier.STATIC)) ?
-//        targetClassNameSimple((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
+//        targetClassNameSimpleForGeneratedClass((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
 //
 //
     if (returnType.getKind() == TypeKind.VOID) {
