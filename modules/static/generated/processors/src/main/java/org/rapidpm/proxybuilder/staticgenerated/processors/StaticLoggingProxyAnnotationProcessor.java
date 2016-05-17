@@ -33,7 +33,7 @@ import java.util.List;
 public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticLoggingProxy> {
 
   public static final String WITH_DELEGATOR = "withDelegator";
-  public static final String LOGGER = "logger";
+  public static final String LOGGER = "LOGGER";
 
   @Override
   public Class<StaticLoggingProxy> responsibleFor() {
@@ -79,8 +79,8 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
     final List<? extends VariableElement> methodElementParameters = methodElement.getParameters();
 
     codeBlockBuilder
-        .beginControlFlow("if(logger.isInfoEnabled())")
-        .addStatement("logger.info(\""
+        .beginControlFlow("if (" + LOGGER + ".isInfoEnabled())")
+        .addStatement(LOGGER + ".info(\""
             + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
             + ((methodElementParameters.isEmpty()) ? "\")" :
             " values - \" + "
