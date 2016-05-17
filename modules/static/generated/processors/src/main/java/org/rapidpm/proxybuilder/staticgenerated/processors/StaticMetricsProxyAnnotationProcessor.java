@@ -44,6 +44,8 @@ import javax.lang.model.type.TypeMirror;
 public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticMetricsProxy> {
 
   public static final String WITH_DELEGATOR = "withDelegator";
+  public static final String RAPID_PMMETRICS_REGISTRY = RapidPMMetricsRegistry.class.getSimpleName();
+      ;
 
   @Override
   public Class<StaticMetricsProxy> responsibleFor() {
@@ -78,7 +80,7 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
     final Builder codeBlockBuilder = CodeBlock.builder();
 
     final String metricsReference = (methodElement.getModifiers().contains(Modifier.STATIC)) ?
-        "RapidPMMetricsRegistry.getInstance().getMetrics()"
+        RAPID_PMMETRICS_REGISTRY + ".getInstance().getMetrics()"
         : "metrics";
 
     if (returnType.getKind() == TypeKind.VOID) {
