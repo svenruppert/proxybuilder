@@ -59,6 +59,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected Elements elementUtils;
   protected Types typeUtils;
   protected Builder typeSpecBuilderForTargetClass;
+  protected TypeElement actualProcessedTypeElement;
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
@@ -88,6 +89,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .stream()
         .map(e -> (TypeElement) e)
         .forEach(typeElement -> {
+          actualProcessedTypeElement = typeElement;
           final TypeName interface2Implement = TypeName.get(typeElement.asType());
           final Builder forTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
 

@@ -84,7 +84,7 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
               .addCode(CodeBlock.builder()
                   .addStatement("this." + adapterAttributeName + "=" + adapterAttributeName)
                   .addStatement("return this").build())
-              .returns(ClassName.get(pkgName(typeElement), targetClassNameSimpleForGeneratedClass(typeElement)))
+              .returns(ClassName.get(pkgName(actualProcessedTypeElement), targetClassNameSimpleForGeneratedClass(actualProcessedTypeElement)))
               .build());
     });
 

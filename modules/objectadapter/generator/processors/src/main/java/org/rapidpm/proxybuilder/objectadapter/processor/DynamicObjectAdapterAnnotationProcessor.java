@@ -27,6 +27,7 @@ import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.E
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
 import java.util.List;
 import java.util.Optional;
@@ -40,14 +41,12 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(responsibleFor())) {
-      //Service
-      // Check if an interface has been annotated with @Factory
       if (annotatedElement.getKind() != ElementKind.INTERFACE) {
         error(annotatedElement, "Only interfaces can be annotated with @%s", responsibleFor().getSimpleName());
         return true; // Exit processing
       }
-      // We can cast it, because we know that it of ElementKind.INTERFACE
-      TypeElement typeElement = (TypeElement) annotatedElement;
+      final TypeElement typeElement = (TypeElement) annotatedElement;
+
       final String pkgName = typeElement.getEnclosingElement().toString();
       final ClassName typeElementClassName = ClassName.get(pkgName, typeElement.getSimpleName().toString());
 
@@ -63,6 +62,23 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
       final List<? extends Element> enclosedElements = annotatedElement.getEnclosedElements();
       workEclosedElementsOnThisLevel(typeElement, pkgName, invocationHandlerBuilder, adapterBuilderClassname, adapterBuilderTypeSpecBuilder, enclosedElements);
 
+
+      // work on Parent class
+      final TypeMirror superclass = typeElement.getSuperclass();
+      if (superclass != null && !"none".equals(superclass.toString())) {
+        final TypeElement typeElementSuperClass = (TypeElement) typeUtils.asElement(superclass);
+        workEclosedElementsOnThisLevel(typeElementSuperClass, pkgName, invocationHandlerBuilder, adapterBuilderClassname, adapterBuilderTypeSpecBuilder, typeElementSuperClass.getEnclosedElements());
+      }
+
+      // work on Interfaces
+      typeElement.getInterfaces()
+          .stream()
+          .forEach(t -> {
+            final TypeElement asElement = (TypeElement) typeUtils.asElement(t);
+            workEclosedElementsOnThisLevel(asElement, pkgName, invocationHandlerBuilder, adapterBuilderClassname, adapterBuilderTypeSpecBuilder, asElement.getEnclosedElements());
+          });
+
+
       //write InvocationHandler
       writeDefinedClass(pkgName, invocationHandlerBuilder);
       //write Builder
@@ -72,18 +88,77 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
     return true;
   }
 
+
   @Override
   public Class<DynamicObjectAdapterBuilder> responsibleFor() {
     return DynamicObjectAdapterBuilder.class;
   }
 
+
+//  private Builder invocationHandlerBuilder;
+//  private Builder adapterBuilderTypeSpecBuilder;
+//  private ClassName adapterBuilderClassname;
+
   @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
-
+//    invocationHandlerBuilder = null;
+//    adapterBuilderTypeSpecBuilder = null;
+//    adapterBuilderClassname = null;
+//
+//    if (typeElement.getKind() != ElementKind.INTERFACE) {
+//      error(typeElement, "Only interfaces can be annotated with @%s", responsibleFor().getSimpleName());
+//    } else {
+//      final String pkgName = typeElement.getEnclosingElement().toString();
+//      final ClassName typeElementClassName = ClassName.get(pkgName, typeElement.getSimpleName().toString());
+//
+////      final TypeSpec.Builder invocationHandlerBuilder = createInvocationHandlerTypeSpecBuilder(typeElement);
+//      invocationHandlerBuilder = createTypedTypeSpecBuilder(typeElement, ExtendedInvocationHandler.class, INVOCATION_HANDLER_CLASSNAME_POST_FIX);
+//
+//      adapterBuilderClassname = ClassName.get(pkgName, typeElement.getSimpleName().toString() + BUILDER_CLASSNAME_POST_FIX);
+//      final ClassName invocationHandlerClassname = ClassName.get(pkgName, invocationHandlerBuilder.build().name);
+//      adapterBuilderTypeSpecBuilder = createAdapterBuilderBuilder(typeElement, typeElementClassName, adapterBuilderClassname, invocationHandlerClassname);
+//
+//      //write InvocationHandler
+//      writeDefinedClass(pkgName, invocationHandlerBuilder);
+//      //write Builder
+//      writeDefinedClass(pkgName, adapterBuilderTypeSpecBuilder);
+//    }
   }
 
   @Override
   protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
+//    final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
+//
+//    if (typeElement.getKind() != ElementKind.INTERFACE) {
+//      error(typeElement, "Only interfaces can be annotated with @%s", responsibleFor().getSimpleName());
+//    } else {
+//      if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
+//
+//        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
+//
+//        if (functionalInterfaceSpec.isPresent()) {
+//          addBuilderMethodForFunctionalInterface(pkgName(typeElement), invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
+//          //now : all delegator Methods
+//          final String methodSimpleName = methodElement.getSimpleName().toString();
+//          final String methodimpleNameUpper = methodSimpleName.substring(0, 1).toUpperCase() + methodSimpleName.substring(1);
+//
+//          final ClassName bestGuess = ClassName.get(pkgName(typeElement), functionalInterfaceSpec.get().name);
+//          final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
+//
+//          adapterBuilderTypeSpecBuilder
+//              .addMethod(MethodSpec
+//                  .methodBuilder("with" + methodimpleNameUpper)
+//                  .addModifiers(Modifier.PUBLIC)
+//                  .addParameter(parameterSpec)
+//                  .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
+//                  .addStatement("return this")
+//                  .returns(adapterBuilderClassname)
+//                  .build())
+//              .build();
+//        }
+//      }
+//    }
+//    return CodeBlock.builder().build();
     return null;
   }
 
@@ -153,59 +228,62 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
     //nun alle Delegator Methods
     enclosedElements
         .stream()
-        .filter(enclosed -> enclosed.getKind() == ElementKind.METHOD).forEach(enclosed -> {
-      final ExecutableElement methodElement = (ExecutableElement) enclosed;
-      if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
-        final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
-        addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
-        //nun alle Delegator Methods
+        .filter(enclosed -> enclosed.getKind() == ElementKind.METHOD)
+        .forEach(enclosed -> {
+          final ExecutableElement methodElement = (ExecutableElement) enclosed;
+          if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
+            final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
+            addBuilderMethodForFunctionalInterface(pkgName, invocationHandlerBuilder, methodElement, functionalInterfaceSpec);
+            //nun alle Delegator Methods
 
-        final String methodSimpleName = methodElement.getSimpleName().toString();
-        final String methodimpleNameUpper = methodSimpleName.substring(0, 1).toUpperCase() + methodSimpleName.substring(1);
+            final String methodSimpleName = methodElement.getSimpleName().toString();
+            final String methodimpleNameUpper = methodSimpleName.substring(0, 1).toUpperCase() + methodSimpleName.substring(1);
 
-        final ClassName bestGuess = ClassName.get(pkgName, functionalInterfaceSpec.get().name);
-        final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
+            final ClassName bestGuess = ClassName.get(pkgName, functionalInterfaceSpec.get().name);
+            final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
 
-        adapterBuilderTypeSpecBuilder
-            .addMethod(MethodSpec
-                .methodBuilder("with" + methodimpleNameUpper)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(parameterSpec)
-                .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
-                .addStatement("return this")
-                .returns(adapterBuilderClassname)
-                .build())
-            .build();
-      }
-    });
+            adapterBuilderTypeSpecBuilder
+                .addMethod(MethodSpec
+                    .methodBuilder("with" + methodimpleNameUpper)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(parameterSpec)
+                    .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
+                    .addStatement("return this")
+                    .returns(adapterBuilderClassname)
+                    .build())
+                .build();
+          }
+        });
   }
 
   private void addBuilderMethodForFunctionalInterface(String pkgName, Builder invocationHandlerBuilder, ExecutableElement methodElement, Optional<TypeSpec> functionalInterfaceSpec) {
-    functionalInterfaceSpec.ifPresent(f -> {
-      final TypeSpec funcInterfaceSpec = functionalInterfaceSpec.get();
+    functionalInterfaceSpec
+        .ifPresent(funcInterfaceSpec -> {
+//        .ifPresent(f -> {
+//          final TypeSpec funcInterfaceSpec = functionalInterfaceSpec.get();
 
-      final ClassName bestGuess = ClassName.get(pkgName, funcInterfaceSpec.name);
-      final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
+          final ClassName bestGuess = ClassName.get(pkgName, funcInterfaceSpec.name);
+          final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
 
-      final MethodSpec adapterMethodSpec = MethodSpec
-          .methodBuilder(methodElement.getSimpleName().toString())
-          .addModifiers(Modifier.PUBLIC)
-          .returns(void.class)
-          .addParameter(parameterSpec)
-          .addCode(CodeBlock.builder().addStatement("addAdapter(adapter)").build())
-          .build();
-      invocationHandlerBuilder.addMethod(adapterMethodSpec);
-    });
+          final MethodSpec adapterMethodSpec = MethodSpec
+              .methodBuilder(methodElement.getSimpleName().toString())
+              .addModifiers(Modifier.PUBLIC)
+              .returns(void.class)
+              .addParameter(parameterSpec)
+              .addCode(CodeBlock.builder().addStatement("addAdapter(adapter)").build())
+              .build();
+          invocationHandlerBuilder.addMethod(adapterMethodSpec);
+        });
   }
 
-//  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
-//    final MethodSpec.Builder methodSpecBuilder = MethodSpec
-//        .methodBuilder(methodElement.getSimpleName().toString())
-//        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-//        .returns(TypeName.get(returnType));
-//
-//    parameterSpecs.forEach(methodSpecBuilder::addParameter);
-//    return methodSpecBuilder;
-//  }
+  private MethodSpec.Builder createMethodSpecBuilder(ExecutableElement methodElement, TypeMirror returnType, List<ParameterSpec> parameterSpecs) {
+    final MethodSpec.Builder methodSpecBuilder = MethodSpec
+        .methodBuilder(methodElement.getSimpleName().toString())
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .returns(TypeName.get(returnType));
+
+    parameterSpecs.forEach(methodSpecBuilder::addParameter);
+    return methodSpecBuilder;
+  }
 
 }

@@ -90,11 +90,6 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
                 + ")"))
         .endControlFlow();
 
-//    // static -> ClassNme non-static DELEGATOR_FIELD_NAME
-//    final String methodRefPoint = (methodElement.getModifiers().contains(Modifier.STATIC)) ?
-//        targetClassNameSimpleForGeneratedClass((TypeElement) methodElement.getEnclosingElement()) : DELEGATOR_FIELD_NAME;
-//
-//
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
           .addStatement(delegatorStatementWithOutReturn(methodElement, methodName2Delegate));
