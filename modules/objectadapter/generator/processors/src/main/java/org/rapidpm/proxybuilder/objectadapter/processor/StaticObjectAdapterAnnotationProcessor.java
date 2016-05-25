@@ -28,6 +28,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
 import java.util.Optional;
 
 public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAnnotationProcessor<StaticObjectAdapter> {
@@ -60,35 +61,51 @@ public class StaticObjectAdapterAnnotationProcessor extends BasicObjectAdapterAn
   }
 
   @Override
-  protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
-    final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
+  protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement,
+                                                 final String methodName2Delegate,
+                                                 final TypeElement typeElementTargetClass) {
+//    final TypeElement typeElement = (TypeElement) methodElement.getEnclosingElement();
     final Builder codeBlockBuilder = CodeBlock.builder();
 
-    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(methodElement);
-    functionalInterfaceSpec.ifPresent(f -> {
-      final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);
-      final ClassName className = ClassName.get(pkgName(typeElement), f.name);
-      final FieldSpec adapterAttributFieldSpec = FieldSpec.builder(className, adapterAttributeName, Modifier.PRIVATE).build();
-      typeSpecBuilderForTargetClass.addField(adapterAttributFieldSpec);
+    final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(typeElementTargetClass, methodElement);
 
-      codeBlockBuilder
-          .beginControlFlow("if(" + adapterAttributeName + " != null)")
-          .addStatement("return " + adapterAttributeName + "." + delegatorMethodCall(methodElement, methodName2Delegate))
-          .endControlFlow();
+    functionalInterfaceSpec
+        .ifPresent(f -> {
+          final String adapterAttributeName = f.name.substring(0, 1).toLowerCase() + f.name.substring(1);
+          final ClassName className = ClassName.get(pkgName(typeElementTargetClass), f.name);
+          final FieldSpec adapterAttributFieldSpec = FieldSpec.builder(className, adapterAttributeName, Modifier.PRIVATE).build();
+          typeSpecBuilderForTargetClass.addField(adapterAttributFieldSpec);
 
-      //add method to set adapter
-      typeSpecBuilderForTargetClass
-          .addMethod(MethodSpec.methodBuilder("with" + className.simpleName())
-              .addModifiers(Modifier.PUBLIC)
-              .addParameter(className, adapterAttributeName, Modifier.FINAL)
-              .addCode(CodeBlock.builder()
-                  .addStatement("this." + adapterAttributeName + "=" + adapterAttributeName)
-                  .addStatement("return this").build())
-              .returns(ClassName.get(pkgName(actualProcessedTypeElement), targetClassNameSimpleForGeneratedClass(actualProcessedTypeElement)))
-              .build());
-    });
 
-    final String delegateStatement = delegatorStatementWithReturn(methodElement, methodName2Delegate);
+          final boolean isVoid = methodElement.getReturnType().getKind() == TypeKind.VOID;
+          final String statement = ((isVoid) ? "" : "return ") + adapterAttributeName + "." + delegatorMethodCall(methodElement, methodName2Delegate);
+
+          codeBlockBuilder
+              .beginControlFlow("if(" + adapterAttributeName + " != null)")
+              .addStatement(statement)
+              .endControlFlow();
+
+          //add method to set adapter
+          typeSpecBuilderForTargetClass
+              .addMethod(MethodSpec.methodBuilder("with" + className.simpleName())
+                  .addModifiers(Modifier.PUBLIC)
+                  .addParameter(className, adapterAttributeName, Modifier.FINAL)
+                  .addCode(CodeBlock.builder()
+                      .addStatement("this." + adapterAttributeName + " = " + adapterAttributeName)
+                      .addStatement("return this").build())
+                  .returns(ClassName.get(pkgName(actualProcessedTypeElement), targetClassNameSimpleForGeneratedClass(actualProcessedTypeElement)))
+//                  .returns(ClassName.get(pkgName(actualProcessedTypeElement), targetClassNameSimpleForGeneratedClass(typeElementTargetClass)))
+                  .build());
+        });
+
+    final String delegateStatement;
+
+    if (methodElement.getReturnType().getKind() == TypeKind.VOID) {
+      delegateStatement = delegatorStatementWithOutReturn(methodElement, methodName2Delegate);
+    } else {
+      delegateStatement = delegatorStatementWithReturn(methodElement, methodName2Delegate);
+    }
+
 
     return codeBlockBuilder
         .addStatement(delegateStatement)
