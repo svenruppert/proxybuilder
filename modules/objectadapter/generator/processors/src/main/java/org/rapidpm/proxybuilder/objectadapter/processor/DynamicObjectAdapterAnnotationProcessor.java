@@ -27,7 +27,6 @@ import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.E
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.*;
-import javax.tools.Diagnostic.Kind;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -97,6 +96,8 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
           final TypeElement typeElement = (TypeElement) e;
           actualProcessedTypeElement = typeElement;
           final Builder typeSpecBuilder = createTypedDAOBuilderTypeSpecBuilder(typeElement, ExtendedInvocationHandler.class, INVOCATION_HANDLER_CLASSNAME_POST_FIX);
+//          typeSpecBuilderForTargetClass = typeSpecBuilder;
+          typeSpecBuilderForTargetClass = null;
           return new HolderStep001(typeElement, typeSpecBuilder);
         })
         .map(holderStep01 -> {
@@ -112,20 +113,24 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
         .map(holderStep002 -> {
           Stream
               .concat(
-                  holderStep002.typeElement
-                      .getEnclosedElements().stream(),
+                  Stream.of(holderStep002.typeElement),
                   holderStep002.typeElement
                       .getInterfaces()
                       .stream()
                       .map(i -> typeUtils.asElement(i)))
               .distinct()
-//              .map(e -> (TypeElement) e)
+              .peek(e -> {
+                System.out.println("holderStep002.e = " + e.toString());
+                System.out.println("holderStep002.typeElement = " + holderStep002.typeElement.getSimpleName());
+              })
+              .map(e -> (TypeElement) e)
               .forEach(element -> workEclosedElementsOnThisLevel(
                   holderStep002.typeElement,
                   holderStep002.invocationHandlerTypeSpecBuilder,
                   holderStep002.adapterBuilderClassname,
                   holderStep002.adapterBuilderTypeSpecBuilder,
                   element.getEnclosedElements()));
+          System.out.println("process.holderStep002.adapterBuilderTypeSpecBuilder = " + holderStep002.adapterBuilderTypeSpecBuilder);
           return holderStep002;
         })
         .forEach(holderStep002 -> {
@@ -179,10 +184,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
   @Override
   protected void addStaticImports(final JavaFile.Builder builder) {
 
-  }
-
-  public void error(Element e, String msg, Object... args) {
-    messager.printMessage(Kind.ERROR, String.format(msg, args), e);
   }
 
   private Builder createTypedDAOBuilderTypeSpecBuilder(TypeElement typeElement, Class class2Extend, String classnamePostFix) {
@@ -239,7 +240,8 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
 
   private void workEclosedElementsOnThisLevel(final TypeElement typeElementTargetClass,
                                               final Builder invocationHandlerBuilder,
-                                              final ClassName adapterBuilderClassname, final Builder adapterBuilderTypeSpecBuilder,
+                                              final ClassName adapterBuilderClassname,
+                                              final Builder adapterBuilderTypeSpecBuilder,
                                               final List<? extends Element> enclosedElements) {
     //now all Delegator Methods
     enclosedElements
@@ -247,7 +249,10 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
         .filter(enclosed -> enclosed.getKind() == ElementKind.METHOD)
         .forEach(enclosed -> {
           final ExecutableElement methodElement = (ExecutableElement) enclosed;
-          if (methodElement.getModifiers().contains(Modifier.PUBLIC)) {
+          System.out.println("workEclosedElementsOnThisLevel.methodElement.getSimpleName() = " + methodElement.getSimpleName());
+          final boolean containsPublic = methodElement.getModifiers().contains(Modifier.PUBLIC);
+          System.out.println("workEclosedElementsOnThisLevel.containsPublic = " + containsPublic);
+          if (containsPublic) {
             final Optional<TypeSpec> functionalInterfaceSpec = writeFunctionalInterface(typeElementTargetClass, methodElement);
 
             addBuilderMethodForFunctionalInterface(invocationHandlerBuilder, methodElement, functionalInterfaceSpec, typeElementTargetClass);
@@ -260,21 +265,27 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
 
             final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
 
-            adapterBuilderTypeSpecBuilder
-                .addMethod(MethodSpec
-                    .methodBuilder("with" + methodimpleNameUpper)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(parameterSpec)
-                    .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
-                    .addStatement("return this")
-                    .returns(adapterBuilderClassname)
-                    .build())
+            final MethodSpec methodSpec = MethodSpec
+                .methodBuilder("with" + methodimpleNameUpper)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(parameterSpec)
+                .addStatement("invocationHandler." + methodSimpleName + "(adapter)")
+                .addStatement("return this")
+                .returns(adapterBuilderClassname)
                 .build();
+            adapterBuilderTypeSpecBuilder.addMethod(methodSpec);
+//                .build();
           }
         });
   }
 
-  private void addBuilderMethodForFunctionalInterface(Builder invocationHandlerBuilder, ExecutableElement methodElement, Optional<TypeSpec> functionalInterfaceSpec, final TypeElement typeElementTargetClass) {
+  private void addBuilderMethodForFunctionalInterface(Builder invocationHandlerBuilder,
+                                                      ExecutableElement methodElement,
+                                                      Optional<TypeSpec> functionalInterfaceSpec,
+                                                      final TypeElement typeElementTargetClass) {
+
+    System.out.println("addBuilderMethodForFunctionalInterface.functionalInterfaceSpec = " + functionalInterfaceSpec.isPresent());
+
     functionalInterfaceSpec
         .ifPresent(funcInterfaceSpec -> {
 

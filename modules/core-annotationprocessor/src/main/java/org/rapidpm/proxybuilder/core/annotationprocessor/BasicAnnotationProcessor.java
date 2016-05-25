@@ -147,7 +147,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
 
-//  private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
+  //  private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
   private void defineNewGeneratedMethod(final TypeElement typeElement) {
     System.out.println("defineNewGeneratedMethod.typeElement = " + typeElement.getQualifiedName().toString());
 
@@ -348,9 +348,16 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final Builder functionalInterfaceTypeSpecBuilder = TypeSpec
         .interfaceBuilder(typeElementTargetClass.getSimpleName().toString() + "Method" + finalMethodName)
         .addAnnotation(createAnnotationSpecGenerated())
-        .addAnnotation(FunctionalInterface.class)
+//        .addAnnotation(FunctionalInterface.class)
         .addMethod(methodSpecBuilder.build())
         .addModifiers(Modifier.PUBLIC);
+
+    if (methodNameRaw.equals("hashCode") || methodNameRaw.equals("toString") || methodNameRaw.equals("equals")) {
+      //
+    } else {
+      functionalInterfaceTypeSpecBuilder.addAnnotation(FunctionalInterface.class);
+    }
+
 
     return writeDefinedClass(pkgName(typeElementTargetClass), functionalInterfaceTypeSpecBuilder);
 //    return writeDefinedClass(pkgName(actualProcessedTypeElement), functionalInterfaceTypeSpecBuilder);
@@ -398,6 +405,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
 
     final TypeSpec typeSpec = typeSpecBuilder.build();
+//    System.out.println("writeDefinedClass.typeSpec = " + typeSpec);
     final JavaFile.Builder javaFileBuilder = JavaFile
         .builder(pkgName, typeSpec)
         .skipJavaLangImports(true);
@@ -412,7 +420,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       Writer writer = jfo.openWriter();
       javaFile.writeTo(writer);
       writer.flush();
-      return Optional.of(typeSpec);
+      //return Optional.of(typeSpec);
     } catch (IOException e) {
       e.printStackTrace();
       if (e instanceof FilerException) {
@@ -422,7 +430,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       }
       System.out.println("e = " + e);
     }
-    return Optional.empty();
+    return Optional.of(typeSpec);
   }
 
   protected FieldSpec defineSimpleClassNameField(final TypeElement typeElement) {
