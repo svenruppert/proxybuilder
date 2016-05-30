@@ -76,12 +76,12 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
    * (01) check if interface
    * (02) start defining Builder
    * (03) for every method
-   * (03a) -> create FunctionalInterface and write it
-   * (03b) -> add method to Builder
+   * (03a) - create FunctionalInterface and write it
+   * (03b) - add method to Builder
    * (04) finish defining Builder
    *
-   * @param annotations
-   * @param roundEnv
+   * @param annotations some comment
+   * @param roundEnv some comment
    *
    * @return true - always
    */

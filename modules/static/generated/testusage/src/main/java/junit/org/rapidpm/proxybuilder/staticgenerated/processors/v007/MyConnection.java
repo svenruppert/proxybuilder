@@ -2,10 +2,8 @@ package junit.org.rapidpm.proxybuilder.staticgenerated.processors.v007;
 
 import org.rapidpm.proxybuilder.staticgenerated.annotations.StaticMetricsProxy;
 
-import java.sql.Connection;
 import java.util.List;
 
-import static javafx.scene.input.KeyCode.T;
 
 /**
  * Copyright (C) 2010 RapidPM
@@ -23,11 +21,11 @@ import static javafx.scene.input.KeyCode.T;
  */
 
 
-
 @StaticMetricsProxy
 public interface MyConnection {
 
   <T> T unwrap(java.lang.Class<T> iface) throws java.sql.SQLException;
+
   <T extends List> T unwrapList(T type);
 
 
@@ -39,8 +37,6 @@ public interface MyConnection {
 //      return "";
 //    }
 //  }
-
-
 
 
 }
