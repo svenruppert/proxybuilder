@@ -320,8 +320,8 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final String firstCharUpper = (methodNameRaw.charAt(0) + "").toUpperCase();
     final List<TypeMirror> argumentTypeListFromMethod = extractArgumentTypeListFromMethod(methodElement);
 
-    final String methodNamePostFix = (argumentTypeListFromMethod.isEmpty()) ? "" : "_" +
-        String.join("_", argumentTypeListFromMethod
+    final String methodNamePostFix = (argumentTypeListFromMethod.isEmpty()) ? "" : "" +
+        String.join("", argumentTypeListFromMethod
             .stream()
             .map(t -> {
               String postFix = "";
@@ -339,7 +339,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
                 final String[] split = className.simpleName().split("\\.");
                 postFix = split[split.length - 1];
               }
-              return postFix;
+              return postFix.substring(0, 1).toUpperCase() + postFix.substring(1);
             }).collect(Collectors.toList()));
 
 
@@ -348,7 +348,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final Builder functionalInterfaceTypeSpecBuilder = TypeSpec
         .interfaceBuilder(typeElementTargetClass.getSimpleName().toString() + "Method" + finalMethodName)
         .addAnnotation(createAnnotationSpecGenerated())
-//        .addAnnotation(FunctionalInterface.class)
         .addMethod(methodSpecBuilder.build())
         .addModifiers(Modifier.PUBLIC);
 
@@ -357,10 +356,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     } else {
       functionalInterfaceTypeSpecBuilder.addAnnotation(FunctionalInterface.class);
     }
-
-
     return writeDefinedClass(pkgName(typeElementTargetClass), functionalInterfaceTypeSpecBuilder);
-//    return writeDefinedClass(pkgName(actualProcessedTypeElement), functionalInterfaceTypeSpecBuilder);
   }
 
   //TODO Define as Lambda

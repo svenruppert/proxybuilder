@@ -152,28 +152,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
 
   @Override
   protected void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv) {
-//    invocationHandlerBuilder = null;
-//    adapterBuilderTypeSpecBuilder = null;
-//    adapterBuilderClassname = null;
-//
-//    if (typeElement.getKind() != ElementKind.INTERFACE) {
-//      error(typeElement, "Only interfaces can be annotated with @%s", responsibleFor().getSimpleName());
-//    } else {
-//      final String pkgName = typeElement.getEnclosingElement().toString();
-//      final ClassName typeElementClassName = ClassName.get(pkgName, typeElement.getSimpleName().toString());
-//
-////      final TypeSpec.Builder invocationHandlerBuilder = createInvocationHandlerTypeSpecBuilder(typeElement);
-//      invocationHandlerBuilder = createTypedDAOBuilderTypeSpecBuilder(typeElement, ExtendedInvocationHandler.class, INVOCATION_HANDLER_CLASSNAME_POST_FIX);
-//
-//      adapterBuilderClassname = ClassName.get(pkgName, typeElement.getSimpleName().toString() + BUILDER_CLASSNAME_POST_FIX);
-//      final ClassName invocationHandlerClassname = ClassName.get(pkgName, invocationHandlerBuilder.build().name);
-//      adapterBuilderTypeSpecBuilder = createAdapterBuilderBuilder(typeElement, typeElementClassName, adapterBuilderClassname, invocationHandlerClassname);
-//
-//      //write InvocationHandler
-//      writeDefinedClass(pkgName, invocationHandlerBuilder);
-//      //write Builder
-//      writeDefinedClass(pkgName, adapterBuilderTypeSpecBuilder);
-//    }
   }
 
   @Override
@@ -290,7 +268,6 @@ public class DynamicObjectAdapterAnnotationProcessor extends BasicObjectAdapterA
         .ifPresent(funcInterfaceSpec -> {
 
           final ClassName bestGuess = ClassName.get(pkgName(typeElementTargetClass), funcInterfaceSpec.name);
-//          final ClassName bestGuess = ClassName.get(pkgName(actualProcessedTypeElement), funcInterfaceSpec.name);
           final ParameterSpec parameterSpec = ParameterSpec.builder(bestGuess, "adapter", Modifier.FINAL).build();
 
           final MethodSpec adapterMethodSpec = MethodSpec
