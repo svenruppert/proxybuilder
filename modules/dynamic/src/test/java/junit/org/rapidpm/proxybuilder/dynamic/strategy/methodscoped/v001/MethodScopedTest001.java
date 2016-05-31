@@ -48,7 +48,7 @@ public class MethodScopedTest001 {
   }
 
 
-  public static interface Service {
+  public interface Service {
     String doWork(String txt);
   }
 

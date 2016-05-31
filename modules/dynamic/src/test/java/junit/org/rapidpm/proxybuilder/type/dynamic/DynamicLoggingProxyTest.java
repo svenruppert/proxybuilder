@@ -50,7 +50,7 @@ public class DynamicLoggingProxyTest {
   }
 
 
-  public static interface DemoInterface {
+  public interface DemoInterface {
     String doWork(String txt);
   }
 

@@ -24,6 +24,7 @@ import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 public class ReflectionsDemo {
@@ -33,7 +34,7 @@ public class ReflectionsDemo {
     final FilterBuilder TestModelFilter = new FilterBuilder().include("demo.*.model.*");
 
     final Reflections reflections = new Reflections(new ConfigurationBuilder()
-        .setUrls(Arrays.asList(ClasspathHelper.forClass(ReflectionsDemo.class)))
+        .setUrls(Collections.singletonList(ClasspathHelper.forClass(ReflectionsDemo.class)))
         .filterInputsBy(TestModelFilter)
         .setScanners(
             new SubTypesScanner(false),
