@@ -55,6 +55,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected static final String CLASS_NAME = "CLASS_NAME";
   protected static final String DELEGATOR_FIELD_NAME = "delegator";
   private final Set<MethodIdentifier> executableElementSet = new HashSet<>();
+  private final Set<MethodIdentifier> finalMethodElementSet = new HashSet<>();
   protected Filer filer;
   protected Messager messager;
   protected Elements elementUtils;
@@ -97,9 +98,11 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           addClassLevelSpecs(typeElement, roundEnv);
           System.out.println(" ============================================================ ");
           executableElementSet.clear();
+          finalMethodElementSet.clear();
           defineNewGeneratedMethod(typeElement);
           defineGeneratedConstructorMethod(typeElement, typeSpecBuilderForTargetClass);
           executableElementSet.clear();
+          finalMethodElementSet.clear();
           System.out.println(" ============================================================ ");
 
           writeDefinedClass(pkgName(typeElement), typeSpecBuilderForTargetClass);
@@ -161,7 +164,14 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           .filter(e -> e.getKind() == ElementKind.METHOD)
           .map(methodElement -> (ExecutableElement) methodElement) //cast only
           .filter(methodElement -> methodElement.getModifiers().contains(Modifier.PUBLIC))
-          .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
+          .peek(methodElement -> {
+            final boolean contains = methodElement.getModifiers().contains(Modifier.FINAL);
+            if (contains) {
+              finalMethodElementSet.add(new MethodIdentifier(methodElement));
+            }
+          })
+          .filter(methodElement -> !finalMethodElementSet.contains(new MethodIdentifier(methodElement)))
+//          .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
           .filter(methodElement -> !methodElement.getSimpleName().toString().equals(METHOD_NAME_FINALIZE))
           .filter(methodElement -> !executableElementSet.contains(new MethodIdentifier(methodElement)))
           .peek(methodElement -> executableElementSet.add(new MethodIdentifier(methodElement)))
@@ -183,7 +193,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
       // work on Interfaces
       typeElement.getInterfaces()
-          .stream()
           .forEach(t -> defineNewGeneratedMethod((TypeElement) typeUtils.asElement(t)));
 
     }
