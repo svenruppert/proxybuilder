@@ -1,5 +1,6 @@
 # Welcome to ProxyBuilder
 
+[![](https://build.rapidpm.org/app/rest/builds/buildType:id:RapidPM_Develop_ProxyBuilder_Snapshot/statusIcon)](https://build.rapidpm.org/viewType.html?buildTypeId=RapidPM_Develop_ProxyBuilder_Snapshot&guest=1)
 Here we will describe the ProxyBuilder from [github.com/ProxyBuilder/proxybuilder](https://github.com/ProxyBuilder/proxybuilder)
 
 ## What are Proxies ?
