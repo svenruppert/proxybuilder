@@ -8,9 +8,9 @@ If you want to have an overview of the Proxy-Pattern itself I can recommend
 the following sources.
 
 ## What goal we want to reach?
-This project was born, because I had to work a lot with old hughe projects. The only thing I could relay on, is the pure JDK.
-So I started playing with different DesignPatterns and figured out, that Proxies are one of the most powerfull patterngroup for me.
-During the time I was writing the german Book ***"Dynamic Proxies"*** with [Dr. Heinz Kabutz](http://www.javaspecialists.eu/) I started to write examples. Step by step the examples are more generic and the ***ProxyBuilder*** - project was born. 
+This project was born, because I had to work a lot with old huge projects. The only thing I could rely on, is the pure JDK.
+So I started playing with different DesignPatterns and figured out, that Proxies are one of the most powerful pattern group for me.
+During the time I was writing the german Book ***"Dynamic Proxies"*** with [Dr. Heinz Kabutz](http://www.javaspecialists.eu/) I started to write examples. Step by step the examples got more generic and the ***ProxyBuilder*** - project was born. 
 
 ## Some Examples
 To have an idea what you could do with the ***ProxyBuilder*** I will show here some examples. The more detailed 
