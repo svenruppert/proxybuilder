@@ -81,6 +81,7 @@ public class DynamicProxyBuilderTest {
         .build();
     Assert.assertNotNull(demoLogic);
     demoLogic.doSomething();
+    Assert.assertNull(demoLogic.doSomething());
   }
 
   @Test
@@ -91,7 +92,7 @@ public class DynamicProxyBuilderTest {
         .addSecurityRule(() -> true)
         .build();
     Assert.assertNotNull(demoLogic);
-    demoLogic.doSomething();
+    Assert.assertEquals("doSomething-> DemoLogic", demoLogic.doSomething());
   }
 
   @Test
@@ -102,7 +103,7 @@ public class DynamicProxyBuilderTest {
         .addSecurityRule(() -> false)
         .build();
     Assert.assertNotNull(demoLogic);
-    Assert.assertEquals(demoLogic.doWork(), null);
+    Assert.assertNull(demoLogic.doWork());
   }
 
   @Test
@@ -113,7 +114,7 @@ public class DynamicProxyBuilderTest {
         .addSecurityRule(() -> true)
         .build();
     Assert.assertNotNull(demoLogic);
-    Assert.assertEquals(demoLogic.doWork(), "InnerDemoClass.doWork()");
+    Assert.assertEquals("InnerDemoClass.doWork()", demoLogic.doWork());
   }
 
   @Test
