@@ -19,9 +19,11 @@
 
 package org.rapidpm.proxybuilder.objectadapter.testusage.v001;
 
+import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
 
 @StaticObjectAdapter
+@DynamicObjectAdapterBuilder
 public interface Service {
   String doWork(String txt);
 

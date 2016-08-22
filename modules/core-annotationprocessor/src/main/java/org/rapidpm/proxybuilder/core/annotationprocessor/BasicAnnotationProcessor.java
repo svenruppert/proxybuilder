@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 
 import static com.squareup.javapoet.MethodSpec.methodBuilder;
 import static java.util.stream.Collectors.toList;
+import static javax.lang.model.type.TypeKind.ARRAY;
 
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor {
 
@@ -54,6 +55,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected static final String CLASS_NAME = "CLASS_NAME";
   protected static final String DELEGATOR_FIELD_NAME = "delegator";
   private final Set<MethodIdentifier> executableElementSet = new HashSet<>();
+  private final Set<MethodIdentifier> finalMethodElementSet = new HashSet<>();
   protected Filer filer;
   protected Messager messager;
   protected Elements elementUtils;
@@ -91,18 +93,21 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .forEach(typeElement -> {
           actualProcessedTypeElement = typeElement;
           final TypeName interface2Implement = TypeName.get(typeElement.asType());
-          final Builder forTargetClass = createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
+          createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
 
           addClassLevelSpecs(typeElement, roundEnv);
           System.out.println(" ============================================================ ");
           executableElementSet.clear();
-          defineNewGeneratedMethod(typeElement, forTargetClass);
-          defineGeneratedConstructorMethod(typeElement, forTargetClass);
+          finalMethodElementSet.clear();
+          defineNewGeneratedMethod(typeElement);
+          defineGeneratedConstructorMethod(typeElement, typeSpecBuilderForTargetClass);
           executableElementSet.clear();
+          finalMethodElementSet.clear();
           System.out.println(" ============================================================ ");
 
-          writeDefinedClass(pkgName(typeElement), forTargetClass);
+          writeDefinedClass(pkgName(typeElement), typeSpecBuilderForTargetClass);
           typeSpecBuilderForTargetClass = null;
+          actualProcessedTypeElement = null;
         });
 
     return true;
@@ -145,7 +150,8 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
 
-  private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
+  //  private void defineNewGeneratedMethod(final TypeElement typeElement, final Builder forTargetClass) {
+  private void defineNewGeneratedMethod(final TypeElement typeElement) {
     System.out.println("defineNewGeneratedMethod.typeElement = " + typeElement.getQualifiedName().toString());
 
     if (typeElement == null) {
@@ -158,30 +164,36 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
           .filter(e -> e.getKind() == ElementKind.METHOD)
           .map(methodElement -> (ExecutableElement) methodElement) //cast only
           .filter(methodElement -> methodElement.getModifiers().contains(Modifier.PUBLIC))
-          .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
+          .peek(methodElement -> {
+            final boolean contains = methodElement.getModifiers().contains(Modifier.FINAL);
+            if (contains) {
+              finalMethodElementSet.add(new MethodIdentifier(methodElement));
+            }
+          })
+          .filter(methodElement -> !finalMethodElementSet.contains(new MethodIdentifier(methodElement)))
+//          .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
           .filter(methodElement -> !methodElement.getSimpleName().toString().equals(METHOD_NAME_FINALIZE))
           .filter(methodElement -> !executableElementSet.contains(new MethodIdentifier(methodElement)))
           .peek(methodElement -> executableElementSet.add(new MethodIdentifier(methodElement)))
           .forEach(
               methodElement -> {
                 final String methodName2Delegate = methodElement.getSimpleName().toString();
-                final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate);
+                final CodeBlock codeBlock = defineMethodImplementation(methodElement, methodName2Delegate, actualProcessedTypeElement);
                 final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
-                forTargetClass.addMethod(delegatedMethodSpec);
+                typeSpecBuilderForTargetClass.addMethod(delegatedMethodSpec);
               }
           );
 
       // work on Parent class
       final TypeMirror superclass = typeElement.getSuperclass();
       if (superclass != null && !"none".equals(superclass.toString())) {
-        final TypeElement typeElement1 = (TypeElement) typeUtils.asElement(superclass);
-        defineNewGeneratedMethod(typeElement1, forTargetClass);
+        final TypeElement typeElementSuperClass = (TypeElement) typeUtils.asElement(superclass);
+        defineNewGeneratedMethod(typeElementSuperClass);
       }
 
       // work on Interfaces
       typeElement.getInterfaces()
-          .stream()
-          .forEach(t -> defineNewGeneratedMethod((TypeElement) typeUtils.asElement(t), forTargetClass));
+          .forEach(t -> defineNewGeneratedMethod((TypeElement) typeUtils.asElement(t)));
 
     }
 
@@ -214,10 +226,17 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
   protected abstract void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv);
 
-  protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate);
+  protected abstract CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate, final TypeElement typeElementTargetClass);
 
   protected MethodSpec defineDelegatorMethod(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
     System.out.println("defineDelegatorMethod.methodElement = " + methodElement);
+    final MethodSpec.Builder methodSpecBuilder = defineDelegatorMethodSpec(methodElement, methodName2Delegate, codeBlock);
+
+    return methodSpecBuilder.build();
+  }
+
+  @NotNull
+  protected MethodSpec.Builder defineDelegatorMethodSpec(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
     final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
     reducedMethodModifiers.remove(Modifier.NATIVE);
@@ -274,7 +293,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       System.out.println("defineDelegatorMethod. return is Primitive = ");
     }
 
-    return methodBuilder
+    final MethodSpec.Builder methodSpecBuilder = methodBuilder
         .addModifiers(reducedMethodModifiers)
         .returns(TypeName.get(returnType))
         .addParameters(defineParamsForMethod(methodElement))
@@ -282,10 +301,10 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
             .getThrownTypes()
             .stream()
             .map(TypeName::get)
-            .collect(toList()))
-        .addCode(codeBlock)
-
-        .build();
+            .collect(toList()));
+    if (codeBlock != null)
+      methodSpecBuilder.addCode(codeBlock);
+    return methodSpecBuilder;
   }
 
   protected String targetClassNameSimpleForGeneratedClass(final TypeElement typeElement) {
@@ -300,38 +319,56 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return responsibleFor().getSimpleName();
   }
 
-  //  protected Optional<TypeSpec> writeFunctionalInterface(final ExecutableElement methodElement, final MethodSpec.Builder methodSpecBuilder) {
-  protected Optional<TypeSpec> writeFunctionalInterface(final ExecutableElement methodElement) {
+  protected Optional<TypeSpec> writeFunctionalInterface(final TypeElement typeElementTargetClass,
+                                                        final ExecutableElement methodElement) {
 
-    final TypeMirror returnType = methodElement.getReturnType();
-    final List<ParameterSpec> parameterSpecList = defineParamsForMethod(methodElement);
-    final MethodSpec.Builder methodSpecBuilder =
-        methodBuilder(methodElement.getSimpleName().toString())
-            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-            .returns(TypeName.get(returnType));
-
-    parameterSpecList.forEach(methodSpecBuilder::addParameter);
-
+    final MethodSpec.Builder methodSpecBuilder = defineDelegatorMethodSpec(methodElement, methodElement.getSimpleName().toString(), null);
+    methodSpecBuilder.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
 
     final String methodNameRaw = methodElement.getSimpleName().toString();
     final String firstCharUpper = (methodNameRaw.charAt(0) + "").toUpperCase();
+    final List<TypeMirror> argumentTypeListFromMethod = extractArgumentTypeListFromMethod(methodElement);
 
-    final String finalMethodName = firstCharUpper + methodNameRaw.substring(1);
+    final String methodNamePostFix = (argumentTypeListFromMethod.isEmpty()) ? "" : "" +
+        String.join("", argumentTypeListFromMethod
+            .stream()
+            .map(t -> {
+              String postFix = "";
+              if (t.getKind().isPrimitive()) {
+                final TypeName boxedTypeName = TypeName.get(t).box();
+                final String[] split = boxedTypeName.toString().split("\\.");
+                postFix = split[split.length - 1];
+              } else if (t.getKind().equals(ARRAY)) {
+                final String[] split = t.toString().replace("[]", "Array").split("\\.");
+                postFix = split[split.length - 1];
+              } else {
+                System.out.println("writeFunctionalInterface t = " + t);
+                final Element element = typeUtils.asElement(t);
+                final ClassName className = ClassName.get((TypeElement) element);
+                final String[] split = className.simpleName().split("\\.");
+                postFix = split[split.length - 1];
+              }
+              return postFix.substring(0, 1).toUpperCase() + postFix.substring(1);
+            }).collect(Collectors.toList()));
 
-    final Element typeElement = methodElement.getEnclosingElement();
+
+    final String finalMethodName = firstCharUpper + methodNameRaw.substring(1) + methodNamePostFix;
 
     final Builder functionalInterfaceTypeSpecBuilder = TypeSpec
-        .interfaceBuilder(typeElement.getSimpleName().toString() + "Method" + finalMethodName)
+        .interfaceBuilder(typeElementTargetClass.getSimpleName().toString() + "Method" + finalMethodName)
         .addAnnotation(createAnnotationSpecGenerated())
-        .addAnnotation(FunctionalInterface.class)
         .addMethod(methodSpecBuilder.build())
         .addModifiers(Modifier.PUBLIC);
 
-    final Element enclosingElement = typeElement.getEnclosingElement();
-    final String packageName = enclosingElement.toString();
-    return writeDefinedClass(packageName, functionalInterfaceTypeSpecBuilder);
+    if (methodNameRaw.equals("hashCode") || methodNameRaw.equals("toString") || methodNameRaw.equals("equals")) {
+      //
+    } else {
+      functionalInterfaceTypeSpecBuilder.addAnnotation(FunctionalInterface.class);
+    }
+    return writeDefinedClass(pkgName(typeElementTargetClass), functionalInterfaceTypeSpecBuilder);
   }
 
+  //TODO Define as Lambda
   protected List<ParameterSpec> defineParamsForMethod(final ExecutableElement methodElement) {
     return methodElement
         .getParameters()
@@ -344,6 +381,16 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         })
         .collect(toList());
   }
+
+  //TODO Define as Lambda
+  protected List<TypeMirror> extractArgumentTypeListFromMethod(final ExecutableElement methodElement) {
+    return methodElement
+        .getParameters()
+        .stream()
+        .map(Element::asType)
+        .collect(toList());
+  }
+
 
   @NotNull
   private AnnotationSpec createAnnotationSpecGenerated() {
@@ -363,6 +410,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
 
     final TypeSpec typeSpec = typeSpecBuilder.build();
+//    System.out.println("writeDefinedClass.typeSpec = " + typeSpec);
     final JavaFile.Builder javaFileBuilder = JavaFile
         .builder(pkgName, typeSpec)
         .skipJavaLangImports(true);
@@ -377,7 +425,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       Writer writer = jfo.openWriter();
       javaFile.writeTo(writer);
       writer.flush();
-      return Optional.of(typeSpec);
+      //return Optional.of(typeSpec);
     } catch (IOException e) {
       e.printStackTrace();
       if (e instanceof FilerException) {
@@ -387,7 +435,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
       }
       System.out.println("e = " + e);
     }
-    return Optional.empty();
+    return Optional.of(typeSpec);
   }
 
   protected FieldSpec defineSimpleClassNameField(final TypeElement typeElement) {

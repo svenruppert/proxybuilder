@@ -72,7 +72,7 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
   }
 
   @Override
-  protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate) {
+  protected CodeBlock defineMethodImplementation(final ExecutableElement methodElement, final String methodName2Delegate, final TypeElement typeElementTargetClass) {
     final TypeMirror returnType = methodElement.getReturnType();
     final CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
 

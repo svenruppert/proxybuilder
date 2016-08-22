@@ -19,6 +19,9 @@
 
 package org.rapidpm.proxybuilder.objectadapter.testusage.v001;
 
+import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
+
+@StaticObjectAdapter
 public class ServiceImpl implements Service {
   @Override
   public String doWork(final String txt) {

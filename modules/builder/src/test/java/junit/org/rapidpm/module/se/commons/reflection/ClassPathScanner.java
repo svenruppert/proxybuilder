@@ -25,10 +25,7 @@ import java.util.*;
 public class ClassPathScanner {
 
   public List<String> scannForClasses() {
-    final List<String> result = new ArrayList<>();
-
-
-    return result;
+    return new ArrayList<>();
   }
 
   public ClassLoader[] classLoaders(ClassLoader... classLoaders) {
