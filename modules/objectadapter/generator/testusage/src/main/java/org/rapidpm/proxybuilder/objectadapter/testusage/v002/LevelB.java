@@ -3,9 +3,6 @@ package org.rapidpm.proxybuilder.objectadapter.testusage.v002;
 import org.rapidpm.proxybuilder.objectadapter.annotations.dynamicobjectadapter.DynamicObjectAdapterBuilder;
 import org.rapidpm.proxybuilder.objectadapter.annotations.staticobjectadapter.StaticObjectAdapter;
 
-import javax.jws.soap.SOAPBinding;
-
-import static com.google.common.base.Ascii.SO;
 
 /**
  * Copyright (C) 2010 RapidPM

@@ -19,7 +19,6 @@
 
 package org.rapidpm.proxybuilder.core.annotationprocessor;
 
-import com.google.common.base.Joiner;
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
 import org.jetbrains.annotations.NotNull;
@@ -494,13 +493,15 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
   protected String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return methodName2Delegate + "(" +
-        Joiner.on(", ")
-            .skipNulls()
-            .join(defineParamsForMethod(methodElement)
-                .stream()
-                .map(v -> v.name)
-                .collect(toList())) +
-        ")";
+
+            defineParamsForMethod(methodElement)
+                    .stream()
+                    .map(v -> v.name)
+                    .filter(name -> name != null && !name.isEmpty())
+                    .reduce((name1, name2) -> name1 + ", " + name2)
+                    .orElseGet(String::new)
+            +
+            ")";
   }
 
 
