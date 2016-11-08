@@ -89,12 +89,6 @@
       <!-- case: when no json de/serialization -->
     </dependency>
 
-
-    <!--Reflection Utils-->
-    <!--<dependency>-->
-      <!--<groupId>org.rapidpm</groupId>-->
-      <!--<artifactId>reflections</artifactId>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
