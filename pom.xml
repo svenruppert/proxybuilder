@@ -22,13 +22,13 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
   </parent>
 
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -62,11 +62,11 @@
   </developers>
   <issueManagement>
     <system>Youtrack</system>
-    <url>http://rapidpm.myjetbrains.com/youtrack/issues?q=project%3A+ProxyBuilder</url>
+    <url>https://issues.rapidpm.org/issues?q=project%3A+ProxyBuilder</url>
   </issueManagement>
   <ciManagement>
     <system>TeamCity</system>
-    <url>http://78.47.22.54/project.html?projectId=RapidPM_RapidPMProxyBuilder</url>
+    <url>https://build.rapidpm.org/viewType.html?buildTypeId=RapidPM_Develop_ProxyBuilder_Snapshot</url>
   </ciManagement>
   <licenses>
     <license>
@@ -89,8 +89,6 @@
       <!-- case: when no json de/serialization -->
     </dependency>
 
-
-    <!--Reflection Utils-->
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
@@ -102,12 +100,12 @@
       <optional>true</optional>
       <!-- case: -->
     </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <optional>true</optional>
-      <!-- case: when no xml de/serialization -->
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>dom4j</groupId>-->
+      <!--<artifactId>dom4j</artifactId>-->
+      <!--<optional>true</optional>-->
+      <!--&lt;!&ndash; case: when no xml de/serialization &ndash;&gt;-->
+    <!--</dependency>-->
     <!--Logging-->
   </dependencies>
 

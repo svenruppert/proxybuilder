@@ -1,6 +1,5 @@
 package org.rapidpm.proxybuilder.staticgenerated.processors;
 
-import com.google.common.base.Joiner;
 import com.squareup.javapoet.*;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsGeneratedProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsLoggingProxy;
@@ -15,6 +14,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Copyright (C) 2010 RapidPM
@@ -27,7 +27,7 @@ import java.util.List;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p>
  * Created by RapidPM - Team on 09.05.16.
  */
 public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnotationProcessor<StaticLoggingProxy> {
@@ -50,14 +50,14 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
     typeSpecBuilderForTargetClass.addField(defineLoggerField(typeElement));
 
     typeSpecBuilderForTargetClass
-        .addMethod(MethodSpec.methodBuilder(WITH_DELEGATOR)
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(targetTypeName, DELEGATOR_FIELD_NAME, Modifier.FINAL)
-            .addCode(CodeBlock.builder()
-                .addStatement("this." + DELEGATOR_FIELD_NAME + " = " + DELEGATOR_FIELD_NAME)
-                .addStatement("return this").build())
-            .returns(ClassName.get(pkgName(typeElement), targetClassNameSimpleForGeneratedClass(typeElement)))
-            .build());
+            .addMethod(MethodSpec.methodBuilder(WITH_DELEGATOR)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(targetTypeName, DELEGATOR_FIELD_NAME, Modifier.FINAL)
+                    .addCode(CodeBlock.builder()
+                            .addStatement("this." + DELEGATOR_FIELD_NAME + " = " + DELEGATOR_FIELD_NAME)
+                            .addStatement("return this").build())
+                    .returns(ClassName.get(pkgName(typeElement), targetClassNameSimpleForGeneratedClass(typeElement)))
+                    .build());
 
   }
 
@@ -65,10 +65,10 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
     final ClassName loggingClassName = ClassName.get(pkgName(typeElement), className(typeElement));
     final ClassName loggerClassName = ClassName.get(Logger.class);
     return FieldSpec
-        .builder(loggerClassName, LOGGER)
-        .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-        .initializer("getLogger(" + loggingClassName.simpleName() + ".class)")
-        .build();
+            .builder(loggerClassName, LOGGER)
+            .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+            .initializer("getLogger(" + loggingClassName.simpleName() + ".class)")
+            .build();
   }
 
   @Override
@@ -79,26 +79,36 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
     final List<? extends VariableElement> methodElementParameters = methodElement.getParameters();
 
     codeBlockBuilder
-        .beginControlFlow("if (" + LOGGER + ".isInfoEnabled())")
-        .addStatement(LOGGER + ".info(\""
-            + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
-            + ((methodElementParameters.isEmpty()) ? "\")" :
-            " values - \" + "
-                + Joiner
-                .on(" + \" - \" + ")
-                .join(methodElementParameters)
-                + ")"))
-        .endControlFlow();
+            .beginControlFlow("if (" + LOGGER + ".isInfoEnabled())")
+            .addStatement(LOGGER + ".info(\""
+                    + DELEGATOR_FIELD_NAME + "." + delegatorMethodCall(methodElement, methodName2Delegate)
+                    + ((methodElementParameters.isEmpty()) ? "\")" :
+                    " values - \" + "
+                            + joinString(methodElementParameters)
+                            + ")"))
+            .endControlFlow();
 
     if (returnType.getKind() == TypeKind.VOID) {
       codeBlockBuilder
-          .addStatement(delegatorStatementWithOutReturn(methodElement, methodName2Delegate));
+              .addStatement(delegatorStatementWithOutReturn(methodElement, methodName2Delegate));
 
     } else {
       codeBlockBuilder
-          .addStatement(delegatorStatementWithReturn(methodElement, methodName2Delegate));
+              .addStatement(delegatorStatementWithReturn(methodElement, methodName2Delegate));
     }
     return codeBlockBuilder.build();
+  }
+
+  private String joinString(List<? extends VariableElement> methodElementParameters) {
+    Optional<String> reduce = methodElementParameters.stream()
+            .map(elementUtils -> elementUtils.toString())
+            .reduce((s1, s2) -> s1 + " + \" - \" + " + s2);
+    if (reduce.isPresent()) {
+      return reduce.get();
+    } else {
+      return "";
+    }
+
   }
 
   @Override

@@ -22,7 +22,6 @@ package org.rapidpm.proxybuilder.type.dymamic;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Joiner;
 import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
 import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFactory;
@@ -37,6 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +72,6 @@ public class DynamicProxyBuilder<I, T extends I> {
    * @param creationStrategy
    * @param <I>
    * @param <T>
-   *
    * @return
    */
 
@@ -106,12 +105,12 @@ public class DynamicProxyBuilder<I, T extends I> {
     if (original == null) {
       //virtual
       this.original = (T) DynamicProxyGenerator.<I, I>newBuilder()
-          .withSubject(clazz)
-          .withCreationStrategy((creationStrategy != null) ? creationStrategy : CreationStrategy.NONE)
-          .withServiceFactory((serviceFactory != null) ? serviceFactory : new DefaultConstructorServiceFactory<>(clazzOrigin))
+              .withSubject(clazz)
+              .withCreationStrategy((creationStrategy != null) ? creationStrategy : CreationStrategy.NONE)
+              .withServiceFactory((serviceFactory != null) ? serviceFactory : new DefaultConstructorServiceFactory<>(clazzOrigin))
 //          .withPostActions(postActionList)
-          .build()
-          .make();
+              .build()
+              .make();
     }
 
     //post
@@ -159,11 +158,16 @@ public class DynamicProxyBuilder<I, T extends I> {
         final int length = (args == null) ? 0 : args.length;
         if (logger.isInfoEnabled()) {
           logger.info(method.getName() + " (" + ((length == 0) ? ")" :
-              ""
-                  + Joiner
-                  .on(" +  -  + ")
-                  .join(args)
-                  + ")"));
+           ""
+           + Arrays.stream(args)
+           .reduce((o1, o2) ->
+                   String.valueOf(o1) +
+                           String.valueOf(o2)
+           )
+           .orElseGet(String::new)
+           + ")")
+
+          );
         }
         return method.invoke(original, args);
       }
