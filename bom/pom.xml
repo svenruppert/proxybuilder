@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>rapidpm-proxybuilder-bom</artifactId>
-
+  <packaging>pom</packaging>
 
   <dependencyManagement>
     <dependencies>
@@ -42,7 +42,6 @@
         <artifactId>rapidpm-proxybuilder-modules-objectadapter-generator-annotations</artifactId>
         <version>${rapidpm-proxybuilder.version}</version>
       </dependency>
-ø
       <dependency>
         <groupId>org.rapidpm.proxybuilder</groupId>
         <artifactId>rapidpm-proxybuilder-modules-objectadapter-generator-processors</artifactId>
