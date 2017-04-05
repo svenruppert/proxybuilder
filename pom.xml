@@ -81,9 +81,9 @@
 
 
 
-
-
-
+  <properties>
+    <rapidpm-proxybuilder.version>0.7.0-SNAPSHOT</rapidpm-proxybuilder.version>
+  </properties>
 
   <dependencies>
     <dependency>
