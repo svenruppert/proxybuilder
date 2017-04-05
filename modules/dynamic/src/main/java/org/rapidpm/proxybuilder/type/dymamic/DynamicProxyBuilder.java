@@ -36,9 +36,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static java.lang.String.valueOf;
+import static java.util.Arrays.stream;
 
 public class DynamicProxyBuilder<I, T extends I> {
 
@@ -159,10 +161,8 @@ public class DynamicProxyBuilder<I, T extends I> {
         if (logger.isInfoEnabled()) {
           logger.info(method.getName() + " (" + ((length == 0) ? ")" :
            ""
-           + Arrays.stream(args)
-           .reduce((o1, o2) ->
-                   String.valueOf(o1) +
-                           String.valueOf(o2)
+           + stream(args)
+           .reduce((o1, o2) -> valueOf(o1) + valueOf(o2)
            )
            .orElseGet(String::new)
            + ")")

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+    <version>3.3.2-SNAPSHOT</version>
   </parent>
 
 
@@ -32,6 +32,7 @@
 
   <packaging>pom</packaging>
   <modules>
+    <module>bom</module>
     <module>modules</module>
   </modules>
 
@@ -76,6 +77,13 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
+
+
+
+
+
+
+
 
   <dependencies>
     <dependency>
