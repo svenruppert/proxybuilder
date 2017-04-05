@@ -12,6 +12,11 @@
   <artifactId>rapidpm-proxybuilder-bom</artifactId>
   <packaging>pom</packaging>
 
+  <!--Change parent pom too !!-->
+  <properties>
+    <rapidpm-proxybuilder.version>0.7.0-SNAPSHOT</rapidpm-proxybuilder.version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
