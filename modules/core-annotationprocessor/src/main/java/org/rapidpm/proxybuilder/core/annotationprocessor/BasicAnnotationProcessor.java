@@ -21,7 +21,6 @@ package org.rapidpm.proxybuilder.core.annotationprocessor;
 
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Generated;
 import javax.annotation.processing.*;
@@ -234,7 +233,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return methodSpecBuilder.build();
   }
 
-  @NotNull
   protected MethodSpec.Builder defineDelegatorMethodSpec(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
     final Set<Modifier> reducedMethodModifiers = EnumSet.copyOf(methodElement.getModifiers());
     reducedMethodModifiers.remove(Modifier.ABSTRACT);
@@ -391,7 +389,6 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
 
-  @NotNull
   private AnnotationSpec createAnnotationSpecGenerated() {
     return AnnotationSpec.builder(Generated.class)
         .addMember("value", "$S", this.getClass().getSimpleName())
@@ -494,14 +491,14 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected String delegatorMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return methodName2Delegate + "(" +
 
-            defineParamsForMethod(methodElement)
-                    .stream()
-                    .map(v -> v.name)
-                    .filter(name -> name != null && !name.isEmpty())
-                    .reduce((name1, name2) -> name1 + ", " + name2)
-                    .orElseGet(String::new)
-            +
-            ")";
+        defineParamsForMethod(methodElement)
+            .stream()
+            .map(v -> v.name)
+            .filter(name -> name != null && !name.isEmpty())
+            .reduce((name1, name2) -> name1 + ", " + name2)
+            .orElseGet(String::new)
+        +
+        ")";
   }
 
 

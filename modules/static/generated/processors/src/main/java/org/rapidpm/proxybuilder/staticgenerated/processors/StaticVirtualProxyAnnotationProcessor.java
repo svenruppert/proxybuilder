@@ -21,7 +21,6 @@ package org.rapidpm.proxybuilder.staticgenerated.processors;
 
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.CodeBlock.Builder;
-import org.jetbrains.annotations.NotNull;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsGeneratedProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.IsVirtualProxy;
 import org.rapidpm.proxybuilder.staticgenerated.annotations.StaticVirtualProxy;
@@ -95,7 +94,6 @@ public class StaticVirtualProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   }
 
-  @NotNull
   private String createMethodCall(final ExecutableElement methodElement, final String methodName2Delegate) {
     return INSTANCE_STRATEGYFACTORY_FIELD_NAME + ".realSubject(" + INSTANCE_FACTORY_FIELD_NAME + ")." + delegatorMethodCall(methodElement, methodName2Delegate);
   }

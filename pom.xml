@@ -22,16 +22,17 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.2.0</version>
+    <version>3.4.0</version>
   </parent>
 
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
 
   <packaging>pom</packaging>
   <modules>
+    <module>bom</module>
     <module>modules</module>
   </modules>
 
@@ -77,6 +78,14 @@
     </license>
   </licenses>
 
+
+
+
+  <!--Change BOM too !!-->
+  <properties>
+    <rapidpm-proxybuilder.version>0.7.0</rapidpm-proxybuilder.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
@@ -90,9 +99,11 @@
     </dependency>
 
     <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
+      <groupId>org.rapidpm</groupId>
+      <artifactId>rapidpm-reflections</artifactId>
+      <version>1.0.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-vfs2</artifactId>
@@ -100,14 +111,23 @@
       <optional>true</optional>
       <!-- case: -->
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>dom4j</groupId>-->
-      <!--<artifactId>dom4j</artifactId>-->
-      <!--<optional>true</optional>-->
-      <!--&lt;!&ndash; case: when no xml de/serialization &ndash;&gt;-->
-    <!--</dependency>-->
-    <!--Logging-->
+
   </dependencies>
+
+
+  <repositories>
+    <repository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <profiles>
     <profile>

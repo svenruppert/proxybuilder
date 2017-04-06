@@ -24,13 +24,12 @@
   <parent>
     <groupId>org.rapidpm.proxybuilder</groupId>
     <artifactId>rapidpm-proxybuilder-modules</artifactId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
 
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>rapidpm-proxybuilder-modules-builder</artifactId>
-
 
 
   <dependencies>
@@ -41,14 +40,9 @@
 
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
-      <artifactId>rapidpm-proxybuilder-modules-static-runtime</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.rapidpm.proxybuilder</groupId>
       <artifactId>rapidpm-proxybuilder-modules-static-generated-annotations</artifactId>
     </dependency>
   </dependencies>
-
 
 
   <build>
@@ -95,9 +89,6 @@
 
     </plugins>
   </build>
-
-
-
 
 
 </project>

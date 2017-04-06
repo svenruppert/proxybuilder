@@ -24,12 +24,27 @@
   <parent>
     <artifactId>rapidpm-proxybuilder</artifactId>
     <groupId>org.rapidpm.proxybuilder</groupId>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>rapidpm-proxybuilder-modules</artifactId>
   <packaging>pom</packaging>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.rapidpm.proxybuilder</groupId>
+        <artifactId>rapidpm-proxybuilder-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+
   <modules>
     <module>core</module>
     <module>core-annotationprocessor</module>
