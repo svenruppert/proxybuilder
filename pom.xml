@@ -28,7 +28,7 @@
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.7.0</version>
+  <version>0.8.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -83,7 +83,7 @@
 
   <!--Change BOM too !!-->
   <properties>
-    <rapidpm-proxybuilder.version>0.7.0</rapidpm-proxybuilder.version>
+    <rapidpm-proxybuilder.version>0.8.0-SNAPSHOT</rapidpm-proxybuilder.version>
   </properties>
 
   <dependencies>
