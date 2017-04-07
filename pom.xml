@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.4.0</version>
+    <version>3.4.1-SNAPSHOT</version>
   </parent>
 
 
@@ -101,7 +101,6 @@
     <dependency>
       <groupId>org.rapidpm</groupId>
       <artifactId>rapidpm-reflections</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <dependency>
