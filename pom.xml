@@ -22,13 +22,13 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.4.0</version>
+    <version>3.4.1</version>
   </parent>
 
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>0.7.0</version>
+  <version>0.8.0</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -83,7 +83,7 @@
 
   <!--Change BOM too !!-->
   <properties>
-    <rapidpm-proxybuilder.version>0.7.0</rapidpm-proxybuilder.version>
+    <rapidpm-proxybuilder.version>0.8.0</rapidpm-proxybuilder.version>
   </properties>
 
   <dependencies>
@@ -101,7 +101,6 @@
     <dependency>
       <groupId>org.rapidpm</groupId>
       <artifactId>rapidpm-reflections</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <dependency>
