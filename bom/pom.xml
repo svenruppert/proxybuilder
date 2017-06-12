@@ -5,7 +5,7 @@
   <parent>
     <artifactId>rapidpm-proxybuilder</artifactId>
     <groupId>org.rapidpm.proxybuilder</groupId>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.8.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +14,7 @@
 
   <!--Change parent pom too !!-->
   <properties>
-    <rapidpm-proxybuilder.version>0.8.1-SNAPSHOT</rapidpm-proxybuilder.version>
+    <rapidpm-proxybuilder.version>0.8.1</rapidpm-proxybuilder.version>
   </properties>
 
   <dependencyManagement>
