@@ -24,7 +24,7 @@
   <parent>
     <artifactId>rapidpm-proxybuilder-modules-static-generated</artifactId>
     <groupId>org.rapidpm.proxybuilder</groupId>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
