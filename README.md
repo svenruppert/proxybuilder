@@ -1,13 +1,14 @@
 # Welcome to ProxyBuilder
 # Welcome to ProxyBuilder
 
-Here we will describe the ProxyBuilder from [github.com/ProxyBuilder/proxybuilder](https://github.com/ProxyBuilder/proxybuilder)
+Here we will describe the ProxyBuilder 
+from [github.com/ProxyBuilder/proxybuilder](https://github.com/ProxyBuilder/proxybuilder)
 
 ## What are Proxies ?
 If you want to have an overview of the Proxy-Pattern itself I can recommend
 the following sources.
 
-<iframe src="//de.slideshare.net/slideshow/embed_code/key/qOl1Sz53XkmKTh" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//de.slideshare.net/svenruppert/proxy-deepdive-javaone20151027001" title="JavaOne 2015 Tutorial - Proxy DeepDive" target="_blank">JavaOne 2015 Tutorial - Proxy DeepDive</a> </strong> from <strong><a target="_blank" href="//de.slideshare.net/svenruppert">Sven Ruppert</a></strong> </div>
+[JavaOne 2015 Tutorial - Proxy DeepDive](de.slideshare.net/svenruppert/proxy-deepdive-javaone20151027001)
 
 ## What goal we want to reach?
 This project was born, because I had to work a lot with old huge projects. The only thing I could rely on, is the pure JDK.
