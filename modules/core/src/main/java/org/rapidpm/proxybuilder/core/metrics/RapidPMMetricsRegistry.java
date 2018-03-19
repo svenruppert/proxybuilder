@@ -34,7 +34,7 @@ public class RapidPMMetricsRegistry {
   private static final RapidPMMetricsRegistry RAPID_PM_METRICS_REGISTRY = new RapidPMMetricsRegistry();
   private final MetricRegistry metrics = new MetricRegistry();
 
-  private JmxReporter jmxReporter;
+  private JmxReporter     jmxReporter;
   private ConsoleReporter consoleReporter;
 
   private RapidPMMetricsRegistry() {
