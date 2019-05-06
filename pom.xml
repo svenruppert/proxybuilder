@@ -22,7 +22,8 @@
   <parent>
     <groupId>org.rapidpm</groupId>
     <artifactId>rapidpm-dependencies</artifactId>
-    <version>3.5.8</version>
+<!--    <version>3.5.8</version>-->
+    <version>04.00.16-RPM</version>
   </parent>
 
 
@@ -61,14 +62,14 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
-  <issueManagement>
-    <system>Youtrack</system>
-    <url>https://issues.rapidpm.org/issues?q=project%3A+ProxyBuilder</url>
-  </issueManagement>
-  <ciManagement>
-    <system>TeamCity</system>
-    <url>https://build.rapidpm.org/viewType.html?buildTypeId=RapidPM_Develop_ProxyBuilder_Snapshot</url>
-  </ciManagement>
+<!--  <issueManagement>-->
+<!--    <system>Youtrack</system>-->
+<!--    <url>https://issues.rapidpm.org/issues?q=project%3A+ProxyBuilder</url>-->
+<!--  </issueManagement>-->
+<!--  <ciManagement>-->
+<!--    <system>TeamCity</system>-->
+<!--    <url>https://build.rapidpm.org/viewType.html?buildTypeId=RapidPM_Develop_ProxyBuilder_Snapshot</url>-->
+<!--  </ciManagement>-->
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -87,6 +88,14 @@
   </properties>
 
   <dependencies>
+<!--    APIs-->
+
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -95,11 +104,20 @@
     </dependency>
 
 
+    <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core -->
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-core</artifactId>
-      <version>3.2.4</version>
+      <version>4.1.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-jmx</artifactId>
+      <version>4.1.0</version>
+    </dependency>
+
+
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -107,9 +125,11 @@
       <!-- case: when no json de/serialization -->
     </dependency>
 
+<!--    reactivate-->
     <dependency>
       <groupId>org.rapidpm</groupId>
       <artifactId>rapidpm-dependencies-core-reflections</artifactId>
+      <version>3.6.3</version>
     </dependency>
 
     <dependency>

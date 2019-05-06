@@ -20,8 +20,8 @@
 package org.rapidpm.proxybuilder.core.metrics;
 
 import com.codahale.metrics.ConsoleReporter;
-import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,9 +53,9 @@ public class RapidPMMetricsRegistry {
     synchronized (LOCK) {
       if (jmxReporter == null) {
         jmxReporter = JmxReporter.forRegistry(metrics)
-            .convertDurationsTo(DURATION_UNIT)
-            .convertRatesTo(RATE_UNIT)
-            .build();
+                                 .convertDurationsTo(DURATION_UNIT)
+                                 .convertRatesTo(RATE_UNIT)
+                                 .build();
       }
       jmxReporter.start();
     }

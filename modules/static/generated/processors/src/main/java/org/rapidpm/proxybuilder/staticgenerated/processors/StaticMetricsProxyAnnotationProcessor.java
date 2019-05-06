@@ -45,7 +45,6 @@ public class StaticMetricsProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   public static final String WITH_DELEGATOR = "withDelegator";
   public static final String RAPID_PMMETRICS_REGISTRY = RapidPMMetricsRegistry.class.getSimpleName();
-      ;
 
   @Override
   public Class<StaticMetricsProxy> responsibleFor() {

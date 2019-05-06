@@ -1,7 +1,6 @@
 package junit.org.rapidpm.proxybuilder.staticgenerated.processors.v008;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;

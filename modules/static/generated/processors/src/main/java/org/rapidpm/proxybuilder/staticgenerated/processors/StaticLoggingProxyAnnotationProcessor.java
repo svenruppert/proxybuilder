@@ -101,13 +101,9 @@ public class StaticLoggingProxyAnnotationProcessor extends BasicStaticProxyAnnot
 
   private String joinString(List<? extends VariableElement> methodElementParameters) {
     Optional<String> reduce = methodElementParameters.stream()
-            .map(elementUtils -> elementUtils.toString())
+            .map(Object::toString)
             .reduce((s1, s2) -> s1 + " + \" - \" + " + s2);
-    if (reduce.isPresent()) {
-      return reduce.get();
-    } else {
-      return "";
-    }
+    return reduce.orElse("");
 
   }
 
