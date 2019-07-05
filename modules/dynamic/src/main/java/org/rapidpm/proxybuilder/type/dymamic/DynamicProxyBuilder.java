@@ -1,32 +1,43 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/**
+ * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+/*
+  Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
 
-package org.rapidpm.proxybuilder.type.dymamic;
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ */
+package org.rapidpm.proxybuilder.proxy.dymamic;
 
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.DefaultConstructorServiceFactory;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.DynamicProxyGenerator;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
+import org.rapidpm.proxybuilder.proxy.dymamic.virtual.CreationStrategy;
+import org.rapidpm.proxybuilder.proxy.dymamic.virtual.DefaultConstructorServiceFactory;
+import org.rapidpm.proxybuilder.proxy.dymamic.virtual.DynamicProxyGenerator;
+import org.rapidpm.proxybuilder.proxy.dymamic.virtual.VirtualDynamicProxyInvocationHandler.ServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,18 +55,18 @@ import static java.util.Arrays.stream;
 
 public class DynamicProxyBuilder<I, T extends I> {
 
-  private final List<SecurityRule> securityRules = new ArrayList<>();
-  private final List<PreAction> preActionList = new ArrayList<>();
-  private final List<PostAction> postActionList = new ArrayList<>();
+  private final List<SecurityRule> securityRules  = new ArrayList<>();
+  private final List<PreAction>    preActionList  = new ArrayList<>();
+  private final List<PostAction>   postActionList = new ArrayList<>();
 
 
-  private Class<I> clazz;
-  private Class<I> clazzOrigin;
+  private Class<I>         clazz;
+  private Class<I>         clazzOrigin;
   private CreationStrategy creationStrategy;
-  private ServiceFactory serviceFactory;
-  private T original;
-  private boolean metrics;
-  private boolean logging;
+  private ServiceFactory   serviceFactory;
+  private T                original;
+  private boolean          metrics;
+  private boolean          logging;
 
 
   private DynamicProxyBuilder() {
@@ -63,24 +74,27 @@ public class DynamicProxyBuilder<I, T extends I> {
 
   public static <I, T extends I> DynamicProxyBuilder<I, T> createBuilder(Class<I> clazz, T original) {
     final DynamicProxyBuilder<I, T> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    dynamicProxyBuilder.clazz = clazz;
+    dynamicProxyBuilder.clazz    = clazz;
     dynamicProxyBuilder.original = original;
     return dynamicProxyBuilder;
   }
 
   /**
-   * @param clazz
-   * @param original
-   * @param creationStrategy
-   * @param <I>
-   * @param <T>
-   * @return
+   * @param clazz for the proxy interface
+   * @param original the subject to delegate to
+   * @param creationStrategy what kind of CreationStrategy
+
+   * @param <I> type of the interface to use
+   * @param <T> type of the origin
+   * @return The ProxyBuilder itself
    */
 
-  public static <I, T extends I> DynamicProxyBuilder<I, T> createBuilder(Class<I> clazz, Class<T> original, CreationStrategy creationStrategy) {
+  public static <I, T extends I> DynamicProxyBuilder<I, T> createBuilder(Class<I> clazz,
+                                                                         Class<T> original,
+                                                                         CreationStrategy creationStrategy) {
     final DynamicProxyBuilder<I, T> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    dynamicProxyBuilder.clazz = clazz;
-    dynamicProxyBuilder.clazzOrigin = (Class<I>) original;
+    dynamicProxyBuilder.clazz            = clazz;
+    dynamicProxyBuilder.clazzOrigin      = (Class<I>) original;
     dynamicProxyBuilder.creationStrategy = creationStrategy;
     return dynamicProxyBuilder;
   }
@@ -89,8 +103,8 @@ public class DynamicProxyBuilder<I, T extends I> {
                                                             CreationStrategy creationStrategy,
                                                             ServiceFactory<I> serviceFactory) {
     final DynamicProxyBuilder<I, I> dynamicProxyBuilder = new DynamicProxyBuilder<>();
-    dynamicProxyBuilder.clazz = clazz;
-    dynamicProxyBuilder.serviceFactory = serviceFactory;
+    dynamicProxyBuilder.clazz            = clazz;
+    dynamicProxyBuilder.serviceFactory   = serviceFactory;
     dynamicProxyBuilder.creationStrategy = creationStrategy;
     return dynamicProxyBuilder;
   }
@@ -106,13 +120,17 @@ public class DynamicProxyBuilder<I, T extends I> {
 
     if (original == null) {
       //virtual
-      this.original = (T) DynamicProxyGenerator.<I, I>newBuilder()
-              .withSubject(clazz)
-              .withCreationStrategy((creationStrategy != null) ? creationStrategy : CreationStrategy.NONE)
-              .withServiceFactory((serviceFactory != null) ? serviceFactory : new DefaultConstructorServiceFactory<>(clazzOrigin))
+      this.original = (T) DynamicProxyGenerator.<I, I>newBuilder().withSubject(clazz)
+                                                                  .withCreationStrategy((creationStrategy != null)
+                                                                                        ? creationStrategy
+                                                                                        : CreationStrategy.NONE)
+                                                                  .withServiceFactory((serviceFactory != null)
+                                                                                      ? serviceFactory
+                                                                                      : new DefaultConstructorServiceFactory<>(
+                                                                                          clazzOrigin))
 //          .withPostActions(postActionList)
-              .build()
-              .make();
+                                                                  .build()
+                                                                  .make();
     }
 
     //post
@@ -133,16 +151,17 @@ public class DynamicProxyBuilder<I, T extends I> {
   }
 
   private void buildMetricsProxy() {
-    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance().getMetrics();
+    final MetricRegistry metrics = RapidPMMetricsRegistry.getInstance()
+                                                         .getMetrics();
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final long start = System.nanoTime();
-        final Object invoke = DynamicProxyBuilder.invoke(original, method, args);
-        final long stop = System.nanoTime();
-        Histogram methodCalls = metrics.histogram(clazz.getName() + "." + method.getName());
+        final long   start       = System.nanoTime();
+        final Object invoke      = DynamicProxyBuilder.invoke(original, method, args);
+        final long   stop        = System.nanoTime();
+        Histogram    methodCalls = metrics.histogram(clazz.getName() + "." + method.getName());
         methodCalls.update((stop - start));
         return invoke;
       }
@@ -153,21 +172,22 @@ public class DynamicProxyBuilder<I, T extends I> {
   private void buildLoggingProxy() {
     final InvocationHandler invocationHandler = new InvocationHandler() {
       private final T original = DynamicProxyBuilder.this.original;
-      private final Logger logger = LoggerFactory.getLogger((clazzOrigin == null) ? original.getClass() : clazzOrigin);
+      private final Logger logger = LoggerFactory.getLogger((clazzOrigin == null)
+                                                            ? original.getClass()
+                                                            : clazzOrigin);
 
       @Override
       public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        final int length = (args == null) ? 0 : args.length;
+        final int length = (args == null)
+                           ? 0
+                           : args.length;
         if (logger.isInfoEnabled()) {
-          logger.info(method.getName() + " (" + ((length == 0) ? ")" :
-           ""
-           + stream(args)
-           .reduce((o1, o2) -> valueOf(o1) + valueOf(o2)
-           )
-           .orElseGet(String::new)
-           + ")")
+          logger.info(method.getName() + " (" + ((length == 0)
+                                                 ? ")"
+                                                 : "" + stream(args).reduce((o1, o2) -> valueOf(o1) + valueOf(o2))
+                                                                    .orElseGet(String::new) + ")")
 
-          );
+                     );
         }
         return method.invoke(original, args);
       }
@@ -185,12 +205,10 @@ public class DynamicProxyBuilder<I, T extends I> {
   }
 
   private void createProxy(InvocationHandler invocationHandler) {
-    final ClassLoader classLoader = original.getClass().getClassLoader();
-    final Class<?>[] interfaces = {clazz};
-    final Object nextProxy = Proxy.newProxyInstance(
-        classLoader,
-        interfaces,
-        invocationHandler);
+    final ClassLoader classLoader = original.getClass()
+                                            .getClassLoader();
+    final Class<?>[]  interfaces  = {clazz};
+    final Object nextProxy = Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
     original = (T) clazz.cast(nextProxy);
   }
 

@@ -1,3 +1,3 @@
-org.rapidpm.proxybuilder.objectadapter.processor.StaticObjectAdapterAnnotationProcessor
-org.rapidpm.proxybuilder.objectadapter.processor.DynamicObjectAdapterAnnotationProcessor
+org.rapidpm.proxybuilder.objectadapter.StaticObjectAdapterAnnotationProcessor
+org.rapidpm.proxybuilder.objectadapter.DynamicObjectAdapterAnnotationProcessor
 

@@ -1,3 +1,33 @@
+/**
+ * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+  Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ */
 package junit.org.rapidpm.proxybuilder.type.dynamic;
 
 import com.codahale.metrics.ConsoleReporter;
@@ -10,8 +40,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.rapidpm.proxybuilder.core.metrics.RapidPMMetricsRegistry;
-import org.rapidpm.proxybuilder.type.dymamic.DynamicProxyBuilder;
-import org.rapidpm.proxybuilder.type.dymamic.virtual.CreationStrategy;
+import org.rapidpm.proxybuilder.proxy.dymamic.DynamicProxyBuilder;
+import org.rapidpm.proxybuilder.proxy.dymamic.virtual.CreationStrategy;
 
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +50,7 @@ import java.util.stream.IntStream;
 /**
  * ProxyBuilder Tester.
  *
- * @author <Sven Rupperte>
+ * @author Sven Rupperte
  * @version 1.0
  * @since <pre>Apr 28, 2015</pre>
  */
@@ -36,11 +66,9 @@ public class DynamicProxyBuilderTest {
   public void after() throws Exception {
   }
 
-  /**
-   * Method: createBuilder(T original)
-   */
+
   @Test
-  public void testCreateBuilder01() throws Exception {
+  public void testCreateBuilder01()  {
 //TODO: Test goes here...
   }
 
@@ -130,9 +158,6 @@ public class DynamicProxyBuilderTest {
     Assert.assertNotEquals(demoLogic.doWork(), original.doWork());
   }
 
-  /**
-   * Method: addMetrics()
-   */
   @Test
   public void testAddMetrics() throws Exception {
 
@@ -177,26 +202,19 @@ public class DynamicProxyBuilderTest {
   }
 
 
-  /**
-   * Method: addVirtualProxy()
-   */
   @Test
   public void testAddVirtualProxy() throws Exception {
 
 
   }
 
-  /**
-   * Method: addLogging()
-   */
+
   @Test
   public void testAddLogging() throws Exception {
 //TODO: Test goes here... 
   }
 
-  /**
-   * Method: checkRule()
-   */
+
   @Test
   public void testCheckRule() throws Exception {
 //TODO: Test goes here... 

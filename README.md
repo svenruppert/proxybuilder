@@ -8,7 +8,7 @@ from [github.com/ProxyBuilder/proxybuilder](https://github.com/ProxyBuilder/prox
 If you want to have an overview of the Proxy-Pattern itself I can recommend
 the following sources.
 
-[JavaOne 2015 Tutorial - Proxy DeepDive](de.slideshare.net/svenruppert/proxy-deepdive-javaone20151027001)
+[JavaOne 2015 Tutorial - Proxy DeepDive](https://de.slideshare.net/svenruppert/proxy-deepdive-javaone20151027001)
 
 ## What goal we want to reach?
 This project was born, because I had to work a lot with old huge projects. The only thing I could rely on, is the pure JDK.
