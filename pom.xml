@@ -30,7 +30,7 @@
 
   <groupId>org.rapidpm.proxybuilder</groupId>
   <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>00.09.05-RPM</version>
+  <version>00.09.06-RPM-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -86,7 +86,7 @@
       <dependency>
         <groupId>org.rapidpm.proxybuilder</groupId>
         <artifactId>rapidpm-proxybuilder-impl</artifactId>
-        <version>00.09.05-RPM</version>
+        <version>00.09.06-RPM-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
