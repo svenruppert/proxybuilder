@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.rapidpm.proxybuilder</groupId>
     <artifactId>rapidpm-proxybuilder</artifactId>
-    <version>00.09.05-RPM-SNAPSHOT</version>
+    <version>00.09.05-RPM</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

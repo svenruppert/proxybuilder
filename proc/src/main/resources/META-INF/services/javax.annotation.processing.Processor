@@ -1,6 +1,0 @@
-org.rapidpm.proxybuilder.objectadapter.StaticObjectAdapterAnnotationProcessor
-org.rapidpm.proxybuilder.objectadapter.DynamicObjectAdapterAnnotationProcessor
-org.rapidpm.proxybuilder.proxy.generated.StaticMetricsProxyAnnotationProcessor
-org.rapidpm.proxybuilder.proxy.generated.StaticLoggingProxyAnnotationProcessor
-org.rapidpm.proxybuilder.proxy.generated.StaticVirtualProxyAnnotationProcessor
-

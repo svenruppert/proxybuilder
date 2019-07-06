@@ -1,4 +1,0 @@
-org.rapidpm.proxybuilder.proxy.generated.StaticMetricsProxyAnnotationProcessor
-org.rapidpm.proxybuilder.proxy.generated.StaticLoggingProxyAnnotationProcessor
-org.rapidpm.proxybuilder.proxy.generated.StaticVirtualProxyAnnotationProcessor
-

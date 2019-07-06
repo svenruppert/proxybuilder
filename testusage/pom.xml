@@ -22,21 +22,18 @@
   <parent>
     <artifactId>rapidpm-proxybuilder</artifactId>
     <groupId>org.rapidpm.proxybuilder</groupId>
-    <version>00.09.05-RPM-SNAPSHOT</version>
+    <version>00.09.05-RPM</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>rapidpm-proxybuilder-testusage</artifactId>
 
   <dependencies>
-
     <dependency>
       <groupId>org.rapidpm.proxybuilder</groupId>
       <artifactId>rapidpm-proxybuilder-impl</artifactId>
-      <version>00.09.05-RPM-SNAPSHOT</version>
     </dependency>
   </dependencies>
-
 
   <build>
     <plugins>
@@ -45,49 +42,6 @@
         <configuration>
           <skip>true</skip>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <!-- Replacing default-compile as it is treated specially by maven -->
-          <execution>
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <compilerArgument>-proc:only</compilerArgument>
-            </configuration>
-          </execution>
-          <!-- Replacing default-testCompile as it is treated specially by maven -->
-          <execution>
-            <id>default-testCompile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <compilerArgument>-proc:only</compilerArgument>
-            </configuration>
-          </execution>
-          <execution>
-            <id>java-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>java-test-compile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

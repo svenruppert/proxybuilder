@@ -38,6 +38,4 @@ class KotlinImpl() : BaseInterface {
   override fun doWork(str: String?): String? {
     throw UnsupportedOperationException()
   }
-
-
 }
