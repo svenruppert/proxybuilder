@@ -114,13 +114,13 @@
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-core</artifactId>
-      <version>4.1.0</version>
+      <version>4.2.27</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
     <dependency>
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-jmx</artifactId>
-      <version>4.1.0</version>
+      <version>4.2.27</version>
     </dependency>
 
 
@@ -145,7 +145,7 @@
     <dependency>
       <groupId>com.squareup</groupId>
       <artifactId>javapoet</artifactId>
-      <version>1.11.1</version>
+      <version>1.13.0</version>
     </dependency>
 
 
