@@ -3,17 +3,10 @@
 
     Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+    Licensed under the EUPL-1.2.
+    You may obtain a copy of the Licence at:
 
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+        https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 
 -->
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
@@ -21,20 +14,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.rapidpm</groupId>
-    <artifactId>rapidpm-dependencies</artifactId>
-    <!--        <version>3.5.8</version>-->
-    <version>04.01.02-RPM</version>
+    <groupId>com.svenruppert</groupId>
+    <artifactId>dependencies</artifactId>
+    <version>06.02.00</version>
   </parent>
 
-
-  <groupId>org.rapidpm.proxybuilder</groupId>
-  <artifactId>rapidpm-proxybuilder</artifactId>
-  <version>00.09.06-RPM-SNAPSHOT</version>
+  <artifactId>proxybuilder-parent</artifactId>
+  <version>00.10.00</version>
 
   <packaging>pom</packaging>
   <modules>
-<!--    <module>proc</module>-->
     <module>impl</module>
     <module>testusage</module>
   </modules>
@@ -45,8 +34,16 @@
     <url>http://www.rapidpm.org</url>
   </organization>
   <url>http://www.proxybuilder.org</url>
-  <name>RapidPM ProxyBuilder</name>
+  <name>Sven Ruppert ProxyBuilder</name>
   <description>Builder-Pattern for different types of proxies</description>
+
+  <properties>
+    <maven.compiler.release>26</maven.compiler.release>
+    <maven.version>4.0.0-rc-5</maven.version>
+    <maven.wrapper.version>3.3.4</maven.wrapper.version>
+    <junit.version>6.0.2</junit.version>
+    <maven.surefire.version>3.5.4</maven.surefire.version>
+  </properties>
 
   <scm>
     <url>https://github.com/svenruppert/proxybuilder</url>
@@ -74,19 +71,26 @@
   <!--  </ciManagement>-->
   <licenses>
     <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <name>European Union Public Licence, Version 1.2</name>
+      <url>https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12</url>
       <distribution>repo</distribution>
-      <comments>A business-friendly OSS license</comments>
+      <comments>SPDX identifier: EUPL-1.2</comments>
     </license>
   </licenses>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.rapidpm.proxybuilder</groupId>
-        <artifactId>rapidpm-proxybuilder-impl</artifactId>
-        <version>00.09.06-RPM-SNAPSHOT</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.svenruppert</groupId>
+        <artifactId>proxybuilder</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -95,19 +99,15 @@
   <dependencies>
     <!--    APIs-->
 
+
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
+      <groupId>com.svenruppert</groupId>
+      <artifactId>core</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core -->
@@ -123,37 +123,60 @@
       <version>4.1.0</version>
     </dependency>
 
-
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <optional>true</optional>
-      <!-- case: when no json de/serialization -->
-    </dependency>
-
-    <!--    reactivate-->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-      <!-- case: -->
-    </dependency>
-
-
     <!-- https://mvnrepository.com/artifact/com.squareup/javapoet -->
     <dependency>
       <groupId>com.squareup</groupId>
       <artifactId>javapoet</artifactId>
-      <version>1.11.1</version>
+      <version>1.13.0</version>
     </dependency>
 
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-testkit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.truth</groupId>
+      <artifactId>truth</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
@@ -161,11 +184,47 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <id>enforce-maven-wrapper-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[${maven.version},${maven.version}]</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <skipUpdateLicense>true</skipUpdateLicense>
+        </configuration>
+      </plugin>
 <!--      <plugin>-->
 <!--        <groupId>com.mycila</groupId>-->
 <!--        <artifactId>license-maven-plugin</artifactId>-->
 <!--        <configuration>-->
-<!--          <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>-->
+<!--          <header>com/mycila/maven/plugin/license/templates/EUPL-1.2.txt</header>-->
 <!--          <properties>-->
 <!--            <owner>Sven Ruppert</owner>-->
 <!--            <email>sven.ruppert@gmail.com</email>-->
@@ -220,5 +279,57 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.11.2</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <doclint>none</doclint>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
