@@ -16,7 +16,7 @@
   <parent>
     <groupId>com.svenruppert</groupId>
     <artifactId>dependencies</artifactId>
-    <version>06.02.00</version>
+    <version>06.02.01</version>
   </parent>
 
   <artifactId>proxybuilder-parent</artifactId>
@@ -30,11 +30,11 @@
 
   <inceptionYear>2013</inceptionYear>
   <organization>
-    <name>RapidPM</name>
-    <url>http://www.rapidpm.org</url>
+    <name>jSentinel</name>
+    <url>https://jsentinel.eu</url>
   </organization>
-  <url>http://www.proxybuilder.org</url>
-  <name>Sven Ruppert ProxyBuilder</name>
+  <url>https://proxy.svenruppert.com</url>
+  <name>ProxyBuilder</name>
   <description>Builder-Pattern for different types of proxies</description>
 
   <properties>
@@ -207,7 +207,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version>
+        <version>3.15.0</version>
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -330,6 +330,7 @@
         </plugins>
       </build>
     </profile>
+
   </profiles>
 
 </project>

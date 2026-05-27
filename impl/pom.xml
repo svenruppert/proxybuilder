@@ -21,6 +21,10 @@
 
   <artifactId>proxybuilder</artifactId>
 
+  <name>Sven Ruppert ProxyBuilder</name>
+  <description>Runtime proxy builders and annotation processors for generated static proxies.</description>
+  <url>http://www.proxybuilder.org</url>
+
   <dependencies>
     <dependency>
       <groupId>com.github.spotbugs</groupId>

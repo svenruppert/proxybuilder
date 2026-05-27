@@ -423,6 +423,54 @@ jdeps --multi-release 26 \
   --check com.svenruppert.proxybuilder
 ```
 
+## Releasing
+
+### Current limitation — Maven 4 + central-publishing-maven-plugin
+
+`central-publishing-maven-plugin` 0.10.0 (the current latest) is not Maven-4-aware.
+It emits the Maven 4 consumer POM as a consumer-classified artefact (`*-consumer.pom`) and uploads the build POM as the primary `.pom`, which the Central Portal validator rejects with `Failed to associate file with coordinates …`.
+Plugin v0.10.0 also offers no "stage but don't upload" mode — `skipPublishing=true` skips staging altogether ("No files to stage for artifact" in the log).
+
+The workaround bypasses the plugin: `./mvnw install` already produces all signed artefacts in `~/.m2/repository/com/svenruppert/<module>/<version>/` with Maven 4's correct local-repo naming (the consumer POM as `<artifact>-<version>.pom`, the build POM as `<artifact>-<version>-build.pom`).
+The script in `scripts/clean-bundle-for-central.sh` copies the publishable files (drops `*-build.pom`, `*-tests*`, etc.), generates the four checksum types Central expects, and zips a bundle that is uploaded by hand through the Central Portal web UI.
+
+### Central Portal POM requirements
+
+Central's validator inspects each artifact's POM directly and does **not** resolve `<parent>` for the metadata it requires. Every published module's `pom.xml` must therefore declare these fields inline:
+
+- `<name>`
+- `<description>`
+- `<url>`
+- `<licenses>` (at least one)
+- `<scm>`
+- `<developers>` (at least one)
+
+`impl/pom.xml` already carries `<name>`, `<description>`, and `<url>`. The remaining fields are currently inherited from `proxybuilder-parent`/`com.svenruppert:dependencies`; if a future Central validation pass rejects the bundle with a missing-field error (`Error: Project <field> is missing`), copy that field into `impl/pom.xml` and re-bundle.
+
+### Working release flow
+
+```bash
+./mvnw clean verify
+./mvnw versions:set -DnewVersion=<RELEASE> -DprocessAllModules=true -DgenerateBackupPoms=false
+./mvnw clean verify
+git commit -am "release <RELEASE>"
+git tag <RELEASE>
+./mvnw clean install -P release,_release_prepare
+./scripts/clean-bundle-for-central.sh
+# Upload target/central-publishing/central-bundle.zip via
+# https://central.sonatype.com/publishing → Publish Component
+./mvnw versions:set -DnewVersion=<NEXT>-SNAPSHOT -DprocessAllModules=true -DgenerateBackupPoms=false
+git commit -am "prepare <NEXT>-SNAPSHOT"
+git push origin <branch> <RELEASE>
+```
+
+Verify the bundle layout with:
+
+```bash
+unzip -l target/central-publishing/central-bundle.zip | grep -c build.pom   # expected: 0
+unzip -l target/central-publishing/central-bundle.zip | grep -c consumer    # expected: 0
+```
+
 ## Project Decisions
 
 - The external parent `com.svenruppert:dependencies` remains in use.
