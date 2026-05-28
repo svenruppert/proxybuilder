@@ -15,7 +15,7 @@
   <parent>
     <groupId>com.svenruppert</groupId>
     <artifactId>proxybuilder-parent</artifactId>
-    <version>00.11.00</version>
+    <version>00.11.01</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -24,6 +24,33 @@
   <name>Sven Ruppert ProxyBuilder Annotations</name>
   <description>Annotations consumed and emitted by the proxybuilder annotation processor. Tiny, dependency-free module intended for the consumer compile classpath.</description>
   <url>http://www.proxybuilder.org</url>
+
+  <licenses>
+    <license>
+      <name>European Union Public Licence, Version 1.2</name>
+      <url>https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12</url>
+      <distribution>repo</distribution>
+      <comments>SPDX identifier: EUPL-1.2</comments>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/svenruppert/proxybuilder</url>
+    <connection>scm:git:https://github.com/svenruppert/proxybuilder.git</connection>
+    <developerConnection>scm:git:https://github.com/svenruppert/proxybuilder.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Sven Ruppert</name>
+      <email>sven.ruppert@gmail.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>

@@ -8,7 +8,7 @@ Use this module on the **compile classpath** of any consumer that wants to refer
 <dependency>
   <groupId>com.svenruppert</groupId>
   <artifactId>proxybuilder-annotations</artifactId>
-  <version>00.11.00</version>
+  <version>00.11.01</version>
 </dependency>
 
 <build>
@@ -20,7 +20,7 @@ Use this module on the **compile classpath** of any consumer that wants to refer
           <path>
             <groupId>com.svenruppert</groupId>
             <artifactId>proxybuilder</artifactId>
-            <version>00.11.00</version>
+            <version>00.11.01</version>
           </path>
         </annotationProcessorPaths>
       </configuration>

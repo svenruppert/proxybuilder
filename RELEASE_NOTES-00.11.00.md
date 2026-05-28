@@ -85,7 +85,7 @@ Minor release. Splits annotations into a new tiny `proxybuilder-annotations` JAR
 <dependency>
   <groupId>com.svenruppert</groupId>
   <artifactId>proxybuilder-annotations</artifactId>
-  <version>00.11.00</version>
+  <version>00.11.01</version>
 </dependency>
 ```
 
@@ -94,7 +94,7 @@ Minor release. Splits annotations into a new tiny `proxybuilder-annotations` JAR
   <path>
     <groupId>com.svenruppert</groupId>
     <artifactId>proxybuilder</artifactId>
-    <version>00.11.00</version>
+    <version>00.11.01</version>
   </path>
 </annotationProcessorPaths>
 ```

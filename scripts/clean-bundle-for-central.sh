@@ -27,6 +27,7 @@ GROUP_PATH="com/svenruppert"
 # integration / usage example, not a published artefact.
 MODULES=(
     "proxybuilder-parent"
+    "proxybuilder-annotations"
     "proxybuilder"
 )
 
