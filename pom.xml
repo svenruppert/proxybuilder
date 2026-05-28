@@ -189,6 +189,44 @@
 
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.25.2</version>
+          <dependencies>
+            <!-- pitest-junit5-plugin 1.2.3 was built against JUnit Platform 1.x;
+                 the project runs JUnit Jupiter 6.x. These 1.13.x overrides keep
+                 the plugin's discovery happy until pitest-junit5-plugin gains
+                 native JUnit 6 support. -->
+            <dependency>
+              <groupId>org.pitest</groupId>
+              <artifactId>pitest-junit5-plugin</artifactId>
+              <version>1.2.3</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.platform</groupId>
+              <artifactId>junit-platform-launcher</artifactId>
+              <version>1.13.4</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.jupiter</groupId>
+              <artifactId>junit-jupiter-engine</artifactId>
+              <version>5.13.4</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <outputFormats>
+              <param>HTML</param>
+              <param>XML</param>
+            </outputFormats>
+            <timestampedReports>false</timestampedReports>
+            <threads>4</threads>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

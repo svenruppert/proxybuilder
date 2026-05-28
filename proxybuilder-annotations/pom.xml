@@ -45,6 +45,18 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <configuration>
+          <targetClasses>
+            <param>com.svenruppert.proxybuilder.annotations.*</param>
+          </targetClasses>
+          <targetTests>
+            <param>com.svenruppert.proxybuilder.annotations.*</param>
+          </targetTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

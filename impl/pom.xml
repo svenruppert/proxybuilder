@@ -55,6 +55,29 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <configuration>
+          <targetClasses>
+            <param>com.svenruppert.proxybuilder.*</param>
+            <param>com.svenruppert.proxybuilder.objectadapter.*</param>
+            <param>com.svenruppert.proxybuilder.objectadapter.dynamic.*</param>
+            <param>com.svenruppert.proxybuilder.objectadapter.generated.*</param>
+            <param>com.svenruppert.proxybuilder.proxy.dymamic.*</param>
+            <param>com.svenruppert.proxybuilder.proxy.dymamic.virtual.*</param>
+            <param>com.svenruppert.proxybuilder.proxy.dymamic.virtual.factory.*</param>
+            <param>com.svenruppert.proxybuilder.proxy.dymamic.virtual.strategy.*</param>
+            <param>com.svenruppert.proxybuilder.proxy.generated.*</param>
+          </targetClasses>
+          <excludedClasses>
+            <param>com.svenruppert.proxybuilder.annotations.*</param>
+          </excludedClasses>
+          <targetTests>
+            <param>com.svenruppert.proxybuilder.processor.*</param>
+          </targetTests>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
