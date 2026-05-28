@@ -201,6 +201,24 @@ class AnnotationsModuleProcessorTest {
   }
 
   @Test
+  void proxyEntryEmitsExperimentalNote() {
+    final Compilation compilation = compile(
+        "test.ProxyEntryTarget",
+        "package test;",
+        "import com.svenruppert.proxybuilder.annotations.ProxyEntry;",
+        "import com.svenruppert.proxybuilder.proxy.generated.annotations.StaticLoggingProxy;",
+        "@StaticLoggingProxy",
+        "public class ProxyEntryTarget {",
+        "  @ProxyEntry(\"trace me\")",
+        "  public String work() { return \"x\"; }",
+        "}");
+
+    assertThat(compilation).succeeded();
+    assertThat(compilation).hadNoteContaining("@ProxyEntry is experimental");
+    assertThat(compilation).hadNoteContaining(ProxyBuilderVersion.VERSION);
+  }
+
+  @Test
   void migrationSmokeProducesUnchangedShape() {
     final Compilation compilation = compile(
         "test.MigrationTarget",
