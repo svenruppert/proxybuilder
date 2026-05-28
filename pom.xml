@@ -20,10 +20,11 @@
   </parent>
 
   <artifactId>proxybuilder-parent</artifactId>
-  <version>00.10.01-SNAPSHOT</version>
+  <version>00.11.00-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>
+    <module>proxybuilder-annotations</module>
     <module>impl</module>
     <module>testusage</module>
   </modules>
@@ -86,6 +87,11 @@
         <version>${junit.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.svenruppert</groupId>
+        <artifactId>proxybuilder-annotations</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.svenruppert</groupId>

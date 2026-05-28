@@ -19,28 +19,18 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>proxybuilder</artifactId>
+  <artifactId>proxybuilder-annotations</artifactId>
 
-  <name>Sven Ruppert ProxyBuilder</name>
-  <description>Runtime proxy builders and annotation processors for generated static proxies.</description>
+  <name>Sven Ruppert ProxyBuilder Annotations</name>
+  <description>Annotations consumed and emitted by the proxybuilder annotation processor. Tiny, dependency-free module intended for the consumer compile classpath.</description>
   <url>http://www.proxybuilder.org</url>
 
   <dependencies>
-    <dependency>
-      <groupId>com.svenruppert</groupId>
-      <artifactId>proxybuilder-annotations</artifactId>
-    </dependency>
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <version>4.9.8</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.testing.compile</groupId>
-      <artifactId>compile-testing</artifactId>
-      <version>0.21.0</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

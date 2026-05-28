@@ -9,6 +9,7 @@
 module com.svenruppert.proxybuilder {
   requires transitive java.compiler;
   requires transitive com.squareup.javapoet;
+  requires transitive com.svenruppert.proxybuilder.annotations;
   requires transitive core;
   requires org.slf4j;
   requires transitive com.codahale.metrics;

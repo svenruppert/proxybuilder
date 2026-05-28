@@ -6,18 +6,18 @@
  *
  *     https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  */
-package com.svenruppert.proxybuilder;
+package com.svenruppert.proxybuilder.annotations;
 
-
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface GeneratedByProxyBuilder {
-  String value() default "";
-  String date() default "";
-  String comments() default "";
+@Target(ElementType.TYPE)
+public @interface ProxyName {
+
+  String value();
 }

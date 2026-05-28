@@ -9,7 +9,7 @@ It is intended both as a ready-to-use proxy utility and as a base for custom ann
 <dependency>
   <groupId>com.svenruppert</groupId>
   <artifactId>proxybuilder</artifactId>
-  <version>00.10.01-SNAPSHOT</version>
+  <version>00.11.00-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ For annotation processing in Maven:
       <path>
         <groupId>com.svenruppert</groupId>
         <artifactId>proxybuilder</artifactId>
-        <version>00.10.01-SNAPSHOT</version>
+        <version>00.11.00-SNAPSHOT</version>
       </path>
     </annotationProcessorPaths>
   </configuration>
@@ -51,7 +51,8 @@ Release artifact checks:
 ## Modules
 
 - `proxybuilder-parent`: reactor parent.
-- `proxybuilder`: implementation artifact with runtime proxy utilities, annotations, annotation processors, and generated-proxy base APIs.
+- `proxybuilder-annotations`: tiny annotations-only JAR consumed and emitted by the processor. Put this on the consumer compile classpath; see [`proxybuilder-annotations/README.md`](proxybuilder-annotations/README.md) for the annotation catalogue.
+- `proxybuilder`: implementation artifact with runtime proxy utilities, annotation processors, and generated-proxy base APIs. Add via `<annotationProcessorPaths>`.
 - `proxybuilder-testusage`: integration and usage examples.
 
 ## Runtime Dynamic Proxies
@@ -350,9 +351,12 @@ Annotation lookup helpers:
 
 The base processor declares:
 
-- `proxybuilder.verbose`: reserved for verbose notes.
+- `proxybuilder.verbose`: emits `Diagnostic.Kind.NOTE` messages for `@SkipProxy` and `excludeMethodNames` skips.
 - `proxybuilder.suffix`: overrides the generated class suffix.
 - `proxybuilder.failOnStaticMethods`: defaults to `true`; set to `false` to downgrade static-method findings to warnings.
+- `proxybuilder.suppressDelegatesTo`: defaults to `false`; set to `true` to strip the auto-emitted `@DelegatesTo` annotation from generated wrapper methods.
+
+For per-type overrides see `@ProxyBuilderOptions` and `@ProxyName` in `proxybuilder-annotations`.
 
 Maven example:
 
@@ -419,7 +423,7 @@ Validate JPMS after a build:
 ```bash
 ./mvnw -pl impl dependency:build-classpath -Dmdep.outputFile=target/classpath.txt
 jdeps --multi-release 26 \
-  --module-path "impl/target/proxybuilder-00.10.00.jar:$(cat impl/target/classpath.txt)" \
+  --module-path "impl/target/proxybuilder-00.11.00-SNAPSHOT.jar:$(cat impl/target/classpath.txt)" \
   --check com.svenruppert.proxybuilder
 ```
 

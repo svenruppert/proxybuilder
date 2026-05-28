@@ -9,11 +9,13 @@
 package com.svenruppert.proxybuilder;
 
 import com.squareup.javapoet.TypeName;
+import com.svenruppert.proxybuilder.annotations.Internal;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import java.util.List;
 
+@Internal(reason = "Processor-internal record for method dedup; not part of the subprocessor SPI.")
 public record MethodIdentifier(String name, List<TypeName> parameters) {
 
   public MethodIdentifier {
