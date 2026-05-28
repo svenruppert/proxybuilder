@@ -15,7 +15,7 @@
   <parent>
     <groupId>com.svenruppert</groupId>
     <artifactId>proxybuilder-parent</artifactId>
-    <version>00.10.00</version>
+    <version>00.10.01-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -31,6 +31,12 @@
       <artifactId>spotbugs-annotations</artifactId>
       <version>4.9.8</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.testing.compile</groupId>
+      <artifactId>compile-testing</artifactId>
+      <version>0.21.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

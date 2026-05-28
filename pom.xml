@@ -20,7 +20,7 @@
   </parent>
 
   <artifactId>proxybuilder-parent</artifactId>
-  <version>00.10.00</version>
+  <version>00.10.01-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>

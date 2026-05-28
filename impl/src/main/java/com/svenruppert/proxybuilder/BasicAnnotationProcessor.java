@@ -539,15 +539,13 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     final String className = javaFile.packageName + "." + javaFile.typeSpec.name;
     try {
       JavaFileObject jfo = filer.createSourceFile(className);
-      Writer writer = jfo.openWriter();
-      javaFile.writeTo(writer);
-      writer.flush();
-      //return Optional.of(typeSpec);
+      try (Writer writer = jfo.openWriter()) {
+        javaFile.writeTo(writer);
+      }
     } catch (FilerException e) {
       return Optional.of(typeSpec);
     } catch (IOException e) {
       logger().warn("Could not write generated source file {}", className, e);
-      logger().warn("Error while writing generated source file {}", className, e);
     }
     return Optional.of(typeSpec);
   }
