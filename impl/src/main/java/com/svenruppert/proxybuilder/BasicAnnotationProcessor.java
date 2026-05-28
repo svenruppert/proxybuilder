@@ -14,6 +14,7 @@ import com.squareup.javapoet.TypeSpec.Builder;
 import com.svenruppert.dependencies.core.logger.HasLogger;
 import com.svenruppert.proxybuilder.annotations.DelegatesTo;
 import com.svenruppert.proxybuilder.annotations.GeneratedByProxyBuilder;
+import com.svenruppert.proxybuilder.annotations.Internal;
 import com.svenruppert.proxybuilder.annotations.ProxyBuilderOptions;
 import com.svenruppert.proxybuilder.annotations.ProxyBuilderVersion;
 import com.svenruppert.proxybuilder.annotations.ProxyEntry;
@@ -73,6 +74,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected TypeElement actualProcessedTypeElement;
   private ResolvedOptions currentOptions = EMPTY_OPTIONS;
 
+  @Internal(reason = "Per-type resolved options cache; populated from @ProxyBuilderOptions / @ProxyName.")
   private record ResolvedOptions(String suffix,
                                  Boolean failOnStatic,
                                  Set<String> excludeMethodNames,
@@ -341,6 +343,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return typeSpecBuilderForTargetClass;
   }
 
+  @Internal(reason = "Stream filter for @SkipProxy.")
   private boolean keepAfterSkipProxy(final ExecutableElement methodElement) {
     if (methodElement.getAnnotation(SkipProxy.class) == null) {
       return true;
@@ -353,6 +356,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return false;
   }
 
+  @Internal(reason = "Stream filter for @ProxyBuilderOptions.excludeMethodNames.")
   private boolean keepAfterExcludeMethodNames(final ExecutableElement methodElement) {
     final Set<String> excludes = currentOptions.excludeMethodNames();
     if (excludes.isEmpty()) {
@@ -367,6 +371,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return false;
   }
 
+  @Internal(reason = "@ProxyEntry NOTE-diagnostic emission.")
   private void noteProxyEntry(final ExecutableElement methodElement) {
     if (methodElement.getAnnotation(ProxyEntry.class) != null) {
       note(methodElement, "@ProxyEntry is experimental, no-op in %s", ProxyBuilderVersion.VERSION);
@@ -456,6 +461,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     return methodSpecBuilder;
   }
 
+  @Internal(reason = "Generic-return-type plumbing for the generated method spec.")
   private void addReturnTypeVariables(final MethodSpec.Builder methodBuilder, final TypeMirror returnType) {
     if (!needsTypeVariableDeclaration(returnType)) {
       return;
@@ -470,12 +476,14 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     }
   }
 
+  @Internal(reason = "Part of the addReturnTypeVariables family.")
   private boolean needsTypeVariableDeclaration(final TypeMirror returnType) {
     return !returnType.getKind().isPrimitive()
         && returnType.getKind() != TypeKind.VOID
         && !(returnType instanceof DeclaredType);
   }
 
+  @Internal(reason = "Part of the addReturnTypeVariables family.")
   private List<TypeName> nonObjectDirectSupertypes(final TypeMirror returnType) {
     return typeUtils.directSupertypes(returnType)
         .stream()
@@ -484,6 +492,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .collect(toList());
   }
 
+  @Internal(reason = "Part of the addReturnTypeVariables family.")
   private boolean isTypeVariableLike(final TypeMirror returnType) {
     final Element element = typeUtils.asElement(returnType);
     return element == null

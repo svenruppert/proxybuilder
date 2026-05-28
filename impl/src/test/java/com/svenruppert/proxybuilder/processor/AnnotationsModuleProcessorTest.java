@@ -75,6 +75,32 @@ class AnnotationsModuleProcessorTest {
   }
 
   @Test
+  void skipProxySkipsConstructor() {
+    final Compilation compilation = compile(
+        "test.SkipCtorTarget",
+        "package test;",
+        "import com.svenruppert.proxybuilder.annotations.SkipProxy;",
+        "import com.svenruppert.proxybuilder.proxy.generated.annotations.StaticLoggingProxy;",
+        "@StaticLoggingProxy",
+        "public class SkipCtorTarget {",
+        "  public SkipCtorTarget() {}",
+        "  @SkipProxy(\"too hot\")",
+        "  public SkipCtorTarget(int forbidden) {}",
+        "  public String work() { return \"x\"; }",
+        "}");
+
+    assertThat(compilation).succeeded();
+    final String generated = readGenerated(compilation, "test.SkipCtorTargetStaticLoggingProxy");
+    final long ctorCount = generated.lines()
+        .filter(line -> line.contains("SkipCtorTargetStaticLoggingProxy("))
+        .count();
+    Assertions.assertEquals(1L, ctorCount,
+                            "wrapper must keep only the un-skipped constructor:\n" + generated);
+    Assertions.assertFalse(generated.contains("int forbidden"),
+                           "@SkipProxy constructor must not appear in wrapper:\n" + generated);
+  }
+
+  @Test
   void proxyBuilderOptionsSuffixOverridesGlobal() {
     final Compilation compilation = compile(
         "test.SuffixTarget",
