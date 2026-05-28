@@ -9,7 +9,7 @@ It is intended both as a ready-to-use proxy utility and as a base for custom ann
 <dependency>
   <groupId>com.svenruppert</groupId>
   <artifactId>proxybuilder</artifactId>
-  <version>00.11.00-SNAPSHOT</version>
+  <version>00.11.00</version>
 </dependency>
 ```
 
@@ -23,7 +23,7 @@ For annotation processing in Maven:
       <path>
         <groupId>com.svenruppert</groupId>
         <artifactId>proxybuilder</artifactId>
-        <version>00.11.00-SNAPSHOT</version>
+        <version>00.11.00</version>
       </path>
     </annotationProcessorPaths>
   </configuration>
