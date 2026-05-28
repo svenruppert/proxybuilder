@@ -12,6 +12,13 @@ package com.svenruppert.proxybuilder;
 import com.squareup.javapoet.*;
 import com.squareup.javapoet.TypeSpec.Builder;
 import com.svenruppert.dependencies.core.logger.HasLogger;
+import com.svenruppert.proxybuilder.annotations.DelegatesTo;
+import com.svenruppert.proxybuilder.annotations.GeneratedByProxyBuilder;
+import com.svenruppert.proxybuilder.annotations.ProxyBuilderOptions;
+import com.svenruppert.proxybuilder.annotations.ProxyBuilderVersion;
+import com.svenruppert.proxybuilder.annotations.ProxyEntry;
+import com.svenruppert.proxybuilder.annotations.ProxyName;
+import com.svenruppert.proxybuilder.annotations.SkipProxy;
 
 
 import javax.annotation.processing.*;
@@ -39,7 +46,8 @@ import static javax.lang.model.type.TypeKind.ARRAY;
 @SupportedOptions({
     BasicAnnotationProcessor.OPTION_VERBOSE,
     BasicAnnotationProcessor.OPTION_GENERATED_CLASS_SUFFIX,
-    BasicAnnotationProcessor.OPTION_FAIL_ON_STATIC_METHODS
+    BasicAnnotationProcessor.OPTION_FAIL_ON_STATIC_METHODS,
+    BasicAnnotationProcessor.OPTION_SUPPRESS_DELEGATES_TO
 })
 public abstract class BasicAnnotationProcessor<T extends Annotation> extends AbstractProcessor implements HasLogger {
 
@@ -47,12 +55,15 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   public static final String OPTION_VERBOSE = "proxybuilder.verbose";
   public static final String OPTION_GENERATED_CLASS_SUFFIX = "proxybuilder.suffix";
   public static final String OPTION_FAIL_ON_STATIC_METHODS = "proxybuilder.failOnStaticMethods";
+  public static final String OPTION_SUPPRESS_DELEGATES_TO = "proxybuilder.suppressDelegatesTo";
   public static final String METHOD_NAME_FINALIZE = "finalize";
   public static final String METHOD_NAME_TO_STRING = "toString";
   public static final String METHOD_NAME_HASH_CODE = "hashCode";
   public static final String METHOD_NAME_EQUALS = "equals";
   protected static final String CLASS_NAME = "CLASS_NAME";
   protected static final String DELEGATOR_FIELD_NAME = "delegator";
+  private static final ResolvedOptions EMPTY_OPTIONS =
+      new ResolvedOptions(null, null, Set.of(), null);
   private final Set<MethodIdentifier> executableElementSet = new HashSet<>();
   protected Filer filer;
   protected Elements elementUtils;
@@ -60,6 +71,13 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected Messager messager;
   protected Builder typeSpecBuilderForTargetClass;
   protected TypeElement actualProcessedTypeElement;
+  private ResolvedOptions currentOptions = EMPTY_OPTIONS;
+
+  private record ResolvedOptions(String suffix,
+                                 Boolean failOnStatic,
+                                 Set<String> excludeMethodNames,
+                                 String nameOverride) {
+  }
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
@@ -91,24 +109,59 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .map(TypeElement.class::cast)
         .filter(this::validateTargetType)
         .forEach(typeElement -> {
-          actualProcessedTypeElement = typeElement;
-          final TypeName interface2Implement = TypeName.get(typeElement.asType());
-          createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
+          applyProxyBuilderOptions(typeElement);
+          try {
+            actualProcessedTypeElement = typeElement;
+            final TypeName interface2Implement = TypeName.get(typeElement.asType());
+            createTypeSpecBuilderForTargetClass(typeElement, interface2Implement);
 
-          addClassLevelSpecs(typeElement, roundEnv);
-          logger().debug("============================================================");
-          executableElementSet.clear();
-          defineNewGeneratedMethod(typeElement);
-          defineGeneratedConstructorMethod(typeElement, typeSpecBuilderForTargetClass);
-          executableElementSet.clear();
-          logger().debug("============================================================");
+            addClassLevelSpecs(typeElement, roundEnv);
+            logger().debug("============================================================");
+            executableElementSet.clear();
+            defineNewGeneratedMethod(typeElement);
+            defineGeneratedConstructorMethod(typeElement, typeSpecBuilderForTargetClass);
+            executableElementSet.clear();
+            logger().debug("============================================================");
 
-          writeDefinedClass(pkgName(typeElement), typeSpecBuilderForTargetClass);
-          typeSpecBuilderForTargetClass = null;
-          actualProcessedTypeElement = null;
+            writeDefinedClass(pkgName(typeElement), typeSpecBuilderForTargetClass);
+            typeSpecBuilderForTargetClass = null;
+            actualProcessedTypeElement = null;
+          } finally {
+            resetProxyBuilderOptions();
+          }
         });
 
     return true;
+  }
+
+  private void applyProxyBuilderOptions(final TypeElement typeElement) {
+    final ProxyBuilderOptions options = typeElement.getAnnotation(ProxyBuilderOptions.class);
+    final ProxyName nameOverride = typeElement.getAnnotation(ProxyName.class);
+    String suffix = null;
+    Boolean failOnStatic = null;
+    Set<String> excludes = Set.of();
+    if (options != null) {
+      if (!options.suffix().isEmpty()) {
+        suffix = options.suffix();
+      }
+      switch (options.failOnStaticMethods()) {
+        case TRUE -> failOnStatic = Boolean.TRUE;
+        case FALSE -> failOnStatic = Boolean.FALSE;
+        case DEFAULT -> {
+        }
+        default -> {
+        }
+      }
+      if (options.excludeMethodNames().length > 0) {
+        excludes = Set.of(options.excludeMethodNames());
+      }
+    }
+    final String name = (nameOverride != null) ? nameOverride.value() : null;
+    currentOptions = new ResolvedOptions(suffix, failOnStatic, excludes, name);
+  }
+
+  private void resetProxyBuilderOptions() {
+    currentOptions = EMPTY_OPTIONS;
   }
 
   public abstract Class<T> responsibleFor();
@@ -122,6 +175,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
   protected boolean validateTargetType(final TypeElement typeElement) {
+    applyProxyBuilderOptions(typeElement);
     boolean valid = true;
     if (typeElement.getModifiers().contains(Modifier.FINAL)) {
       error(typeElement, "@%s cannot be applied to final class %s",
@@ -196,6 +250,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.PRIVATE))
         .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
         .filter(methodElement -> !methodElement.isDefault())
+        .filter(this::keepAfterSkipProxy)
         .filter(methodElement -> !executableElementSet.contains(MethodIdentifier.of(methodElement)))
         .forEach(
             methodElement -> {
@@ -232,10 +287,13 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
         .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.STATIC))
         .filter(methodElement -> !methodElement.getModifiers().contains(Modifier.FINAL))
         .filter(methodElement -> !isObjectMethod(methodElement))
+        .filter(this::keepAfterSkipProxy)
+        .filter(this::keepAfterExcludeMethodNames)
         .filter(methodElement -> !executableElementSet.contains(MethodIdentifier.of(methodElement)))
         .forEach(
             methodElement -> {
               executableElementSet.add(MethodIdentifier.of(methodElement));
+              noteProxyEntry(methodElement);
               final String methodName2Delegate = methodElement.getSimpleName().toString();
               final CodeBlock codeBlock = defineMethodImplementations(methodElement, methodName2Delegate, actualProcessedTypeElement);
               final MethodSpec delegatedMethodSpec = defineDelegatorMethod(methodElement, methodName2Delegate, codeBlock);
@@ -279,8 +337,40 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
     }
 
 
-    typeSpecBuilderForTargetClass.addAnnotation(createAnnotationSpecGenerated());
+    typeSpecBuilderForTargetClass.addAnnotation(createAnnotationSpecGenerated(typeElement));
     return typeSpecBuilderForTargetClass;
+  }
+
+  private boolean keepAfterSkipProxy(final ExecutableElement methodElement) {
+    if (methodElement.getAnnotation(SkipProxy.class) == null) {
+      return true;
+    }
+    if (verbose()) {
+      final String reason = methodElement.getAnnotation(SkipProxy.class).value();
+      note(methodElement, "skipping (@SkipProxy): %s",
+           reason.isEmpty() ? methodElement.getSimpleName() : reason);
+    }
+    return false;
+  }
+
+  private boolean keepAfterExcludeMethodNames(final ExecutableElement methodElement) {
+    final Set<String> excludes = currentOptions.excludeMethodNames();
+    if (excludes.isEmpty()) {
+      return true;
+    }
+    if (!excludes.contains(methodElement.getSimpleName().toString())) {
+      return true;
+    }
+    if (verbose()) {
+      note(methodElement, "skipping (excludeMethodNames): %s", methodElement.getSimpleName());
+    }
+    return false;
+  }
+
+  private void noteProxyEntry(final ExecutableElement methodElement) {
+    if (methodElement.getAnnotation(ProxyEntry.class) != null) {
+      note(methodElement, "@ProxyEntry is experimental, no-op in %s", ProxyBuilderVersion.VERSION);
+    }
   }
 
   protected abstract void addClassLevelSpecs(final TypeElement typeElement, final RoundEnvironment roundEnv);
@@ -336,7 +426,9 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   protected MethodSpec defineDelegatorMethod(final ExecutableElement methodElement, final String methodName2Delegate, final CodeBlock codeBlock) {
     logger().debug("defineDelegatorMethod.methodElement = {}", methodElement);
     final MethodSpec.Builder methodSpecBuilder = defineDelegatorMethodSpec(methodElement, methodName2Delegate, codeBlock);
-
+    if (!suppressDelegatesTo()) {
+      methodSpecBuilder.addAnnotation(createDelegatesToAnnotation(methodElement));
+    }
     return methodSpecBuilder.build();
   }
 
@@ -409,7 +501,12 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
   protected String targetClassNameSimpleForGeneratedClass(final TypeElement typeElement) {
-    return ClassName.get(pkgName(typeElement), className(typeElement) + generatedClassSuffix(typeElement)).simpleName();
+    final String original = className(typeElement);
+    if (currentOptions.nameOverride() != null) {
+      final String expanded = currentOptions.nameOverride().replace("{Original}", original);
+      return ClassName.get(pkgName(typeElement), expanded).simpleName();
+    }
+    return ClassName.get(pkgName(typeElement), original + generatedClassSuffix(typeElement)).simpleName();
   }
 
   protected String targetClassNameSimpleForSourceClass(final TypeElement typeElement) {
@@ -417,6 +514,9 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
   protected String generatedClassSuffix(final TypeElement typeElement) {
+    if (currentOptions.suffix() != null) {
+      return currentOptions.suffix();
+    }
     return processorOption(OPTION_GENERATED_CLASS_SUFFIX)
         .filter(option -> !option.isBlank())
         .orElseGet(() -> responsibleFor().getSimpleName());
@@ -429,9 +529,18 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
   protected boolean failOnStaticMethods() {
+    if (currentOptions.failOnStatic() != null) {
+      return currentOptions.failOnStatic();
+    }
     return processorOption(OPTION_FAIL_ON_STATIC_METHODS)
         .map(Boolean::parseBoolean)
         .orElse(true);
+  }
+
+  protected boolean suppressDelegatesTo() {
+    return processorOption(OPTION_SUPPRESS_DELEGATES_TO)
+        .map(Boolean::parseBoolean)
+        .orElse(false);
   }
 
   protected Optional<String> processorOption(final String name) {
@@ -474,7 +583,7 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
 
     final Builder functionalInterfaceTypeSpecBuilder = TypeSpec
         .interfaceBuilder(typeElementTargetClass.getSimpleName().toString() + "Method" + finalMethodName)
-        .addAnnotation(createAnnotationSpecGenerated())
+        .addAnnotation(createAnnotationSpecGenerated(typeElementTargetClass))
         .addMethod(methodSpecBuilder.build())
         .addModifiers(Modifier.PUBLIC);
 
@@ -510,11 +619,34 @@ public abstract class BasicAnnotationProcessor<T extends Annotation> extends Abs
   }
 
 
-  private AnnotationSpec createAnnotationSpecGenerated() {
+  private AnnotationSpec createAnnotationSpecGenerated(final TypeElement source) {
     return AnnotationSpec.builder(GeneratedByProxyBuilder.class)
-        .addMember("value", "$S", this.getClass().getSimpleName())
+        .addMember("processor", "$S", this.getClass().getName())
+        .addMember("sourceClass", "$S", elementUtils.getBinaryName(source).toString())
+        .addMember("proxyBuilderVersion", "$S", ProxyBuilderVersion.VERSION)
         .addMember("date", "$S", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
         .addMember("comments", "$S", "www.proxybuilder.org")
+        .build();
+  }
+
+  private AnnotationSpec createDelegatesToAnnotation(final ExecutableElement methodElement) {
+    final TypeElement decl = (TypeElement) methodElement.getEnclosingElement();
+    final StringBuilder sb = new StringBuilder()
+        .append(elementUtils.getBinaryName(decl).toString())
+        .append('#')
+        .append(methodElement.getSimpleName())
+        .append('(');
+    boolean first = true;
+    for (final var param : methodElement.getParameters()) {
+      if (!first) {
+        sb.append(',');
+      }
+      sb.append(TypeName.get(param.asType()).toString());
+      first = false;
+    }
+    sb.append(')');
+    return AnnotationSpec.builder(DelegatesTo.class)
+        .addMember("value", "$S", sb.toString())
         .build();
   }
 
